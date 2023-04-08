@@ -20,7 +20,7 @@ const Revenue = () => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if(route.params?.date){
+        if (route.params?.date) {
             setDate(new Date(route.params.date));
         } else {
             setDate(new Date());
@@ -67,12 +67,13 @@ const Revenue = () => {
                     <Label>Data</Label>
                     <RNDateTimePicker
                         style={{marginTop: 10}}
-                        mode={Platform.OS === 'ios' ? 'datetime' : 'date'}
+                        mode={'date'}
                         value={date}
                         onChange={(event, selectedDate) => {
                             const currentDate = selectedDate || date;
                             setDate(currentDate);
                         }}
+                        locale="pt-BR"
                     />
                 </View>
 

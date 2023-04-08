@@ -76,7 +76,7 @@ const LastTransactionItem = (props: LastTransactionProps) => {
 
                 <Container>
                     <TitleTransaction>{props.transaction.title}</TitleTransaction>
-                    <Date>{moment(props.transaction.date).format('LLL')}</Date>
+                    <Date>{moment(props.transaction.date).format('LL')}</Date>
                 </Container>
             </LeftWrapper>
 

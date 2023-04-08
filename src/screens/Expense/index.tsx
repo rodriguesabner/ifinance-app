@@ -69,12 +69,13 @@ const Expense = () => {
                     <Label>Data</Label>
                     <RNDateTimePicker
                         style={{marginTop: 10}}
-                        mode={Platform.OS === 'ios' ? 'datetime' : 'date'}
+                        mode={'date'}
                         value={date}
                         onChange={(event, selectedDate) => {
                             const currentDate = selectedDate || date;
                             setDate(currentDate);
                         }}
+                        locale="pt-BR"
                     />
                 </View>
 
