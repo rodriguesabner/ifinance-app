@@ -1,4 +1,4 @@
-import {StatusBar, View} from 'react-native';
+import {View} from 'react-native';
 import {Suspense} from "react";
 import {Routes} from "./src/routes";
 import {Provider} from "react-redux";
@@ -9,7 +9,6 @@ export default function App() {
     return (
         <Suspense fallback={<View/>}>
             <Provider store={store}>
-                <StatusBar translucent/>
                 <Layout>
                     <Routes/>
                 </Layout>

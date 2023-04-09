@@ -6,8 +6,14 @@ import MenuItem from "./MenuItem";
 const Header = () => {
     const menus = [
         {
-            id: 2,
+            id: 1,
             name: 'Reserva',
+            hidden: false
+        },
+        {
+            id: 2,
+            name: 'Gerar Planilha',
+            hidden: true
         },
     ]
 
@@ -18,9 +24,13 @@ const Header = () => {
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{gap: 10}}
-                renderItem={({item}) =>
-                    <MenuItem name={item.name}/>
-                }
+                renderItem={({item}) => {
+                    if (item.hidden) {
+                        return null;
+                    }
+
+                    return <MenuItem name={item.name}/>
+                }}
             />
         </Layout>
     );

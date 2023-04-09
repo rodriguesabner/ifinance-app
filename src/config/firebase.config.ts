@@ -1,6 +1,12 @@
 import {initializeApp} from 'firebase/app';
 import {getDatabase} from 'firebase/database';
 
+// Your web app's Firebase configuration
+/* add app
+ * add web app
+ * copy config
+ * paste here
+ */
 const firebaseConfig = {
     apiKey: "AIzaSyBguMDXRKbiLszv9WPUSJt6C7r10BW1nUM",
     authDomain: "copy-paste-24ce6.firebaseapp.com",

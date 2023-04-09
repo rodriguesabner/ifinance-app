@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Text, View} from "react-native";
+import {ActivityIndicator, StatusBar, Text, View} from "react-native";
 import {ActionIcon, ActionItem, DateText, DateWrapper, FlatList, Layout, WrapperActions} from "./styles";
 import WrapperTitle from "../../components/Home/WrapperTitle";
 import CurrentBalance from "../../components/Home/CurrentBalance";
@@ -9,7 +9,7 @@ import {onValue, ref} from "firebase/database";
 import {database} from "../../config/firebase.config";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../store/reducers";
-import {setBalance} from "../../store/reducers/balance";
+import {setBalance, setTransactionsAction} from "../../store/reducers/balance";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
 import Header from "../../components/Header";
@@ -20,8 +20,9 @@ const Home = () => {
     const dispatch = useDispatch();
     const $balance = useSelector((state: RootState) => state.balance);
     const navigation: NavigationProp<any> = useNavigation();
-    const { onTouchStart, onTouchEnd } = useSwipe(onSwipeLeft, onSwipeRight, 6)
+    const {onTouchStart, onTouchEnd} = useSwipe(onSwipeLeft, onSwipeRight, 6)
 
+    const [loading, setLoading] = useState(true);
     const [transactions, setTransactions] = useState<any[]>([]);
     const [date, setDate] = useState(new Date());
     const [totalBalance, setTotalBalance] = useState(0);
@@ -31,12 +32,12 @@ const Home = () => {
         getTransactions();
     }, [date])
 
-    function onSwipeLeft(){
+    function onSwipeLeft() {
         const newDate = moment(date).add(1, 'month').toDate();
         setDate(newDate);
     }
 
-    function onSwipeRight(){
+    function onSwipeRight() {
         const newDate = moment(date).subtract(1, 'month').toDate();
         setDate(newDate);
     }
@@ -88,7 +89,10 @@ const Home = () => {
             });
 
             setTransactions(orderedValues)
+            dispatch(setTransactionsAction(orderedValues));
+
             calculateBalance(values)
+            setLoading(false);
         });
     }
 
@@ -108,6 +112,12 @@ const Home = () => {
     const TopContent = () => {
         return (
             <View>
+                <StatusBar
+                    translucent
+                    backgroundColor={totalBalance < 0 ? '#f0cccc' : '#ccf0e3'}
+                    barStyle={'dark-content'}
+                />
+
                 <Header/>
 
                 <View style={{alignItems: 'flex-start'}}>
@@ -168,18 +178,26 @@ const Home = () => {
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}
         >
-            <FlatList
-                data={transactions}
-                keyExtractor={item => item.id}
-                contentContainerStyle={{gap: 20, paddingBottom: 160}}
-                renderItem={({item}) => <LastTransactionItem transaction={item}/>}
-                ListHeaderComponent={() => <TopContent/>}
-                ListEmptyComponent={() => (
-                    <View>
-                        <Text style={{fontSize: 18, color: '#333', opacity: .5}}>Nenhuma transação encontrada</Text>
-                    </View>
-                )}
-            />
+            {loading ? (
+                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                    <ActivityIndicator size={'large'} color={'#000'}/>
+                </View>
+            ) : (
+                <FlatList
+                    data={transactions}
+                    keyExtractor={item => item.id}
+                    contentContainerStyle={{gap: 20, paddingBottom: 160}}
+                    renderItem={({item}) => <LastTransactionItem transaction={item}/>}
+                    ListHeaderComponent={() => <TopContent/>}
+                    ListEmptyComponent={() => (
+                        <View>
+                            <Text style={{fontSize: 18, color: '#333', opacity: .5}}>
+                                Nenhuma transação encontrada
+                            </Text>
+                        </View>
+                    )}
+                />
+            )}
         </Layout>
     );
 };
