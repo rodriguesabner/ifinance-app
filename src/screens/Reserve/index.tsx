@@ -14,7 +14,6 @@ const Reserve = () => {
     const $balance = useSelector((state: RootState) => state.balance);
 
     const [transactions, setTransactions] = useState<any[]>([]);
-    const [date, setDate] = useState(new Date());
     const [totalBalance, setTotalBalance] = useState<any>(0);
 
     useEffect(() => {
@@ -29,41 +28,41 @@ const Reserve = () => {
         }
 
         async function getTransactions() {
-            const year = date.getFullYear();
-            const ret = $balance.databaseRef + `/${year}`;
-
+            const ret = $balance.databaseRef;
             onValue(ref(database, ret), (snapshot) => {
                 const data = snapshot.val();
                 const values: any[] = [];
 
-                for (let key in data) {
-                    const monthData = data[key];
-                    for (let key in monthData) {
-                        const categoryData = monthData[key];
-                        if (categoryData.category === 'Reserva') {
-                            values.push({
-                                id: key,
-                                title: categoryData.name,
-                                value: categoryData.price,
-                                category: categoryData.category,
-                                date: categoryData.date,
-                                type: 'income'
-                            });
+                for (let yearKey in data) {
+                    const yearData = data[yearKey];
+                    for (let monthKey in yearData) {
+                        const monthData = yearData[monthKey];
+                        for (let transactionKey in monthData) {
+                            const transaction = monthData[transactionKey];
+                            if (transaction.category === 'Reserva') {
+                                values.push({
+                                    id: transactionKey,
+                                    title: transaction.name,
+                                    value: transaction.price,
+                                    category: transaction.category,
+                                    date: transaction.date,
+                                    type: 'income'
+                                });
+                            }
                         }
                     }
                 }
 
                 const orderedValues = values.sort((a, b) => {
-                    return new Date(a.date).getTime() - new Date(b.date).getTime();
+                    return new Date(b.date).getTime() - new Date(a.date).getTime();
                 });
-
                 setTransactions(orderedValues)
                 calculateTotal(values)
             });
         }
 
         getTransactions();
-    }, [date])
+    }, [])
 
     const TopContent = () => {
         return (
@@ -98,8 +97,9 @@ const Reserve = () => {
             <FlatList
                 data={transactions}
                 keyExtractor={item => item.id}
-                contentContainerStyle={{gap: 20}}
+                contentContainerStyle={{gap: 20, paddingBottom: 120}}
                 nestedScrollEnabled={true}
+                showsVerticalScrollIndicator={false}
                 renderItem={({item}) => <LastTransactionItem backgroundColor={'#d2d7fa'} transaction={item}/>}
                 ListHeaderComponent={() => <TopContent/>}
                 ListEmptyComponent={() => (

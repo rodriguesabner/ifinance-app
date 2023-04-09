@@ -6,10 +6,6 @@ import MenuItem from "./MenuItem";
 const Header = () => {
     const menus = [
         {
-            id: 1,
-            name: 'Finanças',
-        },
-        {
             id: 2,
             name: 'Reserva',
         },
