@@ -28,6 +28,7 @@ export const Container = styled.View`
 export const TitleTransaction = styled.Text`
   font-weight: 600;
   font-size: 16px;
+  max-width: 200px;
 `;
 
 export const Date = styled.Text`

@@ -9,6 +9,7 @@ import {useSelector} from "react-redux";
 import {RootState} from "../../store/reducers";
 import {Currency, Total} from "../../components/Home/CurrentBalance/styles";
 import 'moment/locale/pt-br';
+import {convertToPrice} from "../../store/reducers/balance";
 
 const Reserve = () => {
     const $balance = useSelector((state: RootState) => state.balance);
@@ -60,6 +61,7 @@ const Reserve = () => {
             const orderedValues = values.sort((a, b) => {
                 return new Date(b.date).getTime() - new Date(a.date).getTime();
             });
+
             setTransactions(orderedValues)
             calculateTotal(values)
             setLoading(false)
@@ -82,7 +84,7 @@ const Reserve = () => {
                     alignItems: 'center',
                     justifyContent: 'center'
                 }}>
-                    <Total>{totalBalance}</Total>
+                    <Total>{convertToPrice(totalBalance)}</Total>
                     <Currency>{$balance.currency}</Currency>
                 </View>
 

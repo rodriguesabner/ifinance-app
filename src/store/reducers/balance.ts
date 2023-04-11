@@ -37,6 +37,17 @@ const initialState: BalanceProps = {
     ]
 }
 
+export const convertToPrice = (value: any) => {
+    const opts = {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    }
+
+    return new Intl
+        .NumberFormat('pt-BR', opts)
+        .format(value);
+}
+
 export const balanceSlice = createSlice({
     name: 'balance',
     initialState,

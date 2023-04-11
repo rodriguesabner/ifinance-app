@@ -3,13 +3,10 @@ import {BottomContainer, Currency, Layout, OutcomeValue, TopContainer, Total} fr
 import {useSelector} from "react-redux";
 import {RootState} from "../../../store/reducers";
 import {Text, View} from "react-native";
+import {convertToPrice} from "../../../store/reducers/balance";
 
 const CurrentBalance = () => {
     const $balance = useSelector((state: RootState) => state.balance);
-
-    const convertToPrice = (value: any) => {
-        return new Intl.NumberFormat('pt-BR').format(value);
-    }
 
     return (
         <Layout>

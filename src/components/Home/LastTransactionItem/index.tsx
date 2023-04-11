@@ -1,11 +1,12 @@
 import React from 'react';
 import {Container, Date, Layout, LeftWrapper, TitleTransaction, TypeTransaction} from "./styles";
-import {Alert, Text} from "react-native";
+import {Alert, Text, Vibration} from "react-native";
 import moment from 'moment';
 import {useSelector} from "react-redux";
 import {RootState} from "../../../store/reducers";
 import {database} from "../../../config/firebase.config";
 import {ref, remove} from "firebase/database";
+import {convertToPrice} from "../../../store/reducers/balance";
 
 export interface LastTransactionProps {
     backgroundColor?: string,
@@ -25,13 +26,14 @@ const LastTransactionItem = (props: LastTransactionProps) => {
     const $balance = useSelector((state: RootState) => state.balance);
     const renderValue = () => {
         if (props.transaction.type === 'outcome') {
-            return `-R$${props.transaction.value}`
+            return `-R$${convertToPrice(props.transaction.value)}`
         }
 
-        return `R$${props.transaction.value}`
+        return `R$${convertToPrice(props.transaction.value)}`
     }
 
     function deleteItem() {
+        Vibration.vibrate(50);
         Alert.alert(
             'Excluir transação',
             'Tem certeza que deseja excluir essa transação?',
