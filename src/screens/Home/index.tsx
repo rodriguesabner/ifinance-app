@@ -60,9 +60,9 @@ const Home = () => {
         total = incomeValue - outcomeValue;
 
         setTotalBalance(total);
-        dispatch(setOutcome(outcomeValue.toFixed(2)));
-        dispatch(setIncome(incomeValue.toFixed(2)));
-        dispatch(setBalance(total.toFixed(2)));
+        dispatch(setOutcome(outcomeValue));
+        dispatch(setIncome(incomeValue));
+        dispatch(setBalance(total));
     }
 
     async function getTransactions() {

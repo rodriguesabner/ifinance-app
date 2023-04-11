@@ -7,18 +7,22 @@ import {Text, View} from "react-native";
 const CurrentBalance = () => {
     const $balance = useSelector((state: RootState) => state.balance);
 
+    const convertToPrice = (value: any) => {
+        return new Intl.NumberFormat('pt-BR').format(value);
+    }
+
     return (
         <Layout>
             <BottomContainer>
-                <OutcomeValue>R${$balance.outcome}</OutcomeValue>
+                <OutcomeValue>R${convertToPrice($balance.outcome)}</OutcomeValue>
                 <Text>{"("}Saída{")"}</Text>
             </BottomContainer>
             <BottomContainer>
-                <OutcomeValue>R${$balance.income}</OutcomeValue>
+                <OutcomeValue>R${convertToPrice($balance.income)}</OutcomeValue>
                 <Text>{"("}Entrada{")"}</Text>
             </BottomContainer>
             <TopContainer>
-                <Total>{$balance.total}</Total>
+                <Total>{convertToPrice($balance.total)}</Total>
                 <Currency>{$balance.currency}</Currency>
             </TopContainer>
         </Layout>
