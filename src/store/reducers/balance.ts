@@ -8,6 +8,8 @@ export interface BalanceProps {
     databaseRef: string
     currency: 'BRL',
     total: number;
+    income: number;
+    outcome: number;
     transactions: any[],
     categories: CategoryProps[],
 }
@@ -16,6 +18,8 @@ const initialState: BalanceProps = {
     databaseRef: 'transactions/',
     currency: 'BRL',
     total: 0,
+    income: 0,
+    outcome: 0,
     transactions: [],
     categories: [
         {title: 'Bem estar'},
@@ -42,12 +46,20 @@ export const balanceSlice = createSlice({
         },
         setTransactionsAction: (state, action: PayloadAction<any>) => {
             state.transactions = action.payload
+        },
+        setOutcome: (state, action: PayloadAction<any>) => {
+            state.outcome = action.payload
+        },
+        setIncome: (state, action: PayloadAction<any>) => {
+            state.income = action.payload
         }
     }
 })
 
 export const {
     setBalance,
-    setTransactionsAction
+    setTransactionsAction,
+    setOutcome,
+    setIncome
 } = balanceSlice.actions
 export default balanceSlice.reducer

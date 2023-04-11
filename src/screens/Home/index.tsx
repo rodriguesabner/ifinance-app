@@ -9,7 +9,7 @@ import {onValue, ref} from "firebase/database";
 import {database} from "../../config/firebase.config";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../store/reducers";
-import {setBalance, setTransactionsAction} from "../../store/reducers/balance";
+import {setBalance, setIncome, setOutcome, setTransactionsAction} from "../../store/reducers/balance";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
 import Header from "../../components/Header";
@@ -60,6 +60,8 @@ const Home = () => {
         total = incomeValue - outcomeValue;
 
         setTotalBalance(total);
+        dispatch(setOutcome(outcomeValue.toFixed(2)));
+        dispatch(setIncome(incomeValue.toFixed(2)));
         dispatch(setBalance(total.toFixed(2)));
     }
 
