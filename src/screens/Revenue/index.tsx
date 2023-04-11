@@ -43,7 +43,7 @@ const Revenue = () => {
         const newExpense = {
             id,
             name,
-            price,
+            price: price.replace(',', '.'),
             category: 'Salário',
             date: date.toISOString(),
             type: 'income'
