@@ -10,6 +10,7 @@ export const TopContainer = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  margin-top: 15px;
 `;
 
 export const BottomContainer = styled.View`

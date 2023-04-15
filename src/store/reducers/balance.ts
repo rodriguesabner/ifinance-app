@@ -5,6 +5,8 @@ interface CategoryProps {
 }
 
 export interface BalanceProps {
+    loading: boolean,
+    hiddeValue: boolean,
     databaseRef: string
     currency: 'BRL',
     total: number;
@@ -15,6 +17,8 @@ export interface BalanceProps {
 }
 
 const initialState: BalanceProps = {
+    loading: true,
+    hiddeValue: true,
     databaseRef: 'transactions/',
     currency: 'BRL',
     total: 0,
@@ -63,6 +67,15 @@ export const balanceSlice = createSlice({
         },
         setIncome: (state, action: PayloadAction<any>) => {
             state.income = action.payload
+        },
+        toggleHiddenValues: (state) => {
+            state.hiddeValue = !state.hiddeValue
+        },
+        enableLoading: (state) => {
+            state.loading = true
+        },
+        disableLoading: (state) => {
+            state.loading = false
         }
     }
 })
@@ -71,6 +84,9 @@ export const {
     setBalance,
     setTransactionsAction,
     setOutcome,
-    setIncome
+    setIncome,
+    toggleHiddenValues,
+    enableLoading,
+    disableLoading
 } = balanceSlice.actions
 export default balanceSlice.reducer

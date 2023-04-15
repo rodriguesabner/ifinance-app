@@ -5,14 +5,20 @@ interface LayoutProps {
     backgroundColor?: string;
 }
 export const Layout = styled.View.attrs({
-    paddingHorizontal: 20
 })<LayoutProps>`
   flex: 1;
   background-color: ${(props) => props.backgroundColor || '#ccf0e3'};
 `;
 
-export const Container = styled.View`
-  padding-bottom: 120px;  
+export const LoadingWrapper = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1;
 `;
 
 export const FlatList = styled.FlatList.attrs({

@@ -17,6 +17,7 @@
     "@react-navigation/native-stack": "^6.9.12",
     "@reduxjs/toolkit": "^1.9.3",
     "expo": "~48.0.10",
+    "expo-blur": "^12.2.2",
     "expo-status-bar": "~1.4.4",
     "expo-updates": "~0.16.4",
     "firebase": "^9.19.1",

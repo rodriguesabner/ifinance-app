@@ -4,6 +4,8 @@ import HomeScreen from '../screens/Home';
 import ExpenseScreen from "../screens/Expense";
 import RevenueScreen from "../screens/Revenue";
 import ReserveScreen from "../screens/Reserve";
+import OnBoarding from "../screens/OnBoarding";
+import Edit from "../screens/Edit";
 
 const StackRoutes = createNativeStackNavigator();
 
@@ -17,9 +19,18 @@ function StackNativeRoutes() {
                     backgroundColor: 'transparent',
                 }
             }}
-            initialRouteName="Home"
+            initialRouteName="OnBoarding"
         >
+            <StackRoutes.Screen name="OnBoarding" component={OnBoarding}/>
             <StackRoutes.Screen name="Home" component={HomeScreen}/>
+            <StackRoutes.Screen
+                name="Edit"
+                component={Edit}
+                options={{
+                    animation: 'slide_from_right',
+                    presentation: 'modal',
+                }}
+            />
             <StackRoutes.Screen
                 name="Reserve"
                 component={ReserveScreen}
