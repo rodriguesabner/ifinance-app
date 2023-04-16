@@ -64,12 +64,13 @@ const LastTransactionItem = (props: LastTransactionProps) => {
                     onPress: () => deleteItem(),
                 }
             ],
-            {cancelable: false},
+            {
+                cancelable: true,
+            },
         );
     }
 
     function deleteItem() {
-        Vibration.vibrate(50);
         Alert.alert(
             'Excluir transação',
             'Tem certeza que deseja excluir essa transação?',

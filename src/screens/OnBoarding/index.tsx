@@ -6,6 +6,13 @@ import {NavigationProp, useNavigation} from "@react-navigation/native";
 const OnBoarding = () => {
     const navigation: NavigationProp<any> = useNavigation();
 
+    const goToHome = () => {
+        navigation.reset({
+            index: 0,
+            routes: [{name: 'Home'}],
+        })
+    }
+
     return (
         <Layout>
             <StatusBar translucent barStyle={'light-content'}/>
@@ -17,7 +24,7 @@ const OnBoarding = () => {
                 </SubTitle>
             </MainContainer>
             <BottomContainer>
-                <WrapperButton onPress={() => navigation.navigate('Home')}>
+                <WrapperButton onPress={() => goToHome()}>
                     <Text style={{fontSize: 18, fontWeight: 'bold', color: '#fff'}}>Entrar</Text>
                 </WrapperButton>
             </BottomContainer>
