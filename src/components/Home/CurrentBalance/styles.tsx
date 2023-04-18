@@ -24,6 +24,7 @@ export const BottomContainer = styled.View`
 export const Total = styled.Text`
   font-size: 36px;
   font-weight: 500;
+  border-radius: 20px;
 `;
 
 export const Currency = styled.Text`

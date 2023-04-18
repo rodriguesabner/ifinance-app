@@ -2,10 +2,11 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeScreen from '../screens/Home';
 import ExpenseScreen from "../screens/Expense";
-import RevenueScreen from "../screens/Revenue";
+import RevenueScreen from "../screens/Income";
 import ReserveScreen from "../screens/Reserve";
 import OnBoarding from "../screens/OnBoarding";
 import Edit from "../screens/Edit";
+import TransactionDetail from "../screens/TransactionDetail";
 
 const StackRoutes = createNativeStackNavigator();
 
@@ -50,6 +51,14 @@ function StackNativeRoutes() {
             <StackRoutes.Screen
                 name="Revenue"
                 component={RevenueScreen}
+                options={{
+                    animation: 'slide_from_right',
+                    presentation: 'modal',
+                }}
+            />
+            <StackRoutes.Screen
+                name="TransactionDetail"
+                component={TransactionDetail}
                 options={{
                     animation: 'slide_from_right',
                     presentation: 'modal',

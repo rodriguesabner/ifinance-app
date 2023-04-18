@@ -1,11 +1,21 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Container, Form, Input, Label} from "./styles";
+import {
+    Button,
+    Container,
+    CurrencyFormat, CurrentCategory,
+    Form,
+    Input,
+    Label,
+    PriceItem, TextCurrentCategory,
+    WrapperCurrency,
+    WrapperPrices
+} from "./styles";
 import WrapperTitle from "../../components/Home/WrapperTitle";
 import {useSelector} from "react-redux";
 import {RootState} from "../../store/reducers";
-import {ActivityIndicator, Alert, Platform, Text, View} from "react-native";
+import {ActivityIndicator, Alert, Text, View} from "react-native";
 import {Picker} from "@react-native-picker/picker";
-import {set, ref} from "firebase/database";
+import {ref, set} from "firebase/database";
 import {database} from "../../config/firebase.config";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigation/native";
@@ -18,11 +28,20 @@ const Expense = () => {
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
     const [category, setCategory] = useState('');
+    const [showCategoryPicker, setShowCategoryPicker] = useState(false);
     const [date, setDate] = useState<Date>(new Date());
     const [loading, setLoading] = useState(false);
 
+    const prices = () => ([
+        {value: '1', label: 'R$1'},
+        {value: '2', label: 'R$10'},
+        {value: '3', label: 'R$100'},
+        {value: '4', label: 'R$500'},
+        {value: '5', label: 'R$1000'},
+    ])
+
     useEffect(() => {
-        if(route.params?.date){
+        if (route.params?.date) {
             setDate(new Date(route.params.date));
         } else {
             setDate(new Date());
@@ -30,7 +49,7 @@ const Expense = () => {
     }, [route.params?.date])
 
     async function save() {
-        if(!name || !price || !category){
+        if (!name || !price || !category) {
             Alert.alert('Ops!', 'Preencha todos os campos');
             return;
         }
@@ -55,6 +74,15 @@ const Expense = () => {
 
         setLoading(false);
         navigation.navigate('Home');
+    }
+
+    const handleClickPrice = (value: string) => {
+        const sanitizedValue = value.replace('R$', '');
+
+        const currentPrice = price === '' ? 0 : parseInt(price, 10);
+        const total = currentPrice + parseInt(sanitizedValue, 10);
+
+        setPrice(total.toString());
     }
 
     return (
@@ -86,19 +114,44 @@ const Expense = () => {
 
                 <View>
                     <Label>Valor</Label>
-                    <Input placeholder="35" value={price} onChangeText={setPrice} keyboardType="numeric"/>
+
+                    <WrapperCurrency>
+                        <CurrencyFormat>R$</CurrencyFormat>
+                        <Input placeholder="35" value={price} onChangeText={setPrice} keyboardType="numeric"/>
+                    </WrapperCurrency>
                 </View>
+
+                <WrapperPrices
+                    data={prices()}
+                    keyExtractor={(item) => item.value}
+                    contentContainerStyle={{gap: 10}}
+                    renderItem={({item}) => (
+                        <PriceItem onPress={() => handleClickPrice(item.label)}>
+                            <Text>{item.label}</Text>
+                        </PriceItem>
+                    )}
+                />
 
                 <View>
                     <Label>Categoria</Label>
-                    <Picker
-                        selectedValue={category}
-                        onValueChange={(itemValue, itemIndex) => setCategory(itemValue)}
-                    >
-                        {$balance.categories.map((item, index) => (
-                            <Picker.Item key={index} label={item.title} value={item.title}/>
-                        ))}
-                    </Picker>
+                    <CurrentCategory onPress={() => setShowCategoryPicker(!showCategoryPicker)}>
+                        <TextCurrentCategory color={category === '' ? '#999' : '#000'}>
+                            {category === '' ? 'Escolher uma categoria' : category}
+                        </TextCurrentCategory>
+                    </CurrentCategory>
+                    {showCategoryPicker && (
+                        <Picker
+                            selectedValue={category}
+                            onValueChange={(itemValue, itemIndex) => {
+                                setCategory(itemValue)
+                                setShowCategoryPicker(false)
+                            }}
+                        >
+                            {$balance.categories.map((item, index) => (
+                                <Picker.Item key={index} label={item.title} value={item.title}/>
+                            ))}
+                        </Picker>
+                    )}
                 </View>
 
                 <Button disabled={loading} onPress={() => save()}>

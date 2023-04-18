@@ -31,7 +31,7 @@ export const TitleTransaction = styled.Text`
   max-width: 200px;
 `;
 
-export const Date = styled.Text`
+export const Category = styled.Text`
   opacity: .3;
   font-size: 13px;
   font-weight: 600;

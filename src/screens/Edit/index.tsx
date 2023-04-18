@@ -10,6 +10,7 @@ import RNDateTimePicker from "@react-native-community/datetimepicker";
 import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigation/native";
 import {Picker} from "@react-native-picker/picker";
 import {disableLoading, enableLoading} from "../../store/reducers/balance";
+import Toast from "react-native-root-toast";
 
 const Edit = () => {
     const dispatch = useDispatch();
@@ -65,6 +66,7 @@ const Edit = () => {
 
         dispatch(disableLoading());
         navigation.navigate('Home');
+        Toast.show('A transação foi editada com sucesso!');
     }
 
     return (

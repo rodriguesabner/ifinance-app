@@ -8,8 +8,9 @@ import {ref, set} from "firebase/database";
 import {database} from "../../config/firebase.config";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigation/native";
+import {CurrencyFormat, PriceItem, WrapperCurrency, WrapperPrices} from "../Expense/styles";
 
-const Revenue = () => {
+const Income = () => {
     const route: RouteProp<any> = useRoute();
     const navigation: NavigationProp<any> = useNavigation();
     const $balance = useSelector((state: RootState) => state.balance);
@@ -55,6 +56,23 @@ const Revenue = () => {
         navigation.navigate('Home');
     }
 
+    const prices = () => ([
+        {value: '1', label: 'R$1'},
+        {value: '2', label: 'R$10'},
+        {value: '3', label: 'R$100'},
+        {value: '4', label: 'R$500'},
+        {value: '5', label: 'R$1000'},
+    ])
+
+    const handleClickPrice = (value: string) => {
+        const sanitizedValue = value.replace('R$', '');
+
+        const currentPrice = price === '' ? 0 : parseInt(price, 10);
+        const total = currentPrice + parseInt(sanitizedValue, 10);
+
+        setPrice(total.toString());
+    }
+
     return (
         <Container>
             <WrapperTitle
@@ -84,8 +102,22 @@ const Revenue = () => {
 
                 <View>
                     <Label>Valor</Label>
-                    <Input placeholder="5900" value={price} onChangeText={setPrice} keyboardType="numeric"/>
+
+                    <WrapperCurrency>
+                        <CurrencyFormat>R$</CurrencyFormat>
+                        <Input placeholder="5900" value={price} onChangeText={setPrice} keyboardType="numeric"/>
+                    </WrapperCurrency>
                 </View>
+                <WrapperPrices
+                    data={prices()}
+                    keyExtractor={(item) => item.value}
+                    contentContainerStyle={{gap: 10}}
+                    renderItem={({item}) => (
+                        <PriceItem onPress={() => handleClickPrice(item.label)}>
+                            <Text>{item.label}</Text>
+                        </PriceItem>
+                    )}
+                />
 
                 <Button disabled={loading} onPress={() => save()}>
                     <Text style={{color: "#fff", fontSize: 16}}>Salvar</Text>
@@ -98,4 +130,4 @@ const Revenue = () => {
     );
 };
 
-export default Revenue;
+export default Income;

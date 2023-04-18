@@ -2,8 +2,10 @@ import React from 'react';
 import {BottomContainer, Currency, Layout, OutcomeValue, TopContainer, Total} from "./styles";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../../store/reducers";
-import {Button, Text, TouchableOpacity, View} from "react-native";
+import {Text, TouchableOpacity} from "react-native";
 import {convertToPrice, toggleHiddenValues} from "../../../store/reducers/balance";
+import * as Clipboard from 'expo-clipboard';
+import Toast from 'react-native-root-toast';
 
 const CurrentBalance = () => {
     const dispatch = useDispatch();
@@ -19,6 +21,13 @@ const CurrentBalance = () => {
         dispatch(toggleHiddenValues());
     }
 
+    const copyBalanceClipboard = async () => {
+        const price = convertToPrice($balance.total.toString())
+        await Clipboard.setStringAsync(price);
+
+        Toast.show('O saldo foi copiado para a área de transferência.');
+    }
+
     return (
         <Layout>
             <BottomContainer>
@@ -30,7 +39,11 @@ const CurrentBalance = () => {
                 <Text>{"("}Entrada{")"}</Text>
             </BottomContainer>
             <TopContainer>
-                <Total>{hiddeValue($balance.total)}</Total>
+                <Total
+                    onLongPress={() => !$balance.hiddeValue && copyBalanceClipboard()}
+                >
+                    {hiddeValue($balance.total)}
+                </Total>
                 <Currency>{$balance.currency}</Currency>
             </TopContainer>
 

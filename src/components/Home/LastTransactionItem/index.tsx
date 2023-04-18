@@ -1,5 +1,5 @@
 import React from 'react';
-import {Container, Date, Layout, LeftWrapper, TitleTransaction, TypeTransaction} from "./styles";
+import {Container, Category, Layout, LeftWrapper, TitleTransaction, TypeTransaction} from "./styles";
 import {Alert, Text, Vibration} from "react-native";
 import moment from 'moment';
 import {useDispatch, useSelector} from "react-redux";
@@ -8,6 +8,7 @@ import {database} from "../../../config/firebase.config";
 import {ref, remove} from "firebase/database";
 import {convertToPrice, disableLoading, enableLoading} from "../../../store/reducers/balance";
 import {NavigationProp, useNavigation} from "@react-navigation/native";
+import Toast from "react-native-root-toast";
 
 export interface LastTransactionProps {
     backgroundColor?: string,
@@ -16,9 +17,7 @@ export interface LastTransactionProps {
         title: string
         value: number
         type: string
-        category: {
-            name: string,
-        },
+        category: string,
         date: Date,
     }
 }
@@ -97,16 +96,13 @@ const LastTransactionItem = (props: LastTransactionProps) => {
         const path = $balance.databaseRef + `${year}/${month}/${props.transaction.id}`;
         await remove(ref(database, path));
 
-        Alert.alert(
-            'Sucesso',
-            'Transação excluída com sucesso!',
-        );
-
         dispatch(disableLoading());
+        Toast.show('A transação foi excluída com sucesso!');
     }
 
     return (
         <Layout
+            onPress={() => navigation.navigate('TransactionDetail', {transaction: props.transaction})}
             onLongPress={() => !$balance.hiddeValue && onLongPress()}
             backgroundColor={props.backgroundColor != null ? props.backgroundColor :  $balance.total < 0 ? '#fde5e5' : '#e5fdf5'}
         >
@@ -118,7 +114,7 @@ const LastTransactionItem = (props: LastTransactionProps) => {
 
                 <Container>
                     <TitleTransaction>{hiddeTitleValue()}</TitleTransaction>
-                    <Date>{moment(props.transaction.date).format('LL')}</Date>
+                    <Category>{props.transaction.category}</Category>
                 </Container>
             </LeftWrapper>
 

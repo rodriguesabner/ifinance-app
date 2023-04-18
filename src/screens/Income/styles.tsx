@@ -42,10 +42,11 @@ export const Input = styled.TextInput.attrs({
   height: 42px;
   padding-left: 10px;
   border-radius: 4px;
+  width: 100%;
 `;
 
 export const Button = styled.TouchableOpacity`
-  background-color: #000;
+  background-color: #333333;
   height: 42px;
   align-items: center;
   justify-content: center;
