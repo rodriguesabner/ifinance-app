@@ -51,6 +51,14 @@ const TransactionDetail = () => {
         return `R$${convertToPrice(price)}`
     }
 
+    const renderDetailValue = () => {
+        if (type === 'outcome') {
+            return `Valor Gasto`
+        }
+
+        return `Valor Recebido`
+    }
+
     const renderCategory = () => {
         if (type === 'income') {
             return `${category}/receita`
@@ -90,7 +98,7 @@ const TransactionDetail = () => {
 
             <WrapperInput>
                 <Label>
-                    Valor gasto
+                    {renderDetailValue()}
                 </Label>
                 <Price>{renderValue()}</Price>
             </WrapperInput>
