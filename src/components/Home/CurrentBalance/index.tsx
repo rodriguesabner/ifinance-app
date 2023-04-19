@@ -22,7 +22,11 @@ const CurrentBalance = () => {
     }
 
     const copyBalanceClipboard = async () => {
-        const price = convertToPrice($balance.total.toString())
+        const value = $balance.total
+            .toString()
+            .replace('-', '');
+
+        const price = convertToPrice(value)
         await Clipboard.setStringAsync(price);
 
         Toast.show('O saldo foi copiado para a área de transferência.');
