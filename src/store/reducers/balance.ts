@@ -14,11 +14,12 @@ export interface BalanceProps {
     outcome: number;
     transactions: any[],
     categories: CategoryProps[],
+    categoriesIncome: CategoryProps[],
 }
 
 const initialState: BalanceProps = {
     loading: true,
-    hiddeValue: true,
+    hiddeValue: false,
     databaseRef: 'transactions/',
     currency: 'BRL',
     total: 0,
@@ -36,7 +37,14 @@ const initialState: BalanceProps = {
         {title: 'Reserva'},
         {title: 'Saúde'},
         {title: 'Salário'},
+        {title: 'Saldo Conta'},
         {title: 'Transporte'},
+        {title: 'Outros'},
+    ],
+    categoriesIncome: [
+        {title: 'Empréstimo'},
+        {title: 'Salário'},
+        {title: 'Saldo Conta'},
         {title: 'Outros'},
     ]
 }

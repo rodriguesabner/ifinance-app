@@ -13,7 +13,7 @@ const Header = () => {
         {
             id: 2,
             name: 'Gerar Planilha',
-            hidden: true
+            hidden: false
         },
     ]
 

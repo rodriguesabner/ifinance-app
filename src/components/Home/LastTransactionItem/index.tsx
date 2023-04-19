@@ -1,5 +1,5 @@
 import React from 'react';
-import {Container, Category, Layout, LeftWrapper, TitleTransaction, TypeTransaction} from "./styles";
+import {Container, Category, Layout, LeftWrapper, TitleTransaction, TypeTransaction, PayedTick} from "./styles";
 import {Alert, Text, Vibration} from "react-native";
 import moment from 'moment';
 import {useDispatch, useSelector} from "react-redux";
@@ -19,6 +19,7 @@ export interface LastTransactionProps {
         type: string
         category: string,
         date: Date,
+        paid: boolean
     }
 }
 
@@ -106,6 +107,10 @@ const LastTransactionItem = (props: LastTransactionProps) => {
             onLongPress={() => !$balance.hiddeValue && onLongPress()}
             backgroundColor={props.backgroundColor != null ? props.backgroundColor :  $balance.total < 0 ? '#fde5e5' : '#e5fdf5'}
         >
+            {props.transaction.paid && (
+                <PayedTick>📌</PayedTick>
+            )}
+
             <LeftWrapper>
                 {props.transaction.type === 'income'
                     ? (<TypeTransaction>+</TypeTransaction>)

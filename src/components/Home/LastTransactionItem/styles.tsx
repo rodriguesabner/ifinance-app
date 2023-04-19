@@ -36,3 +36,9 @@ export const Category = styled.Text`
   font-size: 13px;
   font-weight: 600;
 `;
+
+export const PayedTick = styled.Text`
+  position: absolute;
+  right: 0;
+  top: 0;
+`;

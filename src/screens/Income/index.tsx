@@ -8,7 +8,15 @@ import {ref, set} from "firebase/database";
 import {database} from "../../config/firebase.config";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigation/native";
-import {CurrencyFormat, PriceItem, WrapperCurrency, WrapperPrices} from "../Expense/styles";
+import {
+    CurrencyFormat,
+    CurrentCategory,
+    PriceItem,
+    TextCurrentCategory,
+    WrapperCurrency,
+    WrapperPrices
+} from "../Expense/styles";
+import {Picker} from "@react-native-picker/picker";
 
 const Income = () => {
     const route: RouteProp<any> = useRoute();
@@ -17,6 +25,8 @@ const Income = () => {
 
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
+    const [category, setCategory] = useState('');
+    const [showCategoryPicker, setShowCategoryPicker] = useState(false);
     const [date, setDate] = useState<Date>(new Date());
     const [loading, setLoading] = useState(false);
 
@@ -47,7 +57,8 @@ const Income = () => {
             price: price.replace(',', '.'),
             category: 'Salário',
             date: date.toISOString(),
-            type: 'income'
+            type: 'income',
+            paid: false,
         }
 
         await set(db, newExpense);
@@ -118,6 +129,28 @@ const Income = () => {
                         </PriceItem>
                     )}
                 />
+
+                <View>
+                    <Label>Categoria</Label>
+                    <CurrentCategory onPress={() => setShowCategoryPicker(!showCategoryPicker)}>
+                        <TextCurrentCategory color={category === '' ? '#999' : '#000'}>
+                            {category === '' ? 'Escolher uma categoria' : category}
+                        </TextCurrentCategory>
+                    </CurrentCategory>
+                    {showCategoryPicker && (
+                        <Picker
+                            selectedValue={category}
+                            onValueChange={(itemValue, itemIndex) => {
+                                setCategory(itemValue)
+                                setShowCategoryPicker(false)
+                            }}
+                        >
+                            {$balance.categoriesIncome.map((item, index) => (
+                                <Picker.Item key={index} label={item.title} value={item.title}/>
+                            ))}
+                        </Picker>
+                    )}
+                </View>
 
                 <Button disabled={loading} onPress={() => save()}>
                     <Text style={{color: "#fff", fontSize: 16}}>Salvar</Text>

@@ -1,11 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import {Text} from "react-native";
+import {Alert, Text} from "react-native";
 import moment from "moment/moment";
 import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigation/native";
 import {useSelector} from "react-redux";
 import {RootState} from "../../store/reducers";
 import {Category, Label, Layout, Price, Title, WrapperInput} from "./styles";
-import {convertToPrice} from "../../store/reducers/balance";
+import {convertToPrice, disableLoading, enableLoading} from "../../store/reducers/balance";
+import {ref, update} from "firebase/database";
+import {database} from "../../config/firebase.config";
+import Toast from "react-native-root-toast";
+import {Checkbox} from "expo-checkbox";
 
 export interface TransactionDetailProps {
     transaction: {
@@ -20,6 +24,8 @@ export interface TransactionDetailProps {
 
 const TransactionDetail = () => {
     const route: RouteProp<any> = useRoute();
+    const $balance = useSelector((state: RootState) => state.balance);
+    const navigation: NavigationProp<any> = useNavigation();
 
     const [id, setId] = useState('');
     const [name, setName] = useState('');
@@ -27,6 +33,7 @@ const TransactionDetail = () => {
     const [category, setCategory] = useState('');
     const [date, setDate] = useState<Date>(new Date());
     const [type, setType] = useState('');
+    const [paid, setPaid] = useState(false);
 
     useEffect(() => {
         if (route.params?.transaction != null) {
@@ -37,6 +44,7 @@ const TransactionDetail = () => {
             setCategory(transaction.category);
             setDate(new Date(transaction.date));
             setType(transaction.type);
+            setPaid(transaction.paid ?? false);
 
             const price = transaction.value.toString();
             setPrice(price);
@@ -65,6 +73,31 @@ const TransactionDetail = () => {
         }
 
         return category;
+    }
+
+    async function markPaid(newPaidState: boolean) {
+        setPaid(newPaidState);
+
+        const getMonth = date.getMonth() + 1;
+        const getYear = date.getFullYear();
+
+        const db = ref(database, $balance.databaseRef + `/${getYear}/${getMonth}/${id}`);
+        const newExpense = {
+            id,
+            name,
+            price: price.replace(',', '.'),
+            category,
+            date: date.toISOString(),
+            type,
+            paid: newPaidState
+        }
+
+        await update(db, newExpense);
+
+        if(newPaidState) Toast.show('A transação foi marcada como paga!');
+        else Toast.show('A transação foi marcada como não paga!');
+
+        navigation.goBack();
     }
 
     return (
@@ -102,6 +135,18 @@ const TransactionDetail = () => {
                 </Label>
                 <Price>{renderValue()}</Price>
             </WrapperInput>
+
+            {type === 'outcome' && (
+                <WrapperInput>
+                    <Label>
+                        Essa transação foi paga?
+                    </Label>
+                    <Checkbox
+                        value={paid}
+                        onValueChange={(value) => void markPaid(value)}
+                    />
+                </WrapperInput>
+            )}
         </Layout>
     );
 };

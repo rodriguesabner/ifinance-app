@@ -67,7 +67,8 @@ const Expense = () => {
             price: price.replace(',', '.'),
             category,
             date: date.toISOString(),
-            type: 'outcome'
+            type: 'outcome',
+            paid: false,
         }
 
         await set(db, newExpense);

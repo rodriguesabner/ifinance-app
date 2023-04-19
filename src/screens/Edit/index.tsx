@@ -11,6 +11,7 @@ import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigat
 import {Picker} from "@react-native-picker/picker";
 import {disableLoading, enableLoading} from "../../store/reducers/balance";
 import Toast from "react-native-root-toast";
+import {CurrentCategory, TextCurrentCategory} from "../Expense/styles";
 
 const Edit = () => {
     const dispatch = useDispatch();
@@ -22,6 +23,7 @@ const Edit = () => {
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
     const [category, setCategory] = useState('');
+    const [showCategoryPicker, setShowCategoryPicker] = useState(false);
     const [date, setDate] = useState<Date>(new Date());
     const [type, setType] = useState('');
     const [loading, setLoading] = useState(false);
@@ -101,21 +103,33 @@ const Edit = () => {
                     <Input placeholder="35" value={price} onChangeText={setPrice} keyboardType="numeric"/>
                 </View>
 
-                {type !== 'income' && (
-                    <View>
-                        <Label>Categoria</Label>
+                <View>
+                    <Label>Categoria</Label>
+                    <CurrentCategory onPress={() => setShowCategoryPicker(!showCategoryPicker)}>
+                        <TextCurrentCategory color={category === '' ? '#999' : '#000'}>
+                            {category === '' ? 'Escolher uma categoria' : category}
+                        </TextCurrentCategory>
+                    </CurrentCategory>
+                    {showCategoryPicker && (
                         <Picker
                             selectedValue={category}
                             onValueChange={(itemValue, itemIndex) => {
-                                setCategory(itemValue);
+                                setCategory(itemValue)
+                                setShowCategoryPicker(false)
                             }}
                         >
-                            {$balance.categories.map((item, index) => (
-                                <Picker.Item key={index} label={item.title} value={item.title}/>
-                            ))}
+                            {type === 'income' ? (
+                                $balance.categoriesIncome.map((item, index) => (
+                                    <Picker.Item key={index} label={item.title} value={item.title}/>
+                                ))
+                            ) : (
+                                $balance.categories.map((item, index) => (
+                                    <Picker.Item key={index} label={item.title} value={item.title}/>
+                                ))
+                            )}
                         </Picker>
-                    </View>
-                )}
+                    )}
+                </View>
 
                 <Button disabled={loading} onPress={() => save()}>
                     <Text style={{color: "#fff", fontSize: 16}}>Salvar</Text>
