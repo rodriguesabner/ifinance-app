@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {Alert, Text} from "react-native";
+import {Text} from "react-native";
 import moment from "moment/moment";
 import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigation/native";
 import {useSelector} from "react-redux";
 import {RootState} from "../../store/reducers";
 import {Category, Label, Layout, Price, Title, WrapperInput} from "./styles";
-import {convertToPrice, disableLoading, enableLoading} from "../../store/reducers/balance";
+import {convertToPrice} from "../../store/reducers/balance";
 import {ref, update} from "firebase/database";
 import {database} from "../../config/firebase.config";
 import Toast from "react-native-root-toast";
@@ -94,7 +94,7 @@ const TransactionDetail = () => {
 
         await update(db, newExpense);
 
-        if(newPaidState) Toast.show('A transação foi marcada como paga!');
+        if (newPaidState) Toast.show('A transação foi marcada como paga!');
         else Toast.show('A transação foi marcada como não paga!');
 
         navigation.goBack();
@@ -136,7 +136,10 @@ const TransactionDetail = () => {
                 <Price>{renderValue()}</Price>
             </WrapperInput>
 
-            {type === 'outcome' && (
+            {(
+                type === 'outcome'
+                && category !== 'Saldo Conta'
+            ) && (
                 <WrapperInput>
                     <Label>
                         Essa transação foi paga?

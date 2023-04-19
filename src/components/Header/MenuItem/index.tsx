@@ -52,7 +52,7 @@ const MenuItem = (props: MenuItemProps) => {
         }));
 
         const ws = XLSX.utils.json_to_sheet(transactions);
-        XLSX.utils.book_append_sheet(wb, ws, 'SheetJS');
+        XLSX.utils.book_append_sheet(wb, ws, 'Finanças - ' + moment().format('MMMM-y'));
 
         const base64 = XLSX.write(wb, {bookType: 'xlsx', type: 'base64'});
         const monthYear = moment().format('MMM-y');
