@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {Image, Pressable, Text, TouchableOpacity, View} from "react-native";
+import {Alert, Image, Pressable, Text, TouchableOpacity, View} from "react-native";
 import moment from "moment/moment";
 import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigation/native";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../store/reducers";
 import {Category, Label, Layout, Price, Title, WrapperDetail, WrapperInput, WrapperPaidTransaction} from "./styles";
-import {convertToPrice} from "../../store/reducers/balance";
-import {ref, update} from "firebase/database";
+import {convertToPrice, disableLoading, enableLoading} from "../../store/reducers/balance";
+import {ref, remove, update} from "firebase/database";
 import {database} from "../../config/firebase.config";
 import Toast from "react-native-root-toast";
 import {Checkbox} from "expo-checkbox";
@@ -24,6 +24,7 @@ export interface TransactionDetailProps {
 
 const TransactionDetail = () => {
     const route: RouteProp<any> = useRoute();
+    const dispatch = useDispatch();
     const $balance = useSelector((state: RootState) => state.balance);
     const navigation: NavigationProp<any> = useNavigation();
 
@@ -98,6 +99,37 @@ const TransactionDetail = () => {
         else Toast.show('A transação foi marcada como não paga!');
 
         navigation.goBack();
+    }
+
+    function deleteItem() {
+        Alert.alert(
+            'Excluir transação',
+            'Tem certeza que deseja excluir essa transação?',
+            [
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Excluir',
+                    onPress: () => deleteTransaction(),
+                }
+            ],
+            {cancelable: false},
+        );
+    }
+
+    async function deleteTransaction() {
+        dispatch(enableLoading());
+
+        const month = moment(route.params?.transaction.date).format('M');
+        const year = moment(route.params?.transaction.date).format('YYYY');
+
+        const path = $balance.databaseRef + `${year}/${month}/${route.params?.transaction.id}`;
+        await remove(ref(database, path));
+
+        dispatch(disableLoading());
+        Toast.show('A transação foi excluída com sucesso!');
     }
 
     return (
@@ -193,6 +225,24 @@ const TransactionDetail = () => {
                             </Text>
                             <Text style={{fontSize: 15, fontWeight: '500', opacity: .5, marginTop: 5}}>
                                 Editar transação
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                </WrapperDetail>
+
+                <WrapperDetail>
+                    <TouchableOpacity
+                        onPress={() => deleteItem()}
+                        style={{width: "100%", flexDirection: 'row'}}
+                    >
+                        <Image source={require('../../assets/trash.png')}
+                               style={{width: 30, height: 30, marginRight: 15}}/>
+                        <View>
+                            <Text style={{fontSize: 16, fontWeight: '500'}}>
+                                Cadastrou errado?
+                            </Text>
+                            <Text style={{fontSize: 15, fontWeight: '500', opacity: .5, marginTop: 5}}>
+                                Deletar transação
                             </Text>
                         </View>
                     </TouchableOpacity>
