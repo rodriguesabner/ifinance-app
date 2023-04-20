@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, FlatList, Text, View} from "react-native";
+import {ActivityIndicator, FlatList, Image, Pressable, Text, View} from "react-native";
 import {Layout} from "./styles";
 import WrapperTitle from "../../components/Home/WrapperTitle";
-import LastTransactionItem from "../../components/Home/LastTransactionItem";
+import LastTransactionItem from "./LastTransactionItem";
 import {onValue, ref} from "firebase/database";
 import {database} from "../../config/firebase.config";
 import {useSelector} from "react-redux";
@@ -10,8 +10,10 @@ import {RootState} from "../../store/reducers";
 import {Currency, Total} from "../../components/Home/CurrentBalance/styles";
 import 'moment/locale/pt-br';
 import {convertToPrice} from "../../store/reducers/balance";
+import {NavigationProp, useNavigation} from "@react-navigation/native";
 
 const Reserve = () => {
+    const navigation: NavigationProp<any> = useNavigation();
     const $balance = useSelector((state: RootState) => state.balance);
 
     const [loading, setLoading] = useState(true);
@@ -59,7 +61,7 @@ const Reserve = () => {
             }
 
             const orderedValues = values.sort((a, b) => {
-                return new Date(b.date).getTime() - new Date(a.date).getTime();
+                return new Date(a.date).getTime() - new Date(b.date).getTime();
             });
 
             setTransactions(orderedValues)
@@ -72,6 +74,18 @@ const Reserve = () => {
         return (
             <View>
                 <View style={{alignItems: 'flex-start'}}>
+                    <Pressable onPress={() => navigation.goBack()} style={{marginBottom: 20}}>
+                        <Text>
+                            <Image
+                                source={require('../../assets/caret-left.png')}
+                                style={{
+                                    width: 30,
+                                    height: 30,
+                                }}
+                            />
+                        </Text>
+                    </Pressable>
+
                     <WrapperTitle
                         title={'Minhas Finanças'}
                         subtitle={'Reserva'}
@@ -82,15 +96,14 @@ const Reserve = () => {
                     marginVertical: 36,
                     flexDirection: 'row',
                     alignItems: 'center',
-                    justifyContent: 'center'
                 }}>
                     <Total>{convertToPrice(totalBalance)}</Total>
                     <Currency>{$balance.currency}</Currency>
                 </View>
 
                 <WrapperTitle
-                    title={'Últimos Investimentos'}
-                    subtitle={'Lançamentos'}
+                    title={'Histórico'}
+                    subtitle={'_'}
                 />
             </View>
         )
@@ -106,7 +119,7 @@ const Reserve = () => {
                 <FlatList
                     data={transactions}
                     keyExtractor={item => item.id}
-                    contentContainerStyle={{gap: 20, paddingBottom: 120}}
+                    contentContainerStyle={{gap: 10, paddingBottom: 120}}
                     nestedScrollEnabled={true}
                     showsVerticalScrollIndicator={false}
                     renderItem={({item}) => <LastTransactionItem backgroundColor={'#d2d7fa'} transaction={item}/>}

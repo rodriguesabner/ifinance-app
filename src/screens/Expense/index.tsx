@@ -13,7 +13,7 @@ import {
 import WrapperTitle from "../../components/Home/WrapperTitle";
 import {useSelector} from "react-redux";
 import {RootState} from "../../store/reducers";
-import {ActivityIndicator, Alert, Text, View} from "react-native";
+import {ActivityIndicator, Alert, Image, Pressable, Text, View} from "react-native";
 import {Picker} from "@react-native-picker/picker";
 import {ref, set} from "firebase/database";
 import {database} from "../../config/firebase.config";
@@ -88,6 +88,18 @@ const Expense = () => {
 
     return (
         <Container>
+            <Pressable onPress={() => navigation.goBack()} style={{marginBottom: 20}}>
+                <Text>
+                    <Image
+                        source={require('../../assets/caret-left.png')}
+                        style={{
+                            width: 30,
+                            height: 30,
+                        }}
+                    />
+                </Text>
+            </Pressable>
+
             <WrapperTitle
                 title={'Minhas Finanças'}
                 subtitle={'Nova Despesa'}

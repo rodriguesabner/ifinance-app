@@ -3,7 +3,7 @@ import {Button, Container, Form, Input, Label} from "./styles";
 import WrapperTitle from "../../components/Home/WrapperTitle";
 import {useSelector} from "react-redux";
 import {RootState} from "../../store/reducers";
-import {ActivityIndicator, Alert, Platform, Text, View} from "react-native";
+import {ActivityIndicator, Alert, Image, Platform, Pressable, Text, View} from "react-native";
 import {ref, set} from "firebase/database";
 import {database} from "../../config/firebase.config";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
@@ -86,6 +86,18 @@ const Income = () => {
 
     return (
         <Container>
+            <Pressable onPress={() => navigation.goBack()} style={{marginBottom: 20}}>
+                <Text>
+                    <Image
+                        source={require('../../assets/caret-left.png')}
+                        style={{
+                            width: 30,
+                            height: 30,
+                        }}
+                    />
+                </Text>
+            </Pressable>
+
             <WrapperTitle
                 title={'Minhas Finanças'}
                 subtitle={'Nova Receita'}

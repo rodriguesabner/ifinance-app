@@ -22,6 +22,7 @@ import moment from "moment";
 import Header from "../../components/Header";
 import 'moment/locale/pt-br';
 import {useSwipe} from "../../hooks/useSwipe";
+import BottomNavigation from "../../components/BottomNavigation";
 
 const Home = () => {
     const dispatch = useDispatch();
@@ -121,14 +122,12 @@ const Home = () => {
 
     const TopContent = () => {
         return (
-            <View>
+            <View style={{marginBottom: 20}}>
                 <StatusBar
                     translucent
                     backgroundColor={totalBalance < 0 ? '#f0cccc' : '#ccf0e3'}
                     barStyle={'dark-content'}
                 />
-
-                <Header/>
 
                 <View style={{alignItems: 'flex-start'}}>
                     <WrapperTitle
@@ -197,7 +196,7 @@ const Home = () => {
             <FlatList
                 data={transactions}
                 keyExtractor={item => item.id}
-                contentContainerStyle={{gap: 20, paddingBottom: 160, paddingHorizontal: 20}}
+                contentContainerStyle={{gap: 10, paddingBottom: 200, paddingHorizontal: 20}}
                 renderItem={({item}) => <LastTransactionItem transaction={item}/>}
                 ListHeaderComponent={() => <TopContent/>}
                 ListEmptyComponent={() => (
@@ -208,6 +207,8 @@ const Home = () => {
                     </View>
                 )}
             />
+
+            <BottomNavigation />
         </Layout>
     );
 };

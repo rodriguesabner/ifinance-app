@@ -4,12 +4,15 @@ interface LayoutProps {
     backgroundColor?: string;
 }
 export const Layout = styled.TouchableOpacity<LayoutProps>`
-  background-color: ${(props) => props.backgroundColor ?? '#e5fdf5'};
+  background-color: #fff;
   padding: 30px 20px;
   flex-direction: row;
   justify-content: space-between;
   border-radius: 20px;
   align-items: center;
+  
+  border-bottom-width: 1px;
+  border-bottom-color: #e5e5e5;
 `;
 
 export const LeftWrapper = styled.View`
@@ -17,12 +20,13 @@ export const LeftWrapper = styled.View`
   align-items: center;
 `;
 
-export const TypeTransaction = styled.Text`
-  font-size: 30px;  
+export const DateTransaction = styled.Text`
+  font-size: 14px;
+  margin-bottom: 15px;
 `;
 
 export const Container = styled.View`
-  margin-left: 16px;  
+  
 `;
 
 export const TitleTransaction = styled.Text`
@@ -33,7 +37,7 @@ export const TitleTransaction = styled.Text`
 
 export const Category = styled.Text`
   opacity: .3;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
 `;
 

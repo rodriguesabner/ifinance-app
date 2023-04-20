@@ -1,6 +1,6 @@
 import React from 'react';
-import {Container, Category, Layout, LeftWrapper, TitleTransaction, TypeTransaction, PayedTick} from "./styles";
-import {Alert, Image, Text, Vibration} from "react-native";
+import {Category, Container, DateTransaction, Layout, LeftWrapper, PayedTick, TitleTransaction} from "./styles";
+import {Alert, Text, Vibration, View} from "react-native";
 import moment from 'moment';
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../../store/reducers";
@@ -38,13 +38,13 @@ const LastTransactionItem = (props: LastTransactionProps) => {
     }
 
     const hiddeTitleValue = (): string => {
-        if($balance.hiddeValue) return '*****';
+        if ($balance.hiddeValue) return '*****';
 
         return props.transaction.title;
     }
 
     const hiddePriceValue = (): string => {
-        if($balance.hiddeValue) return '*****';
+        if ($balance.hiddeValue) return '*****';
 
         return renderValue();
     }
@@ -103,25 +103,22 @@ const LastTransactionItem = (props: LastTransactionProps) => {
 
     return (
         <Layout
-            onPress={() => !$balance.hiddeValue && navigation.navigate('TransactionDetail', {transaction: props.transaction})}
             onLongPress={() => !$balance.hiddeValue && onLongPress()}
-            backgroundColor={props.backgroundColor != null ? props.backgroundColor :  $balance.total < 0 ? '#fde5e5' : '#e5fdf5'}
+            backgroundColor={props.backgroundColor != null ? props.backgroundColor : $balance.total < 0 ? '#fde5e5' : '#e5fdf5'}
         >
             {props.transaction.paid && (
-                <PayedTick source={require('../../../assets/currency-eth.png')} />
+                <PayedTick source={require('../../../assets/currency-eth.png')}/>
             )}
 
-            <LeftWrapper>
-                {props.transaction.type === 'income'
-                    ? (<TypeTransaction>+</TypeTransaction>)
-                    : (<TypeTransaction>-</TypeTransaction>)
-                }
-
-                <Container>
-                    <TitleTransaction>{hiddeTitleValue()}</TitleTransaction>
-                    <Category>{props.transaction.category}</Category>
-                </Container>
-            </LeftWrapper>
+            <View>
+                <DateTransaction>{moment(props.transaction.date).format('DD MMM YY')}</DateTransaction>
+                <LeftWrapper>
+                    <Container>
+                        <TitleTransaction>{hiddeTitleValue()}</TitleTransaction>
+                        <Category>Valor reservado</Category>
+                    </Container>
+                </LeftWrapper>
+            </View>
 
             <Text style={{fontSize: 16, fontWeight: 'bold'}}>{hiddePriceValue()}</Text>
         </Layout>

@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {Text} from "react-native";
+import {Image, Pressable, Text, View} from "react-native";
 import moment from "moment/moment";
 import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigation/native";
 import {useSelector} from "react-redux";
 import {RootState} from "../../store/reducers";
-import {Category, Label, Layout, Price, Title, WrapperInput} from "./styles";
+import {Category, Label, Layout, Price, Title, WrapperDetail, WrapperInput, WrapperPaidTransaction} from "./styles";
 import {convertToPrice} from "../../store/reducers/balance";
 import {ref, update} from "firebase/database";
 import {database} from "../../config/firebase.config";
@@ -102,37 +102,51 @@ const TransactionDetail = () => {
 
     return (
         <Layout>
-            <Text style={{fontSize: 28}}>
-                Detalhe da <Text style={{fontWeight: 'bold'}}>Transação</Text>
-            </Text>
-
-            <Text
+            <View
                 style={{
-                    marginTop: 26,
-                    opacity: .3,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: 30
                 }}
             >
-                #{id}
-            </Text>
+                <Pressable onPress={() => navigation.goBack()}>
+                    <Text>
+                        <Image
+                            source={require('../../assets/caret-left.png')}
+                            style={{
+                                width: 30,
+                                height: 30,
+                            }}
+                        />
+                    </Text>
+                </Pressable>
 
-            <WrapperInput>
-                <Label>
-                    Data:
-                </Label>
-                <Text style={{fontSize: 18}}>
-                    {moment(date).format('LL')}
-                </Text>
-            </WrapperInput>
+                <WrapperInput style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginTop: 0
+                }}>
+                    <Text style={{fontSize: 16, color: '#666'}}>
+                        {moment(date).format('LL')}
+                    </Text>
+                </WrapperInput>
 
-            <WrapperInput>
-                <Category>{renderCategory()}</Category>
+                <View/>
+            </View>
+
+            <WrapperInput style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+            }}>
                 <Title>{name}</Title>
+                <Category>{renderCategory()}</Category>
             </WrapperInput>
 
-            <WrapperInput>
-                <Label>
-                    {renderDetailValue()}
-                </Label>
+            <WrapperInput style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+            }}>
                 <Price>{renderValue()}</Price>
             </WrapperInput>
 
@@ -140,16 +154,29 @@ const TransactionDetail = () => {
                 type === 'outcome'
                 && category !== 'Saldo Conta'
             ) && (
-                <WrapperInput>
-                    <Label>
-                        Essa transação foi paga?
-                    </Label>
+                <WrapperPaidTransaction>
                     <Checkbox
+                        style={{marginRight: 10}}
                         value={paid}
                         onValueChange={(value) => void markPaid(value)}
                     />
-                </WrapperInput>
+                    <Label style={{marginBottom: 0, fontSize: 14, color: '#000', opacity: .5, fontWeight: '500'}}>
+                        Essa transação foi paga?
+                    </Label>
+                </WrapperPaidTransaction>
             )}
+
+            <WrapperDetail style={{marginTop: 42}}>
+                <Image source={require('../../assets/ticket.png')} style={{width: 35, height: 35, marginRight: 15}}/>
+                <View>
+                    <Text style={{fontSize: 16, fontWeight: '500'}}>
+                        Tipo de transação
+                    </Text>
+                    <Text style={{fontSize: 15, fontWeight: '500', opacity: .5, marginTop: 5}}>
+                        {type === 'income' ? 'Receita' : 'Despesa'}
+                    </Text>
+                </View>
+            </WrapperDetail>
         </Layout>
     );
 };
