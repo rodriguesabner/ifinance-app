@@ -40,8 +40,8 @@ export const Category = styled.Text`
 export const PayedTick = styled.Image`
   position: absolute;
   right: 3px;
-  top: 13px;
+  top: 8px;
   margin-right: 15px;
-  width: 15px;
-  height: 15px;
+  width: 20px;
+  height: 20px;
 `;

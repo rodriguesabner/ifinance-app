@@ -106,10 +106,6 @@ const LastTransactionItem = (props: LastTransactionProps) => {
             onLongPress={() => !$balance.hiddeValue && onLongPress()}
             backgroundColor={props.backgroundColor != null ? props.backgroundColor : $balance.total < 0 ? '#fde5e5' : '#e5fdf5'}
         >
-            {props.transaction.paid && (
-                <PayedTick source={require('../../../assets/currency-eth.png')}/>
-            )}
-
             <View>
                 <DateTransaction>{moment(props.transaction.date).format('MMM YY')}</DateTransaction>
                 <LeftWrapper>
