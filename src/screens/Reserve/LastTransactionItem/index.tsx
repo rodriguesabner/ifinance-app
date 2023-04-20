@@ -111,7 +111,7 @@ const LastTransactionItem = (props: LastTransactionProps) => {
             )}
 
             <View>
-                <DateTransaction>{moment(props.transaction.date).format('DD MMM YY')}</DateTransaction>
+                <DateTransaction>{moment(props.transaction.date).format('MMM YY')}</DateTransaction>
                 <LeftWrapper>
                     <Container>
                         <TitleTransaction>{hiddeTitleValue()}</TitleTransaction>
