@@ -48,4 +48,5 @@ export const WrapperDetail = styled.View`
   padding: 10px;
   flex-direction: row;
   align-items: center;
+  padding-bottom: 20px;
 `;

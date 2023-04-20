@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Image, Pressable, Text, View} from "react-native";
+import {Image, Pressable, Text, TouchableOpacity, View} from "react-native";
 import moment from "moment/moment";
 import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigation/native";
 import {useSelector} from "react-redux";
@@ -166,17 +166,38 @@ const TransactionDetail = () => {
                 </WrapperPaidTransaction>
             )}
 
-            <WrapperDetail style={{marginTop: 42}}>
-                <Image source={require('../../assets/ticket.png')} style={{width: 35, height: 35, marginRight: 15}}/>
-                <View>
-                    <Text style={{fontSize: 16, fontWeight: '500'}}>
-                        Tipo de transação
-                    </Text>
-                    <Text style={{fontSize: 15, fontWeight: '500', opacity: .5, marginTop: 5}}>
-                        {type === 'income' ? 'Receita' : 'Despesa'}
-                    </Text>
-                </View>
-            </WrapperDetail>
+            <View style={{gap: 10}}>
+                <WrapperDetail style={{marginTop: 42}}>
+                    <Image source={require('../../assets/ticket.png')}
+                           style={{width: 30, height: 30, marginRight: 15}}/>
+                    <View>
+                        <Text style={{fontSize: 16, fontWeight: '500'}}>
+                            Tipo de transação
+                        </Text>
+                        <Text style={{fontSize: 15, fontWeight: '500', opacity: .5, marginTop: 5}}>
+                            {type === 'income' ? 'Receita' : 'Despesa'}
+                        </Text>
+                    </View>
+                </WrapperDetail>
+
+                <WrapperDetail>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate('Edit', {transaction: route.params?.transaction})}
+                        style={{width: "100%", flexDirection: 'row'}}
+                    >
+                        <Image source={require('../../assets/pencil.png')}
+                               style={{width: 30, height: 30, marginRight: 15}}/>
+                        <View>
+                            <Text style={{fontSize: 16, fontWeight: '500'}}>
+                                Há algo errado?
+                            </Text>
+                            <Text style={{fontSize: 15, fontWeight: '500', opacity: .5, marginTop: 5}}>
+                                Editar transação
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                </WrapperDetail>
+            </View>
         </Layout>
     );
 };
