@@ -130,6 +130,8 @@ const TransactionDetail = () => {
 
         dispatch(disableLoading());
         Toast.show('A transação foi excluída com sucesso!');
+
+        navigation.goBack();
     }
 
     return (
