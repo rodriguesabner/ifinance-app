@@ -50,15 +50,20 @@ const Income = () => {
         const getMonth = date.getMonth() + 1;
         const getYear = date.getFullYear();
 
+        const id = Date.now();
+        const db = ref(database, $balance.databaseRef + `/${getYear}/${getMonth}/${id}`);
+
         const user: any = await AsyncStorage.getItem('@iFinance-status');
         const sanitizedUser = JSON.parse(user);
 
-        const id = Date.now();
-        const db = ref(database, $balance.databaseRef + `/${getYear}/${getMonth}/${id}`);
+        const sanitizedPrice = price
+            .replace('.', '')
+            .replace(',', '.')
+
         const newExpense = {
             id,
             name,
-            price: price.replace(',', '.'),
+            price: sanitizedPrice,
             category: 'Salário',
             date: date.toISOString(),
             type: 'income',

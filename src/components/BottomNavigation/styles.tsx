@@ -1,22 +1,22 @@
 import styled from "styled-components/native";
 
 export const Layout = styled.View`
-  width: 100%;
   position: absolute;
-  bottom: 15px;
-  right: 0;
-  left: 0;
+  bottom: 35px;
   padding: 20px 60px;
-  align-items: center;
-`;
 
-export const Container = styled.View`
-  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.89);
   height: 65px;
   width: 180px;
   border-radius: 500px;
+
+  left: 28%;
+  right: 10%;
+`;
+
+export const Container = styled.View`
+  gap: 50px;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
-  flex-direction: row;
-  gap: 50px;
 `;

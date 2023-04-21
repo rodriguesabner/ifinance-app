@@ -64,11 +64,15 @@ const Expense = () => {
         const user: any = await AsyncStorage.getItem('@iFinance-status');
         const sanitizedUser = JSON.parse(user);
 
+        const sanitizedPrice = price
+            .replace('.', '')
+            .replace(',', '.')
+
         const db = ref(database, $balance.databaseRef + `/${getYear}/${getMonth}/${id}`);
         const newExpense = {
             id,
             name,
-            price: price.replace(',', '.'),
+            price: sanitizedPrice,
             category,
             date: date.toISOString(),
             type: 'outcome',
