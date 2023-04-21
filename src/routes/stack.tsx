@@ -4,7 +4,7 @@ import HomeScreen from '../screens/Home';
 import ExpenseScreen from "../screens/Expense";
 import RevenueScreen from "../screens/Income";
 import ReserveScreen from "../screens/Reserve";
-import OnBoarding from "../screens/OnBoarding";
+import OnBoarding from "../screens/Login";
 import Edit from "../screens/Edit";
 import TransactionDetail from "../screens/TransactionDetail";
 

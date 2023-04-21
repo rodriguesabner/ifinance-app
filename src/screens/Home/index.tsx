@@ -5,7 +5,7 @@ import WrapperTitle from "../../components/Home/WrapperTitle";
 import CurrentBalance from "../../components/Home/CurrentBalance";
 import LastTransactionItem from "../../components/Home/LastTransactionItem";
 import {NavigationProp, useNavigation} from "@react-navigation/native";
-import {onValue, ref} from "firebase/database";
+import {onValue, ref, update} from "firebase/database";
 import {database} from "../../config/firebase.config";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../store/reducers";
@@ -23,6 +23,7 @@ import Header from "../../components/Header";
 import 'moment/locale/pt-br';
 import {useSwipe} from "../../hooks/useSwipe";
 import BottomNavigation from "../../components/BottomNavigation";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Home = () => {
     const dispatch = useDispatch();
@@ -78,12 +79,17 @@ const Home = () => {
         const year = date.getFullYear();
 
         const ret = $balance.databaseRef + `/${year}/${month}`;
+        const user: any = await AsyncStorage.getItem('@iFinance-status');
+        const sanitizedUser = JSON.parse(user);
 
         onValue(ref(database, ret), (snapshot) => {
             const data = snapshot.val();
             const values: any[] = [];
 
             for (let key in data) {
+                //check if value is from userId
+                if(data[key].userId !== sanitizedUser?.id) continue;
+
                 values.push({
                     id: key,
                     title: data[key].name,

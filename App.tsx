@@ -7,6 +7,7 @@ import {Layout} from "./src/styles";
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { RootSiblingParent } from 'react-native-root-siblings';
+import "expo-dev-client"
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
