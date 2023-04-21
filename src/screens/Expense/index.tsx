@@ -19,6 +19,7 @@ import {ref, set} from "firebase/database";
 import {database} from "../../config/firebase.config";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Expense = () => {
     const route: RouteProp<any> = useRoute();
@@ -60,6 +61,9 @@ const Expense = () => {
         const getYear = date.getFullYear();
 
         const id = Date.now();
+        const user: any = await AsyncStorage.getItem('@iFinance-status');
+        const sanitizedUser = JSON.parse(user);
+
         const db = ref(database, $balance.databaseRef + `/${getYear}/${getMonth}/${id}`);
         const newExpense = {
             id,
@@ -69,6 +73,7 @@ const Expense = () => {
             date: date.toISOString(),
             type: 'outcome',
             paid: false,
+            userId: sanitizedUser.id
         }
 
         await set(db, newExpense);

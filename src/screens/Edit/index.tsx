@@ -12,6 +12,7 @@ import {Picker} from "@react-native-picker/picker";
 import {disableLoading, enableLoading} from "../../store/reducers/balance";
 import Toast from "react-native-root-toast";
 import {CurrentCategory, TextCurrentCategory} from "../Expense/styles";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Edit = () => {
     const dispatch = useDispatch();
@@ -54,6 +55,9 @@ const Edit = () => {
         const getMonth = date.getMonth() + 1;
         const getYear = date.getFullYear();
 
+        const user: any = await AsyncStorage.getItem('@iFinance-status');
+        const sanitizedUser = JSON.parse(user);
+
         const db = ref(database, $balance.databaseRef + `/${getYear}/${getMonth}/${id}`);
         const newExpense = {
             id,
@@ -61,7 +65,8 @@ const Edit = () => {
             price: price.replace(',', '.'),
             category,
             date: date.toISOString(),
-            type
+            type,
+            userId: sanitizedUser.id
         }
 
         await update(db, newExpense);

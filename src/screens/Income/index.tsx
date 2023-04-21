@@ -17,6 +17,7 @@ import {
     WrapperPrices
 } from "../Expense/styles";
 import {Picker} from "@react-native-picker/picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Income = () => {
     const route: RouteProp<any> = useRoute();
@@ -49,6 +50,9 @@ const Income = () => {
         const getMonth = date.getMonth() + 1;
         const getYear = date.getFullYear();
 
+        const user: any = await AsyncStorage.getItem('@iFinance-status');
+        const sanitizedUser = JSON.parse(user);
+
         const id = Date.now();
         const db = ref(database, $balance.databaseRef + `/${getYear}/${getMonth}/${id}`);
         const newExpense = {
@@ -59,6 +63,7 @@ const Income = () => {
             date: date.toISOString(),
             type: 'income',
             paid: false,
+            userId: sanitizedUser.id
         }
 
         await set(db, newExpense);
