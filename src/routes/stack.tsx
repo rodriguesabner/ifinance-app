@@ -72,7 +72,7 @@ function StackNativeRoutes() {
                 name="TransactionDetail"
                 component={TransactionDetail}
                 options={{
-                    animation: 'slide_from_right',
+                    animation: 'slide_from_bottom',
                     presentation: 'modal',
                     statusBarStyle: 'dark',
                     statusBarColor: '#fff',
