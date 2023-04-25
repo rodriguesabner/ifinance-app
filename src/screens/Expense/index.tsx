@@ -37,6 +37,7 @@ const Expense = () => {
     const [date, setDate] = useState<Date>(new Date());
     const [loading, setLoading] = useState(false);
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const [description, setDescription] = useState('');
 
     const prices = () => ([
         {value: '1', label: 'R$1'},
@@ -81,6 +82,7 @@ const Expense = () => {
             category,
             date: date.toISOString(),
             type: 'outcome',
+            description,
             paid: false,
             userId: sanitizedUser.id
         }
@@ -155,6 +157,11 @@ const Expense = () => {
                 <View>
                     <Label>Título</Label>
                     <Input placeholder="Netflix" value={name} onChangeText={setName}/>
+                </View>
+
+                <View>
+                    <Label>Descrição (opcional)</Label>
+                    <Input placeholder="Código do boleto/pix ou alguma observação" value={description} onChangeText={setDescription}/>
                 </View>
 
                 <View>

@@ -99,7 +99,8 @@ const Home = () => {
                     category: data[key].category,
                     date: data[key].date,
                     type: data[key].type,
-                    paid: data[key].paid
+                    paid: data[key].paid,
+                    description: data[key].description,
                 })
             }
 

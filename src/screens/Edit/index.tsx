@@ -31,6 +31,7 @@ const Edit = () => {
     const [type, setType] = useState('');
     const [loading, setLoading] = useState(false);
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const [description, setDescription] = useState('');
 
     useEffect(() => {
         if (route.params?.transaction != null) {
@@ -41,6 +42,7 @@ const Edit = () => {
             setCategory(transaction.category);
             setDate(new Date(transaction.date));
             setType(transaction.type);
+            setDescription(transaction.description)
 
             const price = transaction.value.toString();
             setPrice(price.replace('.', ','));
@@ -66,17 +68,18 @@ const Edit = () => {
             .replace(',', '.')
 
         const db = ref(database, $balance.databaseRef + `/${getYear}/${getMonth}/${id}`);
-        const newExpense = {
+        const expense = {
             id,
             name,
             price: sanitizedPrice,
             category,
             date: date.toISOString(),
             type,
+            description,
             userId: sanitizedUser.id
         }
 
-        await update(db, newExpense);
+        await update(db, expense);
 
         dispatch(disableLoading());
         navigation.navigate('Home');
@@ -138,6 +141,11 @@ const Edit = () => {
                 <View>
                     <Label>Título</Label>
                     <Input placeholder="Netflix" value={name} onChangeText={setName}/>
+                </View>
+
+                <View>
+                    <Label>Descrição (opcional)</Label>
+                    <Input placeholder="Código do boleto/pix ou alguma observação" value={description} onChangeText={setDescription}/>
                 </View>
 
                 <View>

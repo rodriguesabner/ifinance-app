@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Alert, Image, Pressable, StatusBar, Text, TouchableOpacity, View} from "react-native";
+import {Alert, Image, Pressable, Text, TouchableOpacity, View} from "react-native";
 import moment from "moment/moment";
 import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigation/native";
 import {useDispatch, useSelector} from "react-redux";
@@ -10,6 +10,7 @@ import {ref, remove, update} from "firebase/database";
 import {database} from "../../config/firebase.config";
 import Toast from "react-native-root-toast";
 import {Checkbox} from "expo-checkbox";
+import * as Clipboard from "expo-clipboard";
 
 export interface TransactionDetailProps {
     transaction: {
@@ -35,6 +36,7 @@ const TransactionDetail = () => {
     const [date, setDate] = useState<Date>(new Date());
     const [type, setType] = useState('');
     const [paid, setPaid] = useState(false);
+    const [description, setDescription] = useState('');
 
     useEffect(() => {
         if (route.params?.transaction != null) {
@@ -46,6 +48,7 @@ const TransactionDetail = () => {
             setDate(new Date(transaction.date));
             setType(transaction.type);
             setPaid(transaction.paid ?? false);
+            setDescription(transaction.description ?? '')
 
             const price = transaction.value.toString();
             setPrice(price);
@@ -134,6 +137,16 @@ const TransactionDetail = () => {
         navigation.goBack();
     }
 
+    const copyDescription = async () => {
+        const value = description.toString()
+        await Clipboard.setStringAsync(value);
+
+        Alert.alert(
+            'Descrição copiada',
+            'A descrição foi copiada para a área de transferência',
+        )
+    }
+
     return (
         <Layout>
             <View
@@ -211,6 +224,30 @@ const TransactionDetail = () => {
                         </Text>
                     </View>
                 </WrapperDetail>
+
+                {(
+                    type === 'outcome'
+                    && category !== 'Saldo Conta'
+                    && description !== ''
+                ) && (
+                    <WrapperDetail>
+                        <Image
+                            source={require('../../assets/clipboard-text.png')}
+                            style={{width: 30, height: 30, marginRight: 15}}
+                        />
+                        <TouchableOpacity onLongPress={() => copyDescription()}>
+                            <Text style={{fontSize: 16, fontWeight: '500'}}>
+                                Descrição/Observação
+                            </Text>
+                            <Text
+                                numberOfLines={1}
+                                style={{fontSize: 15, fontWeight: '500', opacity: .5, marginTop: 5}}
+                            >
+                                {description}
+                            </Text>
+                        </TouchableOpacity>
+                    </WrapperDetail>
+                )}
 
                 <WrapperDetail>
                     <TouchableOpacity

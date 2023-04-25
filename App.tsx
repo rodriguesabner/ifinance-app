@@ -10,13 +10,13 @@ import {Layout} from "./src/styles";
 export default function App() {
     return (
         <Suspense fallback={<View/>}>
-            <Provider store={store}>
-                <RootSiblingParent>
+            <RootSiblingParent>
+                <Provider store={store}>
                     <Layout>
                         <Routes/>
                     </Layout>
-                </RootSiblingParent>
-            </Provider>
+                </Provider>
+            </RootSiblingParent>
         </Suspense>
     );
 }
