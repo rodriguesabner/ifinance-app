@@ -16,36 +16,46 @@ function StackNativeRoutes() {
             screenOptions={{
                 headerShown: false,
                 animation: 'none',
+                navigationBarHidden: true,
                 contentStyle: {
                     backgroundColor: 'transparent',
-                }
+                },
             }}
             initialRouteName="OnBoarding"
         >
             <StackRoutes.Screen name="OnBoarding" component={OnBoarding}/>
-            <StackRoutes.Screen name="Home" component={HomeScreen}/>
+            <StackRoutes.Screen
+                name="Home"
+                component={HomeScreen}
+            />
             <StackRoutes.Screen
                 name="Edit"
                 component={Edit}
                 options={{
                     animation: 'slide_from_right',
                     presentation: 'modal',
+                    statusBarStyle: 'dark',
+                    statusBarColor: '#fff'
                 }}
             />
             <StackRoutes.Screen
                 name="Reserve"
                 component={ReserveScreen}
                 options={{
-                    animation: 'slide_from_right',
+                    animation: 'slide_from_bottom',
                     presentation: 'modal',
+                    statusBarStyle: 'dark',
+                    statusBarColor: '#fff'
                 }}
             />
             <StackRoutes.Screen
                 name="Expense"
                 component={ExpenseScreen}
                 options={{
-                    animation: 'slide_from_right',
+                    animation: 'slide_from_left',
                     presentation: 'modal',
+                    statusBarStyle: 'dark',
+                    statusBarColor: '#fff'
                 }}
             />
             <StackRoutes.Screen
@@ -54,6 +64,8 @@ function StackNativeRoutes() {
                 options={{
                     animation: 'slide_from_right',
                     presentation: 'modal',
+                    statusBarStyle: 'dark',
+                    statusBarColor: '#fff'
                 }}
             />
             <StackRoutes.Screen
@@ -62,6 +74,8 @@ function StackNativeRoutes() {
                 options={{
                     animation: 'slide_from_right',
                     presentation: 'modal',
+                    statusBarStyle: 'dark',
+                    statusBarColor: '#fff',
                 }}
             />
         </StackRoutes.Navigator>

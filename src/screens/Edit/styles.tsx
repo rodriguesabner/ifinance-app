@@ -7,7 +7,7 @@ export const Container = styled.KeyboardAvoidingView.attrs({
   flex: 1;
   background-color: #fff;
   padding: 60px 20px;
-`;
+  padding-top: ${Platform.OS === 'android' ? 30 : 60}px;`;
 
 export const Form = styled.View`
   margin-top: 20px;

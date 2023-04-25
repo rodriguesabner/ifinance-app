@@ -2,7 +2,7 @@ import React from 'react';
 import {BottomContainer, Currency, Layout, OutcomeValue, TopContainer, Total} from "./styles";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../../store/reducers";
-import {Text, TouchableOpacity} from "react-native";
+import {Platform, Text, TouchableOpacity} from "react-native";
 import {convertToPrice, toggleHiddenValues} from "../../../store/reducers/balance";
 import * as Clipboard from 'expo-clipboard';
 import Toast from 'react-native-root-toast';
@@ -36,11 +36,11 @@ const CurrentBalance = () => {
         <Layout>
             <BottomContainer>
                 <OutcomeValue>R${hiddeValue($balance.outcome)}</OutcomeValue>
-                <Text>{"("}Saída{")"}</Text>
+                <Text style={{fontSize: Platform.OS === 'ios' ? 16 : 12}}>{"("}Saída{")"}</Text>
             </BottomContainer>
             <BottomContainer>
                 <OutcomeValue>R${hiddeValue($balance.income)}</OutcomeValue>
-                <Text>{"("}Entrada{")"}</Text>
+                <Text style={{fontSize: Platform.OS === 'ios' ? 16 : 12}}>{"("}Entrada{")"}</Text>
             </BottomContainer>
             <TopContainer>
                 <Total
@@ -53,9 +53,9 @@ const CurrentBalance = () => {
 
             <TouchableOpacity onPress={() => handleToggleHidden()}>
                 {!$balance.hiddeValue ? (
-                    <Text>Esconder valores</Text>
+                    <Text style={{fontSize: Platform.OS === 'ios' ? 16 : 12}}>Esconder valores</Text>
                 ) : (
-                    <Text>Mostrar valores</Text>
+                    <Text style={{fontSize: Platform.OS === 'ios' ? 16 : 12}}>Mostrar valores</Text>
                 )}
             </TouchableOpacity>
         </Layout>

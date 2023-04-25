@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Alert, Image, Pressable, Text, TouchableOpacity, View} from "react-native";
+import {Alert, Image, Pressable, StatusBar, Text, TouchableOpacity, View} from "react-native";
 import moment from "moment/moment";
 import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigation/native";
 import {useDispatch, useSelector} from "react-redux";
@@ -145,15 +145,13 @@ const TransactionDetail = () => {
                 }}
             >
                 <Pressable onPress={() => navigation.goBack()}>
-                    <Text>
-                        <Image
-                            source={require('../../assets/caret-left.png')}
-                            style={{
-                                width: 30,
-                                height: 30,
-                            }}
-                        />
-                    </Text>
+                    <Image
+                        source={require('../../assets/caret-left.png')}
+                        style={{
+                            width: 30,
+                            height: 30,
+                        }}
+                    />
                 </Pressable>
 
                 <WrapperInput style={{
@@ -166,7 +164,7 @@ const TransactionDetail = () => {
                     </Text>
                 </WrapperInput>
 
-                <View/>
+                <View style={{width: 30}}/>
             </View>
 
             <WrapperInput style={{

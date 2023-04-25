@@ -1,4 +1,5 @@
 import styled from "styled-components/native";
+import {Platform} from "react-native";
 
 export const Container = styled.ScrollView.attrs({
     showsVerticalScrollIndicator: false,
@@ -9,6 +10,7 @@ export const Container = styled.ScrollView.attrs({
   flex: 1;
   background-color: #fff;
   padding: 60px 20px;
+  padding-top: ${Platform.OS === 'android' ? 30 : 60}px;
 `;
 
 export const Form = styled.View`

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, FlatList, Image, Pressable, Text, View} from "react-native";
-import {Layout} from "./styles";
+import {ActivityIndicator, FlatList, Image, Pressable, StatusBar, Text, View} from "react-native";
+import {Header, Layout} from "./styles";
 import WrapperTitle from "../../components/Home/WrapperTitle";
 import LastTransactionItem from "./LastTransactionItem";
 import {onValue, ref} from "firebase/database";
@@ -72,18 +72,16 @@ const Reserve = () => {
 
     const TopContent = () => {
         return (
-            <View>
+            <Header>
                 <View style={{alignItems: 'flex-start'}}>
                     <Pressable onPress={() => navigation.goBack()} style={{marginBottom: 20}}>
-                        <Text>
-                            <Image
-                                source={require('../../assets/caret-left.png')}
-                                style={{
-                                    width: 30,
-                                    height: 30,
-                                }}
-                            />
-                        </Text>
+                        <Image
+                            source={require('../../assets/caret-left.png')}
+                            style={{
+                                width: 30,
+                                height: 30,
+                            }}
+                        />
                     </Pressable>
 
                     <WrapperTitle
@@ -105,7 +103,7 @@ const Reserve = () => {
                     title={'Histórico'}
                     subtitle={'_'}
                 />
-            </View>
+            </Header>
         )
     }
 
@@ -119,8 +117,8 @@ const Reserve = () => {
                 <FlatList
                     data={transactions}
                     keyExtractor={item => item.id}
+                    style={{flex: 1, width: '100%'}}
                     contentContainerStyle={{gap: 10, paddingBottom: 120}}
-                    nestedScrollEnabled={true}
                     showsVerticalScrollIndicator={false}
                     renderItem={({item}) => <LastTransactionItem backgroundColor={'#d2d7fa'} transaction={item}/>}
                     ListHeaderComponent={() => <TopContent/>}

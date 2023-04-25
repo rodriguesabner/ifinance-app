@@ -13,6 +13,8 @@ import {disableLoading, enableLoading} from "../../store/reducers/balance";
 import Toast from "react-native-root-toast";
 import {CurrentCategory, TextCurrentCategory} from "../Expense/styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {DateText, DateWrapper} from "../Home/styles";
+import moment from "moment/moment";
 
 const Edit = () => {
     const dispatch = useDispatch();
@@ -28,9 +30,10 @@ const Edit = () => {
     const [date, setDate] = useState<Date>(new Date());
     const [type, setType] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showDatePicker, setShowDatePicker] = useState(false);
 
     useEffect(() => {
-        if(route.params?.transaction != null){
+        if (route.params?.transaction != null) {
             const transaction = route.params?.transaction;
 
             setId(transaction.id)
@@ -45,7 +48,7 @@ const Edit = () => {
     }, [route.params?.transaction])
 
     async function save() {
-        if(!name || !price || !category){
+        if (!name || !price || !category) {
             Alert.alert('Ops!', 'Preencha todos os campos');
             return;
         }
@@ -80,18 +83,27 @@ const Edit = () => {
         Toast.show('A transação foi editada com sucesso!');
     }
 
+    const handleToggleDatePicker = () => {
+        setShowDatePicker((prevState) => !prevState)
+    };
+
+    const renderMonthYear = () => {
+        const month = moment(date).format('MM');
+        const year = moment(date).format('YYYY');
+
+        return `${month}/${year}`;
+    }
+
     return (
         <Container>
             <Pressable onPress={() => navigation.goBack()} style={{marginBottom: 20}}>
-                <Text>
-                    <Image
-                        source={require('../../assets/caret-left.png')}
-                        style={{
-                            width: 30,
-                            height: 30,
-                        }}
-                    />
-                </Text>
+                <Image
+                    source={require('../../assets/caret-left.png')}
+                    style={{
+                        width: 30,
+                        height: 30,
+                    }}
+                />
             </Pressable>
 
             <WrapperTitle
@@ -102,16 +114,25 @@ const Edit = () => {
             <Form>
                 <View style={{alignItems: 'flex-start'}}>
                     <Label>Data</Label>
-                    <RNDateTimePicker
-                        style={{marginTop: 10}}
-                        mode={'date'}
-                        value={date}
-                        onChange={(event, selectedDate) => {
-                            const currentDate = selectedDate || date;
-                            setDate(currentDate);
-                        }}
-                        locale="pt-BR"
-                    />
+                    <DateWrapper
+                        onPress={() => handleToggleDatePicker()}
+                    >
+                        <DateText>{renderMonthYear()}</DateText>
+                    </DateWrapper>
+
+                    {showDatePicker && (
+                        <RNDateTimePicker
+                            style={{marginTop: 10}}
+                            mode={'date'}
+                            display={'spinner'}
+                            value={date}
+                            onChange={(event, selectedDate) => {
+                                const currentDate = selectedDate || date;
+                                setDate(currentDate);
+                                setShowDatePicker(false)
+                            }}
+                        />
+                    )}
                 </View>
 
                 <View>
@@ -125,14 +146,37 @@ const Edit = () => {
                 </View>
 
                 <View>
-                    <Label>Categoria</Label>
-                    <CurrentCategory onPress={() => setShowCategoryPicker(!showCategoryPicker)}>
-                        <TextCurrentCategory color={category === '' ? '#999' : '#000'}>
-                            {category === '' ? 'Escolher uma categoria' : category}
-                        </TextCurrentCategory>
-                    </CurrentCategory>
-                    {showCategoryPicker && (
+                    {Platform.OS === 'ios' ? (
+                        <View>
+                            <CurrentCategory onPress={() => setShowCategoryPicker(!showCategoryPicker)}>
+                                <TextCurrentCategory color={category === '' ? '#999' : '#000'}>
+                                    {category === '' ? 'Escolher uma categoria' : category}
+                                </TextCurrentCategory>
+                            </CurrentCategory>
+                            {showCategoryPicker && (
+                                <Picker
+                                    selectedValue={category}
+                                    onValueChange={(itemValue, itemIndex) => {
+                                        setCategory(itemValue)
+                                        setShowCategoryPicker(false)
+                                    }}
+                                >
+                                    {type === 'income' ? (
+                                        $balance.categoriesIncome.map((item, index) => (
+                                            <Picker.Item key={index} label={item.title} value={item.title}/>
+                                        ))
+                                    ) : (
+                                        $balance.categories.map((item, index) => (
+                                            <Picker.Item key={index} label={item.title} value={item.title}/>
+                                        ))
+                                    )}
+                                </Picker>
+                            )}
+                        </View>
+                    ) : (
                         <Picker
+                            style={{backgroundColor: '#fafafa', borderRadius: 4}}
+                            prompt={'Selecione uma categoria'}
                             selectedValue={category}
                             onValueChange={(itemValue, itemIndex) => {
                                 setCategory(itemValue)

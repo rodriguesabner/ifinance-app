@@ -1,4 +1,5 @@
 import styled from "styled-components/native";
+import {Platform} from "react-native";
 
 export const Layout = styled.View`
   position: absolute;
@@ -19,4 +20,15 @@ export const Container = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+`;
+
+export const Button = styled.TouchableOpacity`
+    
+`;
+
+export const Image = styled.Image.attrs({
+    resizeMode: 'contain',
+})`
+  width: 32px;
+  height: 32px;
 `;

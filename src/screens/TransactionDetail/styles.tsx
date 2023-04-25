@@ -1,4 +1,5 @@
 import styled from "styled-components/native";
+import {Platform} from "react-native";
 
 export const Layout = styled.View`
   background-color: #fff;

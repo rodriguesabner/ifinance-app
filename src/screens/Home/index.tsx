@@ -43,11 +43,13 @@ const Home = () => {
     function onSwipeLeft() {
         const newDate = moment(date).add(1, 'month').toDate();
         setDate(newDate);
+        setShowDatePicker(false);
     }
 
     function onSwipeRight() {
         const newDate = moment(date).subtract(1, 'month').toDate();
         setDate(newDate);
+        setShowDatePicker(false);
     }
 
     function calculateBalance(transactions: any[]) {
@@ -129,12 +131,6 @@ const Home = () => {
     const TopContent = () => {
         return (
             <View style={{marginBottom: 20}}>
-                <StatusBar
-                    translucent
-                    backgroundColor={totalBalance < 0 ? '#f0cccc' : '#ccf0e3'}
-                    barStyle={'dark-content'}
-                />
-
                 <View style={{alignItems: 'flex-start'}}>
                     <WrapperTitle
                         title={'Minhas Finanças'}
@@ -157,6 +153,7 @@ const Home = () => {
                             onChange={(event, selectedDate) => {
                                 const currentDate = selectedDate || date;
                                 setDate(currentDate);
+                                setShowDatePicker(false);
                             }}
                         />
                     )}
@@ -193,6 +190,12 @@ const Home = () => {
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}
         >
+            <StatusBar
+                translucent
+                backgroundColor={totalBalance < 0 ? '#f0cccc' : '#ccf0e3'}
+                barStyle={'dark-content'}
+            />
+
             {$balance.loading && (
                 <LoadingWrapper>
                     <ActivityIndicator size={'large'} color={'#fff'}/>

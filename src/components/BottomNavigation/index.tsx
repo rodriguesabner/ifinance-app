@@ -1,6 +1,6 @@
 import React from 'react';
-import {Container, Layout} from "./styles";
-import {Image, Text, TouchableOpacity} from "react-native";
+import {Button, Container, Image, Layout} from "./styles";
+import {Text} from "react-native";
 import {disableLoading, enableLoading} from "../../store/reducers/balance";
 import Toast from "react-native-root-toast";
 import moment from "moment/moment";
@@ -48,17 +48,17 @@ const BottomNavigation = () => {
     return (
         <Layout>
             <Container>
-                <TouchableOpacity onPress={() => navigation.navigate('Reserve')}>
-                    <Text>
-                        <Image source={require('../../assets/piggy-bank.png')} style={{width: 32, height: 32}}/>
-                    </Text>
-                </TouchableOpacity>
+                <Button
+                    onPress={() => navigation.navigate('Reserve')}
+                >
+                    <Image source={require('../../assets/piggy-bank.png')}/>
+                </Button>
 
-                <TouchableOpacity onPress={() => generateSheet()}>
-                    <Text>
-                        <Image source={require('../../assets/table.png')} style={{width: 32, height: 32}}/>
-                    </Text>
-                </TouchableOpacity>
+                <Button
+                    onPress={() => generateSheet()}
+                >
+                    <Image source={require('../../assets/table.png')}/>
+                </Button>
             </Container>
         </Layout>
     );

@@ -1,4 +1,5 @@
 import styled from "styled-components/native";
+import {Platform} from "react-native";
 
 export const Layout = styled.View`
   margin-top: 36px;
@@ -22,18 +23,18 @@ export const BottomContainer = styled.View`
 `;
 
 export const Total = styled.Text`
-  font-size: 36px;
+  font-size: ${Platform.OS === 'ios' ? 36 : 30}px;
   font-weight: 500;
   border-radius: 20px;
 `;
 
 export const Currency = styled.Text`
-  font-size: 36px;
+  font-size: ${Platform.OS === 'ios' ? 36 : 30}px;
   opacity: .2;
   margin-left: 10px;
 `;
 
 export const OutcomeValue = styled.Text`
-  font-size: 16px;
+  font-size: ${Platform.OS === 'ios' ? 16 : 12}px;
   margin-right: 3px;
 `;
