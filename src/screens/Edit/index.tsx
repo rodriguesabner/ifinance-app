@@ -75,8 +75,11 @@ const Edit = () => {
             category,
             date: date.toISOString(),
             type,
-            description,
             userId: sanitizedUser.id
+        }
+
+        if (type === 'outcome') {
+            Object.assing(expense, {description})
         }
 
         await update(db, expense);
@@ -143,10 +146,13 @@ const Edit = () => {
                     <Input placeholder="Netflix" value={name} onChangeText={setName}/>
                 </View>
 
-                <View>
-                    <Label>Descrição (opcional)</Label>
-                    <Input placeholder="Código do boleto/pix ou alguma observação" value={description} onChangeText={setDescription}/>
-                </View>
+                {type === 'outcome' && (
+                    <View>
+                        <Label>Descrição (opcional)</Label>
+                        <Input placeholder="Código do boleto/pix ou alguma observação" value={description}
+                               onChangeText={setDescription}/>
+                    </View>
+                )}
 
                 <View>
                     <Label>Valor</Label>
