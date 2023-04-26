@@ -16,10 +16,10 @@ const OnBoarding = () => {
         async function checkIfLogged(){
             const value = await AsyncStorage.getItem('@iFinance-status')
             if(value != null){
-                navigation.reset({
-                    index: 0,
-                    routes: [{name: 'Home'}],
-                })
+                // navigation.reset({
+                //     index: 0,
+                //     routes: [{name: 'Home'}],
+                // })
             }
 
             setLoading(false);
@@ -72,28 +72,21 @@ const OnBoarding = () => {
 
     return (
         <Layout>
-            <StatusBar translucent barStyle={'light-content'}/>
+            <StatusBar translucent barStyle={'dark-content'}/>
             {loading
                 ? <ActivityIndicator size={'large'} color={'#fff'}/>
                 : (
                     <View>
                         <MainContainer>
-                            <Title>Entre em sua conta</Title>
+                            <Title>Bem vindo de volta</Title>
                             <SubTitle>
-                                Insira seus dados para entrar em sua conta
+                                Estamos feliz em vê-lo novamente, para entrar em sua conta insira seus dados abaixo.
                             </SubTitle>
                         </MainContainer>
 
                         <Form>
-                            <Text style={{color: '#666'}}>
-                                Email
-                            </Text>
-                            <Input placeholder={'Email'} onChangeText={(text) => setEmail(text)} value={email} textContentType={'emailAddress'} keyboardType={'email-address'} />
-
-                            <Text style={{color: '#666'}}>
-                                Senha
-                            </Text>
-                            <Input placeholder={'Senha'} onChangeText={(text) => setPassword(text)} value={password} textContentType={'password'} secureTextEntry={true}/>
+                            <Input placeholder={'jhon@gmail.com'} onChangeText={(text) => setEmail(text)} value={email} textContentType={'emailAddress'} keyboardType={'email-address'} />
+                            <Input placeholder={'******'} onChangeText={(text) => setPassword(text)} value={password} textContentType={'password'} secureTextEntry={true}/>
                         </Form>
 
                         <WrapperButton onPress={() => loginAccount()}>

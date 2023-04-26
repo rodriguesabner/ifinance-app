@@ -14,7 +14,7 @@ export const Image = styled.Image.attrs({
 
 export const MainContainer = styled.View`
   padding: 26px;
-  background-color: #152533;
+  background-color: #fff;
   width: 100%;
   padding-top: 100px;
 `;
@@ -22,32 +22,31 @@ export const MainContainer = styled.View`
 export const Form = styled.View`
   flex-direction: column;
   padding: 24px;
-  margin-top: 36px;
 `;
 
-export const Input = styled.TextInput`
-  border-width: 1px;
-  border-color: rgba(0, 0, 0, .1);
-  height: 42px;
-  border-radius: 4px;
-  padding-left: 10px;
+export const Input = styled.TextInput.attrs({
+    placeholderTextColor: '#666',
+})`
+  height: 48px;
+  border-radius: 15px;
+  padding-left: 15px;
   margin-top: 5px;
+  background-color: #eaedf5;
   margin-bottom: 24px;
 `;
 
 export const Title = styled.Text`
-  font-size: 36px;
-  color: #fff;
+  font-size: 30px;
+  color: #3561fc;
   font-weight: 600;
   margin-bottom: 5px;
-  max-width: 200px;
+  max-width: 250px;
 `;
 
 export const SubTitle = styled.Text`
   font-size: 18px;
-  color: #fff;
+  color: #666;
   font-weight: 400;
-  max-width: 200px;
   opacity: .7;
 `;
 
@@ -67,9 +66,10 @@ export const BottomContainer = styled(BlurView).attrs({
 `;
 
 export const WrapperButton = styled.TouchableOpacity`
-  background-color: #000;
+  background-color: #3561fc;
   padding: 14px;
-  border-radius: 10px;
+  border-radius: 15px;
+  height: 59px;
   justify-content: center;
   align-items: center;
   flex-direction: row;
