@@ -75,11 +75,8 @@ const Edit = () => {
             category,
             date: date.toISOString(),
             type,
+            description: description ?? '',
             userId: sanitizedUser.id
-        }
-
-        if (type === 'outcome') {
-            Object.assing(expense, {description})
         }
 
         await update(db, expense);
