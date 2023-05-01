@@ -1,5 +1,7 @@
 import styled from "styled-components/native";
-import {Platform} from "react-native";
+import {Dimensions, Platform} from "react-native";
+
+const screenWidth = Math.round(Dimensions.get('window').width);
 
 export const Layout = styled.View`
   position: absolute;
@@ -10,9 +12,9 @@ export const Layout = styled.View`
   height: 65px;
   width: 180px;
   border-radius: 500px;
-
-  left: 28%;
-  right: 10%;
+  
+  left: ${screenWidth / 2 - 90}px;
+  right: ${screenWidth / 2 - 90}px;
 `;
 
 export const Container = styled.View`

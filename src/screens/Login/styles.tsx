@@ -1,9 +1,27 @@
 import styled from "styled-components/native";
 import { BlurView } from 'expo-blur';
+import {Dimensions, Platform} from "react-native";
 
-export const Layout = styled.View`
+export const Layout = styled.ScrollView.attrs({
+    contentContainerStyle: {
+        flexGrow: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    bounces: false,
+})`
   flex: 1;
   background-color: #fff;
+`;
+
+const screenHeight = Math.round(Dimensions.get('window').height);
+
+export const Container = styled.KeyboardAvoidingView.attrs({
+    behavior: Platform.OS === 'ios' ? 'padding' : 'height',
+})`
+  max-width: 500px;
+  width: 100%;
+  margin: 0 auto;
 `;
 
 export const Image = styled.Image.attrs({

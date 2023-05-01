@@ -11,6 +11,7 @@ import {Currency, Total} from "../../components/Home/CurrentBalance/styles";
 import 'moment/locale/pt-br';
 import {convertToPrice} from "../../store/reducers/balance";
 import {NavigationProp, useNavigation} from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Reserve = () => {
     const navigation: NavigationProp<any> = useNavigation();
@@ -36,6 +37,9 @@ const Reserve = () => {
 
     async function getTransactions() {
         const ret = $balance.databaseRef;
+        const user: any = await AsyncStorage.getItem('@iFinance-status');
+        const sanitizedUser = JSON.parse(user);
+
         onValue(ref(database, ret), (snapshot) => {
             const data = snapshot.val();
             const values: any[] = [];
@@ -46,7 +50,10 @@ const Reserve = () => {
                     const monthData = yearData[monthKey];
                     for (let transactionKey in monthData) {
                         const transaction = monthData[transactionKey];
-                        if (transaction.category === 'Reserva') {
+                        if (
+                            transaction.category === 'Reserva' &&
+                            monthData[transactionKey].userId === sanitizedUser.id
+                        ) {
                             values.push({
                                 id: transactionKey,
                                 title: transaction.name,

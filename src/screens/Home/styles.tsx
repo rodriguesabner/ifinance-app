@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-import {FlatListProps} from "react-native";
+import {Dimensions, FlatListProps} from "react-native";
 
 interface LayoutProps {
     backgroundColor?: string;
@@ -29,6 +29,12 @@ export const FlatList = styled.FlatList.attrs({
   padding-bottom: 120px;
 `;
 
+export const FlatListMonths = styled.FlatList.attrs({
+    showsHorizontalScrollIndicator: false,
+})<FlatListProps<any>>`
+    padding: 10px 0;
+`;
+
 export const WrapperActions = styled.View`
   flex-direction: row;
   align-items: center;
@@ -53,8 +59,12 @@ export const ActionIcon = styled.View`
   margin-bottom: 10px;
 `;
 
-export const DateWrapper = styled.TouchableOpacity`
-  background-color: rgba(131, 131, 131, 0.16);
+interface DateWrapperProps {
+    isActive?: boolean;
+}
+
+export const DateWrapper = styled.TouchableOpacity<DateWrapperProps>`
+  background-color: ${(props) => props.isActive ? 'rgba(131,131,131,0.45)' : 'rgba(131, 131, 131, 0.16)'};
   padding: 9px;
   border-radius: 10px;
   margin-top: 10px;

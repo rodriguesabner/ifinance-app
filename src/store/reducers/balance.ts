@@ -38,6 +38,7 @@ const initialState: BalanceProps = {
         {title: 'Saúde'},
         {title: 'Salário'},
         {title: 'Saldo Conta'},
+        {title: 'Tranferência'},
         {title: 'Transporte'},
         {title: 'Outros'},
     ],
