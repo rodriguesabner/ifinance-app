@@ -1,6 +1,6 @@
 import React from 'react';
-import {Container, Category, Layout, LeftWrapper, TitleTransaction, TypeTransaction, PayedTick} from "./styles";
-import {Alert, Image, Text, Vibration} from "react-native";
+import {Category, Container, Layout, LeftWrapper, PayedTick, TitleTransaction, TypeTransaction} from "./styles";
+import {Alert, Text, Vibration} from "react-native";
 import moment from 'moment';
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../../store/reducers";
@@ -9,6 +9,7 @@ import {ref, remove} from "firebase/database";
 import {convertToPrice, disableLoading, enableLoading} from "../../../store/reducers/balance";
 import {NavigationProp, useNavigation} from "@react-navigation/native";
 import Toast from "react-native-root-toast";
+import {Coin, Money, Receipt, Bank} from "phosphor-react-native"
 
 export interface LastTransactionProps {
     backgroundColor?: string,
@@ -38,13 +39,13 @@ const LastTransactionItem = (props: LastTransactionProps) => {
     }
 
     const hiddeTitleValue = (): string => {
-        if($balance.hiddeValue) return '*****';
+        if ($balance.hiddeValue) return '*****';
 
         return props.transaction.title;
     }
 
     const hiddePriceValue = (): string => {
-        if($balance.hiddeValue) return '*****';
+        if ($balance.hiddeValue) return '*****';
 
         return renderValue();
     }
@@ -101,23 +102,45 @@ const LastTransactionItem = (props: LastTransactionProps) => {
         Toast.show('A transação foi excluída com sucesso!');
     }
 
+    const RenderIcon = (): JSX.Element => {
+        if (props.transaction.paid) {
+            return (
+                <PayedTick backgroundColor={'#b2e8c5'}>
+                    <Coin size={20} color={'#3f694b'}/>
+                </PayedTick>
+            )
+        }
+
+        if(props.transaction.category === 'Reserva') {
+            return (
+                <PayedTick>
+                    <Bank size={20} color={'#3f694b'}/>
+                </PayedTick>
+            )
+        }
+
+        return (
+            props.transaction.type === 'income'
+                ? <PayedTick><Money size={20} color={'#000'}/></PayedTick>
+                : <PayedTick><Receipt size={20} color={'#000'}/></PayedTick>
+        )
+    }
+
     return (
         <Layout
             onPress={() => !$balance.hiddeValue && navigation.navigate('TransactionDetail', {transaction: props.transaction})}
             onLongPress={() => !$balance.hiddeValue && onLongPress()}
-            backgroundColor={props.backgroundColor != null ? props.backgroundColor :  $balance.total < 0 ? '#fde5e5' : '#e5fdf5'}
+            backgroundColor={props.backgroundColor != null ? props.backgroundColor : $balance.total < 0 ? '#fde5e5' : '#e5fdf5'}
         >
-            {props.transaction.paid && (
-                <PayedTick source={require('../../../assets/currency-circle-dollar.png')} />
-            )}
-
             <LeftWrapper>
-                {props.transaction.type === 'income'
-                    ? (<TypeTransaction>+</TypeTransaction>)
-                    : (<TypeTransaction>-</TypeTransaction>)
-                }
+                <RenderIcon/>
 
                 <Container>
+                    {
+                        props.transaction.type === 'income'
+                            ? (<TypeTransaction>Transferência Recebida</TypeTransaction>)
+                            : (<TypeTransaction>Transferência Enviada</TypeTransaction>)
+                    }
                     <TitleTransaction>{hiddeTitleValue()}</TitleTransaction>
                     <Category>{props.transaction.category}</Category>
                 </Container>

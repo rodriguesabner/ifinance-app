@@ -12,9 +12,12 @@ export const Layout = styled.View`
   height: 65px;
   width: 180px;
   border-radius: 500px;
-  
+
   left: ${screenWidth / 2 - 90}px;
   right: ${screenWidth / 2 - 90}px;
+
+  border-width: 1px;
+  border-color: rgba(0, 0, 0, .1);
 `;
 
 export const Container = styled.View`
@@ -25,7 +28,7 @@ export const Container = styled.View`
 `;
 
 export const Button = styled.TouchableOpacity`
-    
+  
 `;
 
 export const Image = styled.Image.attrs({
@@ -33,4 +36,5 @@ export const Image = styled.Image.attrs({
 })`
   width: 32px;
   height: 32px;
+  margin-top: -5px;
 `;

@@ -22,10 +22,15 @@ export const BottomContainer = styled.View`
   opacity: .5;
 `;
 
-export const Total = styled.Text`
+type TotalProps = {
+    color?: string;
+}
+
+export const Total = styled.Text<TotalProps>`
   font-size: ${Platform.OS === 'ios' ? 36 : 30}px;
   font-weight: 500;
   border-radius: 20px;
+  color: ${(props) => props.color || '#629a86'};
 `;
 
 export const Currency = styled.Text`

@@ -7,7 +7,7 @@ interface LayoutProps {
 export const Layout = styled.View.attrs({
 })<LayoutProps>`
   flex: 1;
-  background-color: ${(props) => props.backgroundColor || '#ccf0e3'};
+  background-color: #fff;
 `;
 
 export const LoadingWrapper = styled.View`

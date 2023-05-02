@@ -103,7 +103,6 @@ const LastTransactionItem = (props: LastTransactionProps) => {
 
     return (
         <Layout
-            onLongPress={() => !$balance.hiddeValue && onLongPress()}
             backgroundColor={props.backgroundColor != null ? props.backgroundColor : $balance.total < 0 ? '#fde5e5' : '#e5fdf5'}
         >
             <View>

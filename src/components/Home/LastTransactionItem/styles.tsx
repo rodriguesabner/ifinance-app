@@ -4,8 +4,9 @@ interface LayoutProps {
     backgroundColor?: string;
 }
 export const Layout = styled.TouchableOpacity<LayoutProps>`
-  background-color: ${(props) => props.backgroundColor ?? '#e5fdf5'};
-  padding: 30px 20px;
+  border-bottom-width: 1px;
+  border-bottom-color: rgba(0, 0, 0, .1);
+  padding: 30px 5px;
   flex-direction: row;
   justify-content: space-between;
   border-radius: 20px;
@@ -18,11 +19,12 @@ export const LeftWrapper = styled.View`
 `;
 
 export const TypeTransaction = styled.Text`
-  font-size: 30px;  
+  font-size: 12px;  
 `;
 
 export const Container = styled.View`
-  margin-left: 16px;  
+  margin-left: 16px;
+  gap: 5px;
 `;
 
 export const TitleTransaction = styled.Text`
@@ -37,11 +39,12 @@ export const Category = styled.Text`
   font-weight: 600;
 `;
 
-export const PayedTick = styled.Image`
-  position: absolute;
-  right: 3px;
-  top: 8px;
-  margin-right: 15px;
-  width: 20px;
-  height: 20px;
+type PayedTickProps = {
+    backgroundColor?: string;
+}
+
+export const PayedTick = styled.View`
+    padding: 15px;
+    border-radius: 500px;
+    background-color: ${(props: PayedTickProps) => props.backgroundColor || 'rgba(164,164,164,0.16)'};
 `;

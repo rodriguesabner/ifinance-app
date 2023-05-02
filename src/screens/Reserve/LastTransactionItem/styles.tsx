@@ -3,7 +3,7 @@ import styled from "styled-components/native";
 interface LayoutProps {
     backgroundColor?: string;
 }
-export const Layout = styled.TouchableOpacity<LayoutProps>`
+export const Layout = styled.Pressable<LayoutProps>`
   background-color: #fff;
   padding: 30px 20px;
   flex-direction: row;

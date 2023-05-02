@@ -326,9 +326,7 @@ const Home = () => {
     }
 
     return (
-        <Layout
-            backgroundColor={totalBalance < 0 ? '#f0cccc' : '#ccf0e3'}
-        >
+        <Layout>
             <StatusBar
                 translucent
                 backgroundColor={totalBalance < 0 ? '#f0cccc' : '#ccf0e3'}

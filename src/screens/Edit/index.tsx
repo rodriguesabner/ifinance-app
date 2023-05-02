@@ -55,6 +55,7 @@ const Edit = () => {
             return;
         }
 
+        setLoading(true);
         dispatch(enableLoading());
 
         const getMonth = date.getMonth() + 1;
@@ -81,6 +82,7 @@ const Edit = () => {
 
         await update(db, expense);
 
+        setLoading(false);
         dispatch(disableLoading());
         navigation.navigate('Home');
         Toast.show('A transação foi editada com sucesso!');

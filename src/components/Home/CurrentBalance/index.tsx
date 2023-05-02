@@ -44,6 +44,7 @@ const CurrentBalance = () => {
             </BottomContainer>
             <TopContainer>
                 <Total
+                    color={$balance.total < 0 ? '#de4b4b' : '#339461'}
                     onLongPress={() => !$balance.hiddeValue && copyBalanceClipboard()}
                 >
                     {hiddeValue($balance.total)}
