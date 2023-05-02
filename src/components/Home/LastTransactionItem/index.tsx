@@ -104,8 +104,16 @@ const LastTransactionItem = (props: LastTransactionProps) => {
 
     const RenderIcon = (): JSX.Element => {
         if (props.transaction.paid) {
+            if(props.transaction.category === 'Reserva') {
+                return (
+                    <PayedTick backgroundColor={'rgba(178,232,197,0.5)'}>
+                        <Bank size={20} color={'#3f694b'}/>
+                    </PayedTick>
+                )
+            }
+
             return (
-                <PayedTick backgroundColor={'#b2e8c5'}>
+                <PayedTick backgroundColor={'rgba(178,232,197,0.5)'}>
                     <Coin size={20} color={'#3f694b'}/>
                 </PayedTick>
             )
@@ -114,16 +122,36 @@ const LastTransactionItem = (props: LastTransactionProps) => {
         if(props.transaction.category === 'Reserva') {
             return (
                 <PayedTick>
-                    <Bank size={20} color={'#3f694b'}/>
+                    <Bank size={20} color={'#000'}/>
                 </PayedTick>
             )
         }
 
         return (
             props.transaction.type === 'income'
-                ? <PayedTick><Money size={20} color={'#000'}/></PayedTick>
+                ? <PayedTick backgroundColor={'rgba(178,224,232,0.5)'}><Money size={20} color={'#000'}/></PayedTick>
                 : <PayedTick><Receipt size={20} color={'#000'}/></PayedTick>
         )
+    }
+
+    const RenderTypeTransaction = (): JSX.Element | null => {
+        if(props.transaction.type === 'income'){
+            return <TypeTransaction>Transferência Recebida</TypeTransaction>
+        }
+
+        if(props.transaction.type === 'outcome'){
+            if(props.transaction.category === 'Saldo Conta'){
+                return null;
+            }
+
+            if (props.transaction.paid) {
+                return <TypeTransaction>Transferência Enviada (Pago)</TypeTransaction>
+            }
+
+            return <TypeTransaction>Transferência Enviada</TypeTransaction>
+        }
+
+        return <TypeTransaction></TypeTransaction>;
     }
 
     return (
@@ -136,11 +164,7 @@ const LastTransactionItem = (props: LastTransactionProps) => {
                 <RenderIcon/>
 
                 <Container>
-                    {
-                        props.transaction.type === 'income'
-                            ? (<TypeTransaction>Transferência Recebida</TypeTransaction>)
-                            : (<TypeTransaction>Transferência Enviada</TypeTransaction>)
-                    }
+                    <RenderTypeTransaction/>
                     <TitleTransaction>{hiddeTitleValue()}</TitleTransaction>
                     <Category>{props.transaction.category}</Category>
                 </Container>

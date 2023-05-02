@@ -3,7 +3,9 @@ import styled from "styled-components/native";
 interface LayoutProps {
     backgroundColor?: string;
 }
-export const Layout = styled.TouchableOpacity<LayoutProps>`
+export const Layout = styled.TouchableOpacity.attrs({
+    activeOpacity: .8
+})<LayoutProps>`
   border-bottom-width: 1px;
   border-bottom-color: rgba(0, 0, 0, .1);
   padding: 30px 5px;
