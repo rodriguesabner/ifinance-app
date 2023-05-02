@@ -6,7 +6,6 @@ import {
     DateText,
     DateWrapper,
     FlatList,
-    FlatListMonths,
     Layout,
     LoadingWrapper,
     WrapperActions
@@ -182,7 +181,7 @@ const Home = () => {
 
     const TopContent = () => {
         return (
-            <View style={{marginBottom: 20}}>
+            <View>
                 <View style={{alignItems: 'flex-start'}}>
                     <WrapperTitle
                         title={'Minhas Finanças'}
@@ -236,18 +235,24 @@ const Home = () => {
                     </View>
 
                     {showDatePicker && (
-                        <RNDateTimePicker
-                            style={{marginTop: 10}}
-                            mode={'date'}
-                            value={date}
-                            display={'spinner'}
-                            locale={'pt-BR'}
-                            onChange={(event, selectedDate) => {
-                                const currentDate = selectedDate || date;
-                                setDate(currentDate);
-                                setShowDatePicker(false);
-                            }}
-                        />
+                        <View style={{
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '100%'
+                        }}>
+                            <RNDateTimePicker
+                                style={{marginTop: 10}}
+                                mode={'date'}
+                                value={date}
+                                display={'spinner'}
+                                locale={'pt-BR'}
+                                onChange={(event, selectedDate) => {
+                                    const currentDate = selectedDate || date;
+                                    setDate(currentDate);
+                                    setShowDatePicker(false);
+                                }}
+                            />
+                        </View>
                     )}
                 </View>
 
@@ -281,46 +286,6 @@ const Home = () => {
                         </Text>
                     ))}
                 </Text>
-
-                {months.length > 0 && (
-                    <FlatListMonths
-                        ref={flatListMonthsRef}
-                        data={months}
-                        horizontal
-                        keyExtractor={(item) => item.name}
-                        refreshing={false}
-                        maintainVisibleContentPosition={{
-                            minIndexForVisible: 0,
-                            autoscrollToTopThreshold: 10,
-                            // @ts-ignore
-                            key: months.findIndex((item: any) => item.name === moment(date).format('MMMM'))
-                        }}
-                        onContentSizeChange={() => {
-                            flatListMonthsRef.current?.scrollToIndex({
-                                index: months.findIndex((item: any) => item.name === moment(date).format('MMMM')),
-                            });
-                        }}
-                        onScrollToIndexFailed={(info) => {
-                            const wait = new Promise(resolve => setTimeout(resolve, 500));
-                            wait.then(() => {
-                                flatListMonthsRef.current?.scrollToIndex({
-                                    index: info.index,
-                                    animated: true,
-                                    viewPosition: 0.5
-                                });
-                            })
-                        }}
-                        contentContainerStyle={{gap: 10}}
-                        renderItem={({item}) => (
-                            <DateWrapper
-                                isActive={item.name === moment(date).format('MMMM')}
-                                onPress={() => handleChooseMonth(item.name)}
-                            >
-                                <DateText>{item.name}</DateText>
-                            </DateWrapper>
-                        )}
-                    />
-                )}
             </View>
         )
     }

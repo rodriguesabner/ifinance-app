@@ -136,6 +136,10 @@ const LastTransactionItem = (props: LastTransactionProps) => {
 
     const RenderTypeTransaction = (): JSX.Element | null => {
         if(props.transaction.type === 'income'){
+            if(props.transaction.category === 'Saldo Conta'){
+                return null;
+            }
+
             return <TypeTransaction>Transferência Recebida</TypeTransaction>
         }
 
@@ -151,7 +155,7 @@ const LastTransactionItem = (props: LastTransactionProps) => {
             return <TypeTransaction>Transferência Enviada</TypeTransaction>
         }
 
-        return <TypeTransaction></TypeTransaction>;
+        return null;
     }
 
     return (
