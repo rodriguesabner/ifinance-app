@@ -135,8 +135,30 @@ const Home = () => {
                 return new Date(b.date).getTime() - new Date(a.date).getTime();
             });
 
-            setTransactions(orderedValues)
-            dispatch(setTransactionsAction(orderedValues));
+            //group by date
+            const groupedValues = orderedValues.reduce((acc, item) => {
+                const date = moment(item.date).format('DD/MM/YYYY');
+
+                if (!acc[date]) {
+                    acc[date] = [];
+                }
+
+                acc[date].push(item);
+
+                return acc;
+            }, {});
+
+            const valuesGrouped = Object
+                .keys(groupedValues)
+                .map((item) => {
+                    return {
+                        date: item,
+                        values: groupedValues[item]
+                    }
+                });
+
+            setTransactions(valuesGrouped);
+            dispatch(setTransactionsAction(valuesGrouped));
 
             calculateBalance(values)
             dispatch(disableLoading());
@@ -167,16 +189,6 @@ const Home = () => {
             });
 
         setMonths(months);
-    }
-
-    const handleChooseMonth = (selectedMonth: string) => {
-        const day = moment().format('DD');
-        const month = months.find((item: any) => item.name === selectedMonth)?.id;
-        const year = moment().format('YYYY');
-
-        const selectedDate = moment(`${day}/${month}/${year}`, 'DD/MM/YYYY').toDate();
-        const currentDate = selectedDate || date;
-        setDate(currentDate);
     }
 
     const TopContent = () => {
@@ -306,7 +318,7 @@ const Home = () => {
 
             <FlatList
                 data={transactions}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item.date}
                 contentContainerStyle={{gap: 10, paddingBottom: 200, paddingHorizontal: 20}}
                 renderItem={({item}) => <LastTransactionItem transaction={item}/>}
                 ListHeaderComponent={() => <TopContent/>}

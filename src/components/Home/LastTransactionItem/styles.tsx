@@ -50,3 +50,11 @@ export const PayedTick = styled.View`
     border-radius: 500px;
     background-color: ${(props: PayedTickProps) => props.backgroundColor || 'rgba(164,164,164,0.16)'};
 `;
+
+export const DateTransactions = styled.Text`
+  font-size: 16px;
+  margin-top: 20px;
+  margin-bottom: 0px;
+  opacity: .6;
+  font-weight: bold;
+`;

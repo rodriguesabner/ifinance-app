@@ -1,6 +1,15 @@
 import React from 'react';
-import {Category, Container, Layout, LeftWrapper, PayedTick, TitleTransaction, TypeTransaction} from "./styles";
-import {Alert, Text, Vibration} from "react-native";
+import {
+    Category,
+    Container,
+    DateTransactions,
+    Layout,
+    LeftWrapper,
+    PayedTick,
+    TitleTransaction,
+    TypeTransaction
+} from "./styles";
+import {Alert, Text, Vibration, View} from "react-native";
 import moment from 'moment';
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../../store/reducers";
@@ -14,13 +23,16 @@ import {Coin, Money, Receipt, Bank} from "phosphor-react-native"
 export interface LastTransactionProps {
     backgroundColor?: string,
     transaction: {
-        id: string,
-        title: string
-        value: number
-        type: string
-        category: string,
-        date: Date,
-        paid: boolean
+        date: string,
+        values: [{
+            id: string,
+            title: string
+            value: number
+            type: string
+            category: string,
+            date: Date,
+            paid: boolean
+        }]
     }
 }
 
@@ -30,27 +42,27 @@ const LastTransactionItem = (props: LastTransactionProps) => {
     const dispatch = useDispatch();
     const $balance = useSelector((state: RootState) => state.balance);
 
-    const renderValue = () => {
-        if (props.transaction.type === 'outcome') {
-            return `-R$${convertToPrice(props.transaction.value)}`
+    const renderValue = (type: string, value: number) => {
+        if (type === 'outcome') {
+            return `-R$${convertToPrice(value)}`
         }
 
-        return `R$${convertToPrice(props.transaction.value)}`
+        return `R$${convertToPrice(value)}`
     }
 
-    const hiddeTitleValue = (): string => {
+    const hiddeTitleValue = (title: string): string => {
         if ($balance.hiddeValue) return '*****';
 
-        return props.transaction.title;
+        return title;
     }
 
-    const hiddePriceValue = (): string => {
+    const hiddePriceValue = (type: string, value: number): string => {
         if ($balance.hiddeValue) return '*****';
 
-        return renderValue();
+        return renderValue(type, value);
     }
 
-    function onLongPress() {
+    function onLongPress(idTransaction: string) {
         Vibration.vibrate(50);
         Alert.alert(
             'O que deseja fazer?',
@@ -62,7 +74,7 @@ const LastTransactionItem = (props: LastTransactionProps) => {
                 },
                 {
                     text: 'Excluir',
-                    onPress: () => deleteItem(),
+                    onPress: () => deleteItem(idTransaction),
                 }
             ],
             {
@@ -71,7 +83,7 @@ const LastTransactionItem = (props: LastTransactionProps) => {
         );
     }
 
-    function deleteItem() {
+    function deleteItem(idTransaction: string) {
         Alert.alert(
             'Excluir transação',
             'Tem certeza que deseja excluir essa transação?',
@@ -82,29 +94,29 @@ const LastTransactionItem = (props: LastTransactionProps) => {
                 },
                 {
                     text: 'Excluir',
-                    onPress: () => deleteTransaction(),
+                    onPress: () => deleteTransaction(idTransaction),
                 }
             ],
             {cancelable: false},
         );
     }
 
-    async function deleteTransaction() {
+    async function deleteTransaction(id: string) {
         dispatch(enableLoading());
 
         const month = moment(props.transaction.date).format('M');
         const year = moment(props.transaction.date).format('YYYY');
 
-        const path = $balance.databaseRef + `${year}/${month}/${props.transaction.id}`;
+        const path = $balance.databaseRef + `${year}/${month}/${id}`;
         await remove(ref(database, path));
 
         dispatch(disableLoading());
         Toast.show('A transação foi excluída com sucesso!');
     }
 
-    const RenderIcon = (): JSX.Element => {
-        if (props.transaction.paid) {
-            if(props.transaction.category === 'Reserva') {
+    const RenderIcon = ({category, type, paid}: {category: string, type: string, paid: boolean}): JSX.Element => {
+        if (paid) {
+            if(category === 'Reserva') {
                 return (
                     <PayedTick backgroundColor={'rgba(178,232,197,0.5)'}>
                         <Bank size={20} color={'#3f694b'}/>
@@ -119,7 +131,7 @@ const LastTransactionItem = (props: LastTransactionProps) => {
             )
         }
 
-        if(props.transaction.category === 'Reserva') {
+        if(category === 'Reserva') {
             return (
                 <PayedTick>
                     <Bank size={20} color={'#000'}/>
@@ -128,27 +140,27 @@ const LastTransactionItem = (props: LastTransactionProps) => {
         }
 
         return (
-            props.transaction.type === 'income'
+            type === 'income'
                 ? <PayedTick backgroundColor={'rgba(178,224,232,0.5)'}><Money size={20} color={'#000'}/></PayedTick>
                 : <PayedTick><Receipt size={20} color={'#000'}/></PayedTick>
         )
     }
 
-    const RenderTypeTransaction = (): JSX.Element | null => {
-        if(props.transaction.type === 'income'){
-            if(props.transaction.category === 'Saldo Conta'){
+    const RenderTypeTransaction = ({category, type, paid}: {category: string, type: string, paid: boolean}): JSX.Element | null => {
+        if(type === 'income'){
+            if(category === 'Saldo Conta'){
                 return null;
             }
 
             return <TypeTransaction>Transferência Recebida</TypeTransaction>
         }
 
-        if(props.transaction.type === 'outcome'){
-            if(props.transaction.category === 'Saldo Conta'){
+        if(type === 'outcome'){
+            if(category === 'Saldo Conta'){
                 return null;
             }
 
-            if (props.transaction.paid) {
+            if (paid) {
                 return <TypeTransaction>Transferência Enviada (Pago)</TypeTransaction>
             }
 
@@ -159,23 +171,31 @@ const LastTransactionItem = (props: LastTransactionProps) => {
     }
 
     return (
-        <Layout
-            onPress={() => !$balance.hiddeValue && navigation.navigate('TransactionDetail', {transaction: props.transaction})}
-            onLongPress={() => !$balance.hiddeValue && onLongPress()}
-            backgroundColor={props.backgroundColor != null ? props.backgroundColor : $balance.total < 0 ? '#fde5e5' : '#e5fdf5'}
-        >
-            <LeftWrapper>
-                <RenderIcon/>
+        <View>
+            <DateTransactions>
+                {props.transaction.date}
+            </DateTransactions>
+            {props.transaction.values.map((transaction) => (
+                <Layout
+                    key={transaction.id}
+                    onPress={() => !$balance.hiddeValue && navigation.navigate('TransactionDetail', {transaction: transaction})}
+                    onLongPress={() => !$balance.hiddeValue && onLongPress(transaction.id)}
+                    backgroundColor={props.backgroundColor != null ? props.backgroundColor : $balance.total < 0 ? '#fde5e5' : '#e5fdf5'}
+                >
+                    <LeftWrapper>
+                        <RenderIcon type={transaction.type} paid={transaction.paid} category={transaction.category}/>
 
-                <Container>
-                    <RenderTypeTransaction/>
-                    <TitleTransaction>{hiddeTitleValue()}</TitleTransaction>
-                    <Category>{props.transaction.category}</Category>
-                </Container>
-            </LeftWrapper>
+                        <Container>
+                            <RenderTypeTransaction type={transaction.type} paid={transaction.paid} category={transaction.category}/>
+                            <TitleTransaction>{hiddeTitleValue(transaction.title)}</TitleTransaction>
+                            <Category>{transaction.category}</Category>
+                        </Container>
+                    </LeftWrapper>
 
-            <Text style={{fontSize: 16, fontWeight: 'bold'}}>{hiddePriceValue()}</Text>
-        </Layout>
+                    <Text style={{fontSize: 16, fontWeight: 'bold'}}>{hiddePriceValue(transaction.type, transaction.value)}</Text>
+                </Layout>
+            ))}
+        </View>
     );
 };
 
