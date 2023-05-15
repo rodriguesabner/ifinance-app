@@ -49,7 +49,7 @@ const LastTransactionItem = (props: LastTransactionProps) => {
         return renderValue();
     }
 
-    function onLongPress() {
+    function onLongPress(transaction) {
         Vibration.vibrate(50);
         Alert.alert(
             'O que deseja fazer?',
@@ -57,11 +57,11 @@ const LastTransactionItem = (props: LastTransactionProps) => {
             [
                 {
                     text: 'Editar',
-                    onPress: () => navigation.navigate('Edit', {transaction: props.transaction}),
+                    onPress: () => navigation.navigate('Edit', {transaction: transaction}),
                 },
                 {
                     text: 'Excluir',
-                    onPress: () => deleteItem(),
+                    onPress: () => deleteItem(transaction.id),
                 }
             ],
             {
@@ -70,7 +70,7 @@ const LastTransactionItem = (props: LastTransactionProps) => {
         );
     }
 
-    function deleteItem() {
+    function deleteItem(idTransaction: string) {
         Alert.alert(
             'Excluir transação',
             'Tem certeza que deseja excluir essa transação?',
@@ -81,20 +81,20 @@ const LastTransactionItem = (props: LastTransactionProps) => {
                 },
                 {
                     text: 'Excluir',
-                    onPress: () => deleteTransaction(),
+                    onPress: () => deleteTransaction(idTransaction),
                 }
             ],
             {cancelable: false},
         );
     }
 
-    async function deleteTransaction() {
+    async function deleteTransaction(idTransaction: string) {
         dispatch(enableLoading());
 
         const month = moment(props.transaction.date).format('M');
         const year = moment(props.transaction.date).format('YYYY');
 
-        const path = $balance.databaseRef + `${year}/${month}/${props.transaction.id}`;
+        const path = $balance.databaseRef + `${year}/${month}/${id}`;
         await remove(ref(database, path));
 
         dispatch(disableLoading());

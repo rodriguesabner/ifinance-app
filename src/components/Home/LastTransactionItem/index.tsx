@@ -62,7 +62,7 @@ const LastTransactionItem = (props: LastTransactionProps) => {
         return renderValue(type, value);
     }
 
-    function onLongPress(idTransaction: string) {
+    function onLongPress(transaction: any) {
         Vibration.vibrate(50);
         Alert.alert(
             'O que deseja fazer?',
@@ -70,11 +70,11 @@ const LastTransactionItem = (props: LastTransactionProps) => {
             [
                 {
                     text: 'Editar',
-                    onPress: () => navigation.navigate('Edit', {transaction: props.transaction}),
+                    onPress: () => navigation.navigate('Edit', {transaction}),
                 },
                 {
                     text: 'Excluir',
-                    onPress: () => deleteItem(idTransaction),
+                    onPress: () => deleteItem(transaction),
                 }
             ],
             {
@@ -83,7 +83,7 @@ const LastTransactionItem = (props: LastTransactionProps) => {
         );
     }
 
-    function deleteItem(idTransaction: string) {
+    function deleteItem(transaction: any) {
         Alert.alert(
             'Excluir transação',
             'Tem certeza que deseja excluir essa transação?',
@@ -94,20 +94,20 @@ const LastTransactionItem = (props: LastTransactionProps) => {
                 },
                 {
                     text: 'Excluir',
-                    onPress: () => deleteTransaction(idTransaction),
+                    onPress: () => deleteTransaction(transaction),
                 }
             ],
             {cancelable: false},
         );
     }
 
-    async function deleteTransaction(id: string) {
+    async function deleteTransaction(transaction: any) {
         dispatch(enableLoading());
 
-        const month = moment(props.transaction.date).format('M');
-        const year = moment(props.transaction.date).format('YYYY');
+        const month = moment(transaction.date).format('M');
+        const year = moment(transaction.date).format('YYYY');
 
-        const path = $balance.databaseRef + `${year}/${month}/${id}`;
+        const path = $balance.databaseRef + `${year}/${month}/${transaction.id}`;
         await remove(ref(database, path));
 
         dispatch(disableLoading());
@@ -179,7 +179,7 @@ const LastTransactionItem = (props: LastTransactionProps) => {
                 <Layout
                     key={transaction.id}
                     onPress={() => !$balance.hiddeValue && navigation.navigate('TransactionDetail', {transaction: transaction})}
-                    onLongPress={() => !$balance.hiddeValue && onLongPress(transaction.id)}
+                    onLongPress={() => !$balance.hiddeValue && onLongPress(transaction)}
                     backgroundColor={props.backgroundColor != null ? props.backgroundColor : $balance.total < 0 ? '#fde5e5' : '#e5fdf5'}
                 >
                     <LeftWrapper>

@@ -19,10 +19,10 @@ const Login = () => {
         async function checkIfLogged() {
             const value = await AsyncStorage.getItem('@iFinance-status')
             if (value != null) {
-                // navigation.reset({
-                //     index: 0,
-                //     routes: [{name: 'Home'}],
-                // })
+                navigation.reset({
+                    index: 0,
+                    routes: [{name: 'Home'}],
+                })
             }
         }
 
