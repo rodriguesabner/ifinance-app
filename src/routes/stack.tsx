@@ -4,9 +4,10 @@ import HomeScreen from '../screens/Home';
 import ExpenseScreen from "../screens/Expense";
 import RevenueScreen from "../screens/Income";
 import ReserveScreen from "../screens/Reserve";
-import OnBoarding from "../screens/Login";
+import Login from "../screens/Login";
 import Edit from "../screens/Edit";
 import TransactionDetail from "../screens/TransactionDetail";
+import Register from "../screens/Register";
 
 const StackRoutes = createNativeStackNavigator();
 
@@ -21,9 +22,10 @@ function StackNativeRoutes() {
                     backgroundColor: 'transparent',
                 },
             }}
-            initialRouteName="OnBoarding"
+            initialRouteName="Login"
         >
-            <StackRoutes.Screen name="OnBoarding" component={OnBoarding}/>
+            <StackRoutes.Screen name="Login" component={Login}/>
+            <StackRoutes.Screen name="Register" component={Register}/>
             <StackRoutes.Screen
                 name="Home"
                 component={HomeScreen}

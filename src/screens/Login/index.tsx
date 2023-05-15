@@ -1,30 +1,29 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Container, Form, Input, Layout, MainContainer, SubTitle, Title, WrapperButton} from "./styles";
-import {ActivityIndicator, Alert, StatusBar, Text, View} from "react-native";
+import {ActivityIndicator, Alert, StatusBar, Text, TouchableOpacity, View} from "react-native";
 import {NavigationProp, useNavigation} from "@react-navigation/native";
 import {database} from "../../config/firebase.config";
 import {onValue, ref} from "firebase/database";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import BcryptReactNative from 'bcrypt-react-native';
 
-const OnBoarding = () => {
+const Login = () => {
     const navigation: NavigationProp<any> = useNavigation();
     const passwordInputRef = useRef(null)
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         async function checkIfLogged() {
             const value = await AsyncStorage.getItem('@iFinance-status')
             if (value != null) {
-                navigation.reset({
-                    index: 0,
-                    routes: [{name: 'Home'}],
-                })
+                // navigation.reset({
+                //     index: 0,
+                //     routes: [{name: 'Home'}],
+                // })
             }
-
-            setLoading(false);
         }
 
         checkIfLogged()
@@ -50,7 +49,7 @@ const OnBoarding = () => {
         }
 
         const userRef = ref(database, 'users');
-        onValue(userRef, (snapshot) => {
+        onValue(userRef, async (snapshot) => {
             const data = snapshot.val();
             const users = Object.keys(data).map((key) => {
                 return {
@@ -60,9 +59,10 @@ const OnBoarding = () => {
             });
 
             const user = users.find((user) => user.email === email);
+
             if (user) {
                 if (user.password === password) {
-                    goToHome({id: user.id, name: user.name});
+                    await goToHome({id: user.id, name: user.name});
                 } else {
                     Alert.alert('Ops!', 'Senha incorreta');
                 }
@@ -76,53 +76,63 @@ const OnBoarding = () => {
         <Layout>
             <Container>
                 <StatusBar translucent barStyle={'dark-content'}/>
-                {loading
-                    ? <ActivityIndicator size={'large'} color={'#fff'}/>
-                    : (
-                        <View>
-                            <MainContainer>
-                                <Title>Bem vindo de volta</Title>
-                                <SubTitle>
-                                    Estamos feliz em vê-lo novamente, para entrar em sua conta insira seus dados abaixo.
-                                </SubTitle>
-                            </MainContainer>
+                <View>
+                    <MainContainer>
+                        <Title>Bem vindo de volta</Title>
+                        <SubTitle>
+                            Estamos feliz em vê-lo novamente, para entrar em sua conta insira seus dados abaixo.
+                        </SubTitle>
+                    </MainContainer>
 
-                            <Form>
-                                <Input
-                                    placeholder={'jhon@gmail.com'}
-                                    onChangeText={(text) => setEmail(text)}
-                                    value={email}
-                                    textContentType={'emailAddress'}
-                                    keyboardType={'email-address'}
-                                    returnKeyLabel={'next'}
-                                    returnKeyType={'next'}
-                                    onSubmitEditing={() => {
-                                        // @ts-ignore
-                                        passwordInputRef.current.focus();
-                                    }}
-                                />
-                                <Input
-                                    ref={passwordInputRef}
-                                    placeholder={'******'}
-                                    onChangeText={(text) => setPassword(text)}
-                                    value={password}
-                                    textContentType={'password'}
-                                    secureTextEntry={true}
-                                    returnKeyLabel={'join'}
-                                    returnKeyType={'join'}
-                                    onSubmitEditing={() => loginAccount()}
-                                />
-                            </Form>
+                    <Form>
+                        <Input
+                            placeholder={'jhon@gmail.com'}
+                            onChangeText={(text) => setEmail(text)}
+                            value={email}
+                            textContentType={'emailAddress'}
+                            keyboardType={'email-address'}
+                            returnKeyLabel={'next'}
+                            returnKeyType={'next'}
+                            onSubmitEditing={() => {
+                                // @ts-ignore
+                                passwordInputRef.current.focus();
+                            }}
+                        />
+                        <Input
+                            ref={passwordInputRef}
+                            placeholder={'******'}
+                            onChangeText={(text) => setPassword(text)}
+                            value={password}
+                            textContentType={'password'}
+                            secureTextEntry={true}
+                            returnKeyLabel={'join'}
+                            returnKeyType={'join'}
+                            onSubmitEditing={() => loginAccount()}
+                        />
+                    </Form>
 
-                            <WrapperButton onPress={() => loginAccount()}>
-                                <Text style={{fontSize: 18, fontWeight: 'bold', color: '#fff'}}>Entrar</Text>
-                            </WrapperButton>
-                        </View>
-                    )
-                }
+                    <WrapperButton onPress={() => loginAccount()}>
+                        {loading && (<ActivityIndicator size={'small'} color={'#fff'}/>)}
+                        <Text style={{marginLeft: 15, fontSize: 18, fontWeight: 'bold', color: '#fff'}}>Entrar</Text>
+                    </WrapperButton>
+
+                    <View
+                        style={{
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            marginTop: 20
+                        }}
+                    >
+                        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                            <Text style={{color: 'blue'}}>
+                                Ainda não tem uma conta? Cadastre-se aqui
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
             </Container>
         </Layout>
     );
 };
 
-export default OnBoarding;
+export default Login;

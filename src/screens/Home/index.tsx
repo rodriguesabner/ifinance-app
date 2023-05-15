@@ -198,6 +198,7 @@ const Home = () => {
                     <WrapperTitle
                         title={'Minhas Finanças'}
                         subtitle={'Controle Financeiro'}
+                        logoutButton={true}
                     />
 
                     <View
@@ -290,14 +291,16 @@ const Home = () => {
                     subtitle={'Transações'}
                 />
 
-                <Text>
-                    Suas maiores saídas são em {
-                    mostOutcome.map((item: any, index) => (
-                        <Text key={index}>
-                            {item.title}{index < mostOutcome.length - 1 ? ', ' : ''}
-                        </Text>
-                    ))}
-                </Text>
+                {mostOutcome.length > 0 && (
+                    <Text>
+                        Suas maiores saídas são em {
+                        mostOutcome.map((item: any, index) => (
+                            <Text key={index}>
+                                {item.title}{index < mostOutcome.length - 1 ? ', ' : ''}
+                            </Text>
+                        ))}
+                    </Text>
+                )}
             </View>
         )
     }

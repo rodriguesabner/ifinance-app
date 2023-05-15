@@ -2,7 +2,10 @@ import styled from "styled-components/native";
 import {Platform} from "react-native";
 
 export const Layout = styled.View`
-
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 `;
 
 export const AppTitle = styled.Text`
