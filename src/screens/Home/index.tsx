@@ -66,7 +66,7 @@ const Home = () => {
         let total: number = 0;
 
         const incomeValue = transactions
-            .filter((item) => item?.type === 'income' && item?.category !== 'Saldo Conta')
+            .filter((item) => item?.type === 'income')
             .reduce((acc, item) => {
                 return acc + parseFloat(item.value);
             }, 0);
