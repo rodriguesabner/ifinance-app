@@ -65,14 +65,14 @@ const Home = () => {
     function calculateBalance(transactions: any[]) {
         let total: number = 0;
 
-        const outcomeValue = transactions
-            .filter((item) => item.type === 'outcome')
+        const incomeValue = transactions
+            .filter((item) => item?.type === 'income' && item?.category !== 'Saldo Conta')
             .reduce((acc, item) => {
                 return acc + parseFloat(item.value);
             }, 0);
 
-        const incomeValue = transactions
-            .filter((item) => item?.type === 'income')
+        const outcomeValue = transactions
+            .filter((item) => item.type === 'outcome')
             .reduce((acc, item) => {
                 return acc + parseFloat(item.value);
             }, 0);
@@ -119,7 +119,6 @@ const Home = () => {
                     return parseFloat(b.value) - parseFloat(a.value);
                 })
                 .slice(0, 3)
-                //without duplication
                 .filter((item, index, self) =>
                         index === self.findIndex((t) => (
                             t.category === item.category
@@ -158,7 +157,7 @@ const Home = () => {
                 });
 
             setTransactions(valuesGrouped);
-            dispatch(setTransactionsAction(valuesGrouped));
+            dispatch(setTransactionsAction(orderedValues));
 
             calculateBalance(values)
             dispatch(disableLoading());
