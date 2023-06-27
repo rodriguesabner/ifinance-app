@@ -37,13 +37,13 @@ const Home = () => {
     const $balance = useSelector((state: RootState) => state.balance);
     const navigation: NavigationProp<any> = useNavigation();
 
-    const flatListMonthsRef = useRef<any>(null);
     const [transactions, setTransactions] = useState<any[]>([]);
     const [mostOutcome, setMostOutcome] = useState<any[]>([]);
     const [date, setDate] = useState(new Date());
     const [totalBalance, setTotalBalance] = useState(0);
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [months, setMonths] = useState<any>([]);
+    const [countTransactions, setCountTransactions] = useState(0);
 
     useEffect(() => {
         getMonthsMoment();
@@ -133,6 +133,8 @@ const Home = () => {
             const orderedValues = values.sort((a, b) => {
                 return new Date(b.date).getTime() - new Date(a.date).getTime();
             });
+
+            setCountTransactions(orderedValues.length)
 
             //group by date
             const groupedValues = orderedValues.reduce((acc, item) => {
@@ -287,7 +289,7 @@ const Home = () => {
 
                 <WrapperTitle
                     title={'Últimas Transações'}
-                    subtitle={'Transações'}
+                    subtitle={`Transações (${countTransactions})`}
                 />
 
                 {mostOutcome.length > 0 && (
