@@ -1,24 +1,18 @@
 import React from 'react';
-import {BottomContainer, Currency, Layout, OutcomeValue, TopContainer, Total} from "./styles";
-import {useDispatch, useSelector} from "react-redux";
+import {Currency, DescriptionTotal, Layout, TopContainer, Total} from "./styles";
+import {useSelector} from "react-redux";
 import {RootState} from "../../../store/reducers";
-import {Platform, Text, TouchableOpacity} from "react-native";
-import {convertToPrice, toggleHiddenValues} from "../../../store/reducers/balance";
+import {convertToPrice} from "../../../store/reducers/balance";
 import * as Clipboard from 'expo-clipboard';
 import Toast from 'react-native-root-toast';
 
 const CurrentBalance = () => {
-    const dispatch = useDispatch();
     const $balance = useSelector((state: RootState) => state.balance);
 
     const hiddeValue = (value: any): string => {
-        if($balance.hiddeValue) return '*****';
+        if ($balance.hiddeValue) return '*****';
 
         return convertToPrice(value);
-    }
-
-    const handleToggleHidden = (): void => {
-        dispatch(toggleHiddenValues());
     }
 
     const copyBalanceClipboard = async () => {
@@ -34,14 +28,6 @@ const CurrentBalance = () => {
 
     return (
         <Layout>
-            <BottomContainer>
-                <OutcomeValue>R${hiddeValue($balance.outcome)}</OutcomeValue>
-                <Text style={{fontSize: Platform.OS === 'ios' ? 16 : 12}}>{"("}Saída{")"}</Text>
-            </BottomContainer>
-            <BottomContainer>
-                <OutcomeValue>R${hiddeValue($balance.income)}</OutcomeValue>
-                <Text style={{fontSize: Platform.OS === 'ios' ? 16 : 12}}>{"("}Entrada{")"}</Text>
-            </BottomContainer>
             <TopContainer>
                 <Total
                     color={$balance.total < 0 ? '#de4b4b' : '#339461'}
@@ -51,14 +37,9 @@ const CurrentBalance = () => {
                 </Total>
                 <Currency>{$balance.currency}</Currency>
             </TopContainer>
-
-            <TouchableOpacity onPress={() => handleToggleHidden()}>
-                {!$balance.hiddeValue ? (
-                    <Text style={{fontSize: Platform.OS === 'ios' ? 16 : 12}}>Esconder valores</Text>
-                ) : (
-                    <Text style={{fontSize: Platform.OS === 'ios' ? 16 : 12}}>Mostrar valores</Text>
-                )}
-            </TouchableOpacity>
+            <DescriptionTotal>
+                Você terá no final do mês
+            </DescriptionTotal>
         </Layout>
     );
 };

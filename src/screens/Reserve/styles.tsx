@@ -6,7 +6,7 @@ export const Layout = styled.View.attrs({
 })`
   flex: 1;
   padding-top: 40px;
-  background-color: #fff;
+  background-color: #222222;
 `;
 
 export const Container = styled.View`

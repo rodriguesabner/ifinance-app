@@ -8,11 +8,13 @@ export const Layout = styled.TouchableOpacity.attrs({
 })<LayoutProps>`
   border-bottom-width: 1px;
   border-bottom-color: rgba(0, 0, 0, .1);
-  padding: 30px 5px;
+  padding: 20px;
   flex-direction: row;
   justify-content: space-between;
   border-radius: 20px;
   align-items: center;
+  background-color: #3e3e3e;
+  margin-bottom: 5px;
 `;
 
 export const LeftWrapper = styled.View`
@@ -22,6 +24,7 @@ export const LeftWrapper = styled.View`
 
 export const TypeTransaction = styled.Text`
   font-size: 12px;  
+  color: #999;
 `;
 
 export const Container = styled.View`
@@ -33,12 +36,13 @@ export const TitleTransaction = styled.Text`
   font-weight: 600;
   font-size: 16px;
   max-width: 200px;
+  color: #fff;
 `;
 
 export const Category = styled.Text`
-  opacity: .3;
   font-size: 13px;
   font-weight: 600;
+  color: #777;
 `;
 
 type PayedTickProps = {
@@ -46,15 +50,17 @@ type PayedTickProps = {
 }
 
 export const PayedTick = styled.View`
-    padding: 15px;
-    border-radius: 500px;
-    background-color: ${(props: PayedTickProps) => props.backgroundColor || 'rgba(164,164,164,0.16)'};
+  padding: 15px;
+  border-radius: 500px;
+  background-color: ${(props: PayedTickProps) => props.backgroundColor || 'rgba(164,164,164,0.16)'};
+  border-width: 1px;
+  border-color: rgba(255, 255, 255, .3);
 `;
 
 export const DateTransactions = styled.Text`
-  font-size: 16px;
+  font-size: 14px;
   margin-top: 20px;
-  margin-bottom: 0px;
-  opacity: .6;
+  margin-bottom: 10px;
   font-weight: bold;
+  color: #999;
 `;

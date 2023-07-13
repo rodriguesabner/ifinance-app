@@ -7,7 +7,22 @@ interface LayoutProps {
 export const Layout = styled.View.attrs({
 })<LayoutProps>`
   flex: 1;
-  background-color: #fff;
+  background-color: #222222;
+  padding: 10px 0;
+`;
+
+export const HeaderWrapper = styled.View`
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+export const TitleHeader = styled.Text`
+  color: #fff;  
+`;
+
+export const TitleGreenText = styled.Text`
+  color: #a1f062;
 `;
 
 export const LoadingWrapper = styled.View`
@@ -35,30 +50,6 @@ export const FlatListMonths = styled.FlatList.attrs({
     padding: 10px 0;
 `;
 
-export const WrapperActions = styled.View`
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 36px;
-  margin: 36px 0;
-`;
-
-export const ActionItem = styled.TouchableOpacity`
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
-
-export const ActionIcon = styled.View`
-  background-color: #333333;
-  width: 70px;
-  height: 70px;
-  border-radius: 500px;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 10px;
-`;
-
 interface DateWrapperProps {
     isActive?: boolean;
 }
@@ -73,4 +64,5 @@ export const DateWrapper = styled.TouchableOpacity<DateWrapperProps>`
 export const DateText = styled.Text`
   font-size: 15px;
   font-weight: 500;
+  color: #fff;
 `;

@@ -23,7 +23,6 @@ const Header = () => {
                 data={menus}
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{gap: 10}}
                 renderItem={({item}) => {
                     if (item.hidden) {
                         return null;

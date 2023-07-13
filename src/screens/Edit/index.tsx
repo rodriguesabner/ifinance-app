@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Container, Form, Input, Label} from "./styles";
 import WrapperTitle from "../../components/Home/WrapperTitle";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../store/reducers";
@@ -11,10 +10,20 @@ import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigat
 import {Picker} from "@react-native-picker/picker";
 import {disableLoading, enableLoading} from "../../store/reducers/balance";
 import Toast from "react-native-root-toast";
-import {CurrentCategory, TextCurrentCategory} from "../Expense/styles";
+import {
+    BackButton,
+    Button, CancelButton,
+    Container,
+    CurrentCategory, Footer,
+    Form,
+    Input,
+    Label,
+    TextCurrentCategory
+} from "../Income/styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {DateText, DateWrapper} from "../Home/styles";
 import moment from "moment/moment";
+import {ArrowLeft} from "phosphor-react-native";
 
 const Edit = () => {
     const dispatch = useDispatch();
@@ -99,20 +108,30 @@ const Edit = () => {
         return `${month}/${year}`;
     }
 
+    const maskMoneyBr = (value: string) => {
+        const opts = {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        }
+
+        const valueMask = value
+            .replace(/\D/g, '')
+
+        const ret = new Intl
+            .NumberFormat('pt-BR', opts)
+            .format(valueMask / 100);
+
+        setPrice(ret);
+    }
+
     return (
         <Container>
-            <Pressable onPress={() => navigation.goBack()} style={{marginBottom: 20}}>
-                <Image
-                    source={require('../../assets/caret-left.png')}
-                    style={{
-                        width: 30,
-                        height: 30,
-                    }}
-                />
-            </Pressable>
+            <BackButton onPress={() => navigation.goBack()}>
+                <ArrowLeft size={24} color={'#fff'}/>
+            </BackButton>
 
             <WrapperTitle
-                title={'Minhas Finanças'}
+                title={''}
                 subtitle={'Editar Transação'}
             />
 
@@ -155,14 +174,20 @@ const Edit = () => {
 
                 <View>
                     <Label>Valor</Label>
-                    <Input placeholder="35" value={price} onChangeText={setPrice} keyboardType="numeric"/>
+                    <Input
+                        placeholder="35"
+                        value={price}
+                        onChangeText={(value) => maskMoneyBr(value)}
+                        keyboardType="numeric"
+                    />
                 </View>
 
                 <View>
+                    <Label>Categoria</Label>
                     {Platform.OS === 'ios' ? (
                         <View>
                             <CurrentCategory onPress={() => setShowCategoryPicker(!showCategoryPicker)}>
-                                <TextCurrentCategory color={category === '' ? '#999' : '#000'}>
+                                <TextCurrentCategory color={category === '' ? '#999' : '#fff'}>
                                     {category === '' ? 'Escolher uma categoria' : category}
                                 </TextCurrentCategory>
                             </CurrentCategory>
@@ -176,11 +201,11 @@ const Edit = () => {
                                 >
                                     {type === 'income' ? (
                                         $balance.categoriesIncome.map((item, index) => (
-                                            <Picker.Item key={index} label={item.title} value={item.title}/>
+                                            <Picker.Item key={index} label={item.title} value={item.title} color={'#fff'}/>
                                         ))
                                     ) : (
                                         $balance.categories.map((item, index) => (
-                                            <Picker.Item key={index} label={item.title} value={item.title}/>
+                                            <Picker.Item key={index} label={item.title} value={item.title} color={'#fff'}/>
                                         ))
                                     )}
                                 </Picker>
@@ -209,12 +234,21 @@ const Edit = () => {
                     )}
                 </View>
 
-                <Button disabled={loading} onPress={() => save()}>
-                    <Text style={{color: "#fff", fontSize: 16}}>Salvar</Text>
-                    {loading && (
-                        <ActivityIndicator size="small" color="#fff" style={{marginLeft: 15}}/>
-                    )}
-                </Button>
+                <Footer>
+                    <CancelButton onPress={() => navigation.goBack()}>
+                        <Text style={{color: "#fff", fontSize: 16}}>
+                            Cancelar
+                        </Text>
+                    </CancelButton>
+                    <Button disabled={loading} onPress={() => save()}>
+                        <Text style={{color: "#000", fontSize: 16}}>
+                            Salvar
+                        </Text>
+                        {loading && (
+                            <ActivityIndicator size="small" color="#000" style={{marginLeft: 15}}/>
+                        )}
+                    </Button>
+                </Footer>
             </Form>
         </Container>
     );

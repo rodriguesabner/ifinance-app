@@ -126,7 +126,7 @@ const LastTransactionItem = (props: LastTransactionProps) => {
 
             return (
                 <PayedTick backgroundColor={'rgba(178,232,197,0.5)'}>
-                    <Coin size={20} color={'#3f694b'}/>
+                    <Coin size={20} color={'#0d2514'}/>
                 </PayedTick>
             )
         }
@@ -134,7 +134,7 @@ const LastTransactionItem = (props: LastTransactionProps) => {
         if(category === 'Reserva') {
             return (
                 <PayedTick>
-                    <Bank size={20} color={'#000'}/>
+                    <Bank size={20} color={'#fff'}/>
                 </PayedTick>
             )
         }
@@ -142,7 +142,7 @@ const LastTransactionItem = (props: LastTransactionProps) => {
         return (
             type === 'income'
                 ? <PayedTick backgroundColor={'rgba(178,224,232,0.5)'}><Money size={20} color={'#000'}/></PayedTick>
-                : <PayedTick><Receipt size={20} color={'#000'}/></PayedTick>
+                : <PayedTick><Receipt size={20} color={'#fff'}/></PayedTick>
         )
     }
 
@@ -175,12 +175,12 @@ const LastTransactionItem = (props: LastTransactionProps) => {
             <DateTransactions>
                 {props.transaction.date}
             </DateTransactions>
+
             {props.transaction.values.map((transaction) => (
                 <Layout
                     key={transaction.id}
                     onPress={() => !$balance.hiddeValue && navigation.navigate('TransactionDetail', {transaction: transaction})}
                     onLongPress={() => !$balance.hiddeValue && onLongPress(transaction)}
-                    backgroundColor={props.backgroundColor != null ? props.backgroundColor : $balance.total < 0 ? '#fde5e5' : '#e5fdf5'}
                 >
                     <LeftWrapper>
                         <RenderIcon type={transaction.type} paid={transaction.paid} category={transaction.category}/>
@@ -192,7 +192,9 @@ const LastTransactionItem = (props: LastTransactionProps) => {
                         </Container>
                     </LeftWrapper>
 
-                    <Text style={{fontSize: 16, fontWeight: 'bold'}}>{hiddePriceValue(transaction.type, transaction.value)}</Text>
+                    <Text style={{fontSize: 16, fontWeight: 'bold', color: "#fff"}}>
+                        {hiddePriceValue(transaction.type, transaction.value)}
+                    </Text>
                 </Layout>
             ))}
         </View>

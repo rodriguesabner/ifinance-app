@@ -1,16 +1,15 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {ActivityIndicator, Image, StatusBar, Text, TouchableOpacity, View} from "react-native";
+import React, {useEffect, useState} from 'react';
+import {ActivityIndicator, Alert, StatusBar, Text, TouchableOpacity, View} from "react-native";
 import {
-    ActionIcon,
-    ActionItem,
     DateText,
     DateWrapper,
     FlatList,
+    HeaderWrapper,
     Layout,
     LoadingWrapper,
-    WrapperActions
+    TitleGreenText,
+    TitleHeader
 } from "./styles";
-import WrapperTitle from "../../components/Home/WrapperTitle";
 import CurrentBalance from "../../components/Home/CurrentBalance";
 import LastTransactionItem from "../../components/Home/LastTransactionItem";
 import {NavigationProp, useNavigation} from "@react-navigation/native";
@@ -26,11 +25,14 @@ import {
     setOutcome,
     setTransactionsAction
 } from "../../store/reducers/balance";
-import RNDateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
 import 'moment/locale/pt-br';
-import BottomNavigation from "../../components/BottomNavigation";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {CaretLeft, CaretRight, SignOut} from "phosphor-react-native";
+import OverviewMoney from "../../components/Home/OverviewMoney";
+import MostOutcome from "../../components/Home/MostOutcome";
+import Actions from "../../components/Home/Actions";
+import RNDateTimePicker from "@react-native-community/datetimepicker";
 
 const Home = () => {
     const dispatch = useDispatch();
@@ -192,38 +194,53 @@ const Home = () => {
         setMonths(months);
     }
 
+    async function logout() {
+        Alert.alert(
+            'Sair da conta',
+            'Tem certeza que deseja sair da sua conta?',
+            [
+                {
+                    text: 'Sim, sair',
+                    onPress: async () => {
+                        await AsyncStorage.removeItem('@iFinance-status');
+
+                        navigation.reset({
+                            index: 0,
+                            routes: [{name: 'Login'}],
+                        })
+                    }
+                },
+                {
+                    text: 'Não, ficar na conta'
+                }
+            ])
+    }
+
     const TopContent = () => {
         return (
             <View>
                 <View style={{alignItems: 'flex-start'}}>
-                    <WrapperTitle
-                        title={'Minhas Finanças'}
-                        subtitle={'Controle Financeiro'}
-                        logoutButton={true}
-                    />
+                    <HeaderWrapper>
+                        <TitleHeader>
+                            <TitleGreenText style={{color: '#a1f062'}}>
+                            Economize tempo e esforço</TitleGreenText> deixando
+                            {"\n"}
+                            todo trabalho <TitleGreenText>conosco!</TitleGreenText>
+                        </TitleHeader>
 
-                    <View
-                        style={{
-                            width: '100%',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            flexDirection: 'row',
-                            marginTop: 15
-                        }}
-                    >
+                        <TouchableOpacity onPress={() => logout()}>
+                            <SignOut color={"#fff"} size={24} weight={"bold"}/>
+                        </TouchableOpacity>
+                    </HeaderWrapper>
+
+                    <View style={{width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 20}}>
                         <TouchableOpacity
                             onPress={() => {
                                 const dateSelected = moment(date).subtract(1, 'month').toDate();
                                 setDate(dateSelected);
                             }}
                         >
-                            <Image
-                                style={{
-                                    width: 24,
-                                    height: 24
-                                }}
-                                source={require('../../assets/caret-left.png')}
-                            />
+                            <CaretLeft color={"#fff"} size={24} weight={"bold"}/>
                         </TouchableOpacity>
 
                         <DateWrapper
@@ -231,20 +248,13 @@ const Home = () => {
                         >
                             <DateText>{renderMonthYear()}</DateText>
                         </DateWrapper>
-
                         <TouchableOpacity
                             onPress={() => {
                                 const dateSelected = moment(date).add(1, 'month').toDate();
                                 setDate(dateSelected);
                             }}
                         >
-                            <Image
-                                style={{
-                                    width: 24,
-                                    height: 24
-                                }}
-                                source={require('../../assets/caret-right.png')}
-                            />
+                            <CaretRight color={"#fff"} size={24} weight={"bold"}/>
                         </TouchableOpacity>
                     </View>
 
@@ -268,40 +278,17 @@ const Home = () => {
                             />
                         </View>
                     )}
+
+                    <CurrentBalance/>
+                    <OverviewMoney/>
                 </View>
 
-                <CurrentBalance/>
-                <WrapperActions>
-                    <ActionItem onPress={() => goToScreen('Expense')}>
-                        <ActionIcon>
-                            <Text style={{color: '#fff', fontSize: 32}}>-</Text>
-                        </ActionIcon>
-                        <Text>Despesa</Text>
-                    </ActionItem>
+                <Actions date={date}/>
 
-                    <ActionItem onPress={() => goToScreen('Revenue')}>
-                        <ActionIcon>
-                            <Text style={{color: '#fff', fontSize: 32}}>+</Text>
-                        </ActionIcon>
-                        <Text>Receita</Text>
-                    </ActionItem>
-                </WrapperActions>
-
-                <WrapperTitle
-                    title={'Últimas Transações'}
-                    subtitle={`Transações (${countTransactions})`}
+                <MostOutcome
+                    countTransactions={countTransactions}
+                    mostOutcome={mostOutcome}
                 />
-
-                {mostOutcome.length > 0 && (
-                    <Text>
-                        Suas maiores saídas são em {
-                        mostOutcome.map((item: any, index) => (
-                            <Text key={index}>
-                                {item.title}{index < mostOutcome.length - 1 ? ', ' : ''}
-                            </Text>
-                        ))}
-                    </Text>
-                )}
             </View>
         )
     }
@@ -310,8 +297,8 @@ const Home = () => {
         <Layout>
             <StatusBar
                 translucent
-                backgroundColor={totalBalance < 0 ? '#f0cccc' : '#ccf0e3'}
-                barStyle={'dark-content'}
+                backgroundColor={'#222222'}
+                barStyle={'light-content'}
             />
 
             {$balance.loading && (
@@ -323,7 +310,7 @@ const Home = () => {
             <FlatList
                 data={transactions}
                 keyExtractor={item => item.date}
-                contentContainerStyle={{gap: 10, paddingBottom: 200, paddingHorizontal: 20}}
+                contentContainerStyle={{gap: 10, paddingBottom: 200, paddingHorizontal: 16}}
                 renderItem={({item}) => <LastTransactionItem transaction={item}/>}
                 ListHeaderComponent={() => <TopContent/>}
                 ListEmptyComponent={() => (
@@ -334,8 +321,6 @@ const Home = () => {
                     </View>
                 )}
             />
-
-            <BottomNavigation/>
         </Layout>
     );
 };

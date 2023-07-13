@@ -5,7 +5,6 @@ import {NavigationProp, useNavigation} from "@react-navigation/native";
 import {database} from "../../config/firebase.config";
 import {onValue, ref} from "firebase/database";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import BcryptReactNative from 'bcrypt-react-native';
 
 const Login = () => {
     const navigation: NavigationProp<any> = useNavigation();

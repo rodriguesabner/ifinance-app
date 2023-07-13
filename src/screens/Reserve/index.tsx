@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, FlatList, Image, Pressable, StatusBar, Text, View} from "react-native";
+import {ActivityIndicator, FlatList, Text, View} from "react-native";
 import {Header, Layout} from "./styles";
 import WrapperTitle from "../../components/Home/WrapperTitle";
 import LastTransactionItem from "./LastTransactionItem";
@@ -12,6 +12,8 @@ import 'moment/locale/pt-br';
 import {convertToPrice} from "../../store/reducers/balance";
 import {NavigationProp, useNavigation} from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {BackButton} from "../Income/styles";
+import {ArrowLeft} from "phosphor-react-native";
 
 const Reserve = () => {
     const navigation: NavigationProp<any> = useNavigation();
@@ -81,18 +83,12 @@ const Reserve = () => {
         return (
             <Header>
                 <View style={{alignItems: 'flex-start'}}>
-                    <Pressable onPress={() => navigation.goBack()} style={{marginBottom: 20}}>
-                        <Image
-                            source={require('../../assets/caret-left.png')}
-                            style={{
-                                width: 30,
-                                height: 30,
-                            }}
-                        />
-                    </Pressable>
+                    <BackButton onPress={() => navigation.goBack()}>
+                        <ArrowLeft size={24} color={'#fff'}/>
+                    </BackButton>
 
                     <WrapperTitle
-                        title={'Minhas Finanças'}
+                        title={''}
                         subtitle={'Reserva'}
                     />
                 </View>
@@ -118,7 +114,7 @@ const Reserve = () => {
         <Layout>
             {loading ? (
                 <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                    <ActivityIndicator size={'large'} color={'#000'}/>
+                    <ActivityIndicator size={'large'} color={'#fff'}/>
                 </View>
             ) : (
                 <FlatList
@@ -127,7 +123,7 @@ const Reserve = () => {
                     style={{flex: 1, width: '100%'}}
                     contentContainerStyle={{gap: 10, paddingBottom: 120}}
                     showsVerticalScrollIndicator={false}
-                    renderItem={({item}) => <LastTransactionItem backgroundColor={'#d2d7fa'} transaction={item}/>}
+                    renderItem={({item}) => <LastTransactionItem backgroundColor={'#3e3e3e'} transaction={item}/>}
                     ListHeaderComponent={() => <TopContent/>}
                     ListEmptyComponent={() => (
                         <View>

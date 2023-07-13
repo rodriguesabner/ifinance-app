@@ -4,13 +4,25 @@ import moment from "moment/moment";
 import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigation/native";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../store/reducers";
-import {Category, Label, Layout, Price, Title, WrapperDetail, WrapperInput, WrapperPaidTransaction} from "./styles";
+import {
+    Category,
+    Label,
+    Layout,
+    Price,
+    Title,
+    WrapperDetail,
+    WrapperView,
+    WrapperPaidTransaction,
+    DateText
+} from "./styles";
 import {convertToPrice, disableLoading, enableLoading} from "../../store/reducers/balance";
 import {ref, remove, update} from "firebase/database";
 import {database} from "../../config/firebase.config";
 import Toast from "react-native-root-toast";
 import {Checkbox} from "expo-checkbox";
 import * as Clipboard from "expo-clipboard";
+import {BackButton} from "../Income/styles";
+import {ArrowLeft, Pencil, Clipboard as ClipboardIcon, Ticket} from "phosphor-react-native";
 
 export interface TransactionDetailProps {
     transaction: {
@@ -154,46 +166,26 @@ const TransactionDetail = () => {
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    marginBottom: 30
+                    marginBottom: 10
                 }}
             >
-                <Pressable onPress={() => navigation.goBack()}>
-                    <Image
-                        source={require('../../assets/caret-left.png')}
-                        style={{
-                            width: 30,
-                            height: 30,
-                        }}
-                    />
-                </Pressable>
-
-                <WrapperInput style={{
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginTop: 0
-                }}>
-                    <Text style={{fontSize: 16, color: '#666'}}>
-                        {moment(date).format('LL')}
-                    </Text>
-                </WrapperInput>
-
+                <BackButton onPress={() => navigation.goBack()}>
+                    <ArrowLeft size={24} color={'#fff'}/>
+                </BackButton>
                 <View style={{width: 30}}/>
             </View>
 
-            <WrapperInput style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-            }}>
+            <WrapperView>
+                <DateText>
+                    {moment(date).format('LL')}
+                </DateText>
                 <Title>{name}</Title>
                 <Category>{renderCategory()}</Category>
-            </WrapperInput>
+            </WrapperView>
 
-            <WrapperInput style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-            }}>
+            <WrapperView>
                 <Price>{renderValue()}</Price>
-            </WrapperInput>
+            </WrapperView>
 
             {(
                 type === 'outcome'
@@ -201,11 +193,11 @@ const TransactionDetail = () => {
             ) && (
                 <WrapperPaidTransaction>
                     <Checkbox
-                        style={{marginRight: 10}}
+                        style={{marginRight: 10, borderColor: '#fff', borderRadius: 5}}
                         value={paid}
                         onValueChange={(value) => void markPaid(value)}
                     />
-                    <Label style={{marginBottom: 0, fontSize: 14, color: '#000', opacity: .5, fontWeight: '500'}}>
+                    <Label style={{marginBottom: 0, fontSize: 14, color: '#fff', opacity: .5, fontWeight: '500'}}>
                         Essa transação foi paga?
                     </Label>
                 </WrapperPaidTransaction>
@@ -213,13 +205,12 @@ const TransactionDetail = () => {
 
             <View style={{gap: 10}}>
                 <WrapperDetail style={{marginTop: 42}}>
-                    <Image source={require('../../assets/ticket.png')}
-                           style={{width: 30, height: 30, marginRight: 15}}/>
+                    <Ticket size={30} color={'#fff'} style={{marginRight: 15}}/>
                     <View>
-                        <Text style={{fontSize: 16, fontWeight: '500'}}>
+                        <Text style={{fontSize: 16, fontWeight: '500', color: '#fff'}}>
                             Tipo de transação
                         </Text>
-                        <Text style={{fontSize: 15, fontWeight: '500', opacity: .5, marginTop: 5}}>
+                        <Text style={{fontSize: 15, fontWeight: '500', marginTop: 5, color: '#999'}}>
                             {type === 'income' ? 'Receita' : 'Despesa'}
                         </Text>
                     </View>
@@ -231,17 +222,14 @@ const TransactionDetail = () => {
                     && description !== ''
                 ) && (
                     <WrapperDetail>
-                        <Image
-                            source={require('../../assets/clipboard-text.png')}
-                            style={{width: 30, height: 30, marginRight: 15}}
-                        />
+                        <ClipboardIcon size={30} color={'#fff'} style={{marginRight: 15}}/>
                         <TouchableOpacity onLongPress={() => copyDescription()}>
-                            <Text style={{fontSize: 16, fontWeight: '500'}}>
+                            <Text style={{fontSize: 16, fontWeight: '500', color: '#fff'}}>
                                 Descrição/Observação
                             </Text>
                             <Text
                                 numberOfLines={1}
-                                style={{fontSize: 15, fontWeight: '500', opacity: .5, marginTop: 5}}
+                                style={{fontSize: 15, fontWeight: '500', marginTop: 5, color: '#999'}}
                             >
                                 {description}
                             </Text>
@@ -254,13 +242,12 @@ const TransactionDetail = () => {
                         onPress={() => navigation.navigate('Edit', {transaction: route.params?.transaction})}
                         style={{width: "100%", flexDirection: 'row'}}
                     >
-                        <Image source={require('../../assets/pencil.png')}
-                               style={{width: 30, height: 30, marginRight: 15}}/>
+                        <Pencil size={30} color={'#fff'} style={{marginRight: 15}}/>
                         <View>
-                            <Text style={{fontSize: 16, fontWeight: '500'}}>
+                            <Text style={{fontSize: 16, fontWeight: '500', color: '#fff'}}>
                                 Há algo errado?
                             </Text>
-                            <Text style={{fontSize: 15, fontWeight: '500', opacity: .5, marginTop: 5}}>
+                            <Text style={{fontSize: 15, fontWeight: '500', marginTop: 5, color: '#999'}}>
                                 Editar transação
                             </Text>
                         </View>
@@ -275,10 +262,10 @@ const TransactionDetail = () => {
                         <Image source={require('../../assets/trash.png')}
                                style={{width: 30, height: 30, marginRight: 15}}/>
                         <View>
-                            <Text style={{fontSize: 16, fontWeight: '500'}}>
+                            <Text style={{fontSize: 16, fontWeight: '500', color: '#fff'}}>
                                 Cadastrou errado?
                             </Text>
-                            <Text style={{fontSize: 15, fontWeight: '500', opacity: .5, marginTop: 5}}>
+                            <Text style={{fontSize: 15, fontWeight: '500', marginTop: 5, color: '#999'}}>
                                 Deletar transação
                             </Text>
                         </View>

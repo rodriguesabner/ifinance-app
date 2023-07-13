@@ -8,6 +8,7 @@ import Login from "../screens/Login";
 import Edit from "../screens/Edit";
 import TransactionDetail from "../screens/TransactionDetail";
 import Register from "../screens/Register";
+import Investments from "../screens/Investments";
 
 const StackRoutes = createNativeStackNavigator();
 
@@ -43,6 +44,16 @@ function StackNativeRoutes() {
             <StackRoutes.Screen
                 name="Reserve"
                 component={ReserveScreen}
+                options={{
+                    animation: 'slide_from_bottom',
+                    presentation: 'modal',
+                    statusBarStyle: 'dark',
+                    statusBarColor: '#fff'
+                }}
+            />
+            <StackRoutes.Screen
+                name="Investments"
+                component={Investments}
                 options={{
                     animation: 'slide_from_bottom',
                     presentation: 'modal',

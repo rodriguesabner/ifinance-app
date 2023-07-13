@@ -2,16 +2,13 @@ import styled from "styled-components/native";
 import {Platform} from "react-native";
 
 export const Layout = styled.View`
-  margin-top: 36px;
-  align-items: center;
-  justify-content: center;
+  margin-top: 10px;
 `;
 
 export const TopContainer = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  margin-top: 15px;
 `;
 
 export const BottomContainer = styled.View`
@@ -27,19 +24,23 @@ type TotalProps = {
 }
 
 export const Total = styled.Text<TotalProps>`
-  font-size: ${Platform.OS === 'ios' ? 36 : 30}px;
+  font-size: ${Platform.OS === 'ios' ? 46 : 40}px;
   font-weight: 500;
   border-radius: 20px;
-  color: ${(props) => props.color || '#629a86'};
+  color: #ffffff;
 `;
 
 export const Currency = styled.Text`
-  font-size: ${Platform.OS === 'ios' ? 36 : 30}px;
-  opacity: .2;
-  margin-left: 10px;
+  font-size: ${Platform.OS === 'ios' ? 46 : 40}px;
+  opacity: 1;
+  color: #555555;
 `;
 
 export const OutcomeValue = styled.Text`
   font-size: ${Platform.OS === 'ios' ? 16 : 12}px;
   margin-right: 3px;
+`;
+
+export const DescriptionTotal = styled.Text`
+  color: #777;
 `;

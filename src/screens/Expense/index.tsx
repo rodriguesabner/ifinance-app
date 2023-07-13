@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {
-    Button,
+    BackButton,
+    Button, CancelButton,
     Container,
-    CurrencyFormat,
-    CurrentCategory,
+    CurrentCategory, Footer,
     Form,
     Input,
     Label,
@@ -11,11 +11,11 @@ import {
     TextCurrentCategory,
     WrapperCurrency,
     WrapperPrices
-} from "./styles";
+} from "../Income/styles";
 import WrapperTitle from "../../components/Home/WrapperTitle";
 import {useSelector} from "react-redux";
 import {RootState} from "../../store/reducers";
-import {ActivityIndicator, Alert, Image, Platform, Pressable, Text, View} from "react-native";
+import {ActivityIndicator, Alert, Platform, Text, View} from "react-native";
 import {Picker} from "@react-native-picker/picker";
 import {ref, set} from "firebase/database";
 import {database} from "../../config/firebase.config";
@@ -24,6 +24,7 @@ import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigat
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {DateText, DateWrapper} from "../Home/styles";
 import moment from "moment/moment";
+import {ArrowLeft} from "phosphor-react-native";
 
 const Expense = () => {
     const route: RouteProp<any> = useRoute();
@@ -113,20 +114,30 @@ const Expense = () => {
         return `${month}/${year}`;
     }
 
+    const maskMoneyBr = (value: string) => {
+        const opts = {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        }
+
+        const valueMask = value
+            .replace(/\D/g, '')
+
+        const ret = new Intl
+            .NumberFormat('pt-BR', opts)
+            .format(valueMask / 100);
+
+        setPrice(ret);
+    }
+
     return (
         <Container>
-            <Pressable onPress={() => navigation.goBack()} style={{marginBottom: 20}}>
-                <Image
-                    source={require('../../assets/caret-left.png')}
-                    style={{
-                        width: 30,
-                        height: 30,
-                    }}
-                />
-            </Pressable>
+            <BackButton onPress={() => navigation.goBack()}>
+                <ArrowLeft size={24} color={'#fff'}/>
+            </BackButton>
 
             <WrapperTitle
-                title={'Minhas Finanças'}
+                title={''}
                 subtitle={'Nova Despesa'}
             />
 
@@ -161,15 +172,20 @@ const Expense = () => {
 
                 <View>
                     <Label>Descrição (opcional)</Label>
-                    <Input placeholder="Código do boleto/pix ou alguma observação" value={description} onChangeText={setDescription}/>
+                    <Input placeholder="Código do boleto/pix ou alguma observação" value={description}
+                           onChangeText={setDescription}/>
                 </View>
 
                 <View>
                     <Label>Valor</Label>
 
                     <WrapperCurrency>
-                        <CurrencyFormat>R$</CurrencyFormat>
-                        <Input placeholder="35" value={price} onChangeText={setPrice} keyboardType="numeric"/>
+                        <Input
+                            placeholder="35"
+                           value={price}
+                           onChangeText={(value) => maskMoneyBr(value)}
+                           keyboardType="numeric"
+                        />
                     </WrapperCurrency>
                 </View>
 
@@ -179,7 +195,7 @@ const Expense = () => {
                     contentContainerStyle={{gap: 10}}
                     renderItem={({item}) => (
                         <PriceItem onPress={() => handleClickPrice(item.label)}>
-                            <Text>{item.label}</Text>
+                            <Text style={{color: '#fff'}}>{item.label}</Text>
                         </PriceItem>
                     )}
                 />
@@ -188,7 +204,7 @@ const Expense = () => {
                     {Platform.OS === 'ios' ? (
                         <View>
                             <CurrentCategory onPress={() => setShowCategoryPicker(!showCategoryPicker)}>
-                                <TextCurrentCategory color={category === '' ? '#999' : '#000'}>
+                                <TextCurrentCategory color={category === '' ? '#999' : '#fff'}>
                                     {category === '' ? 'Escolher uma categoria' : category}
                                 </TextCurrentCategory>
                             </CurrentCategory>
@@ -201,7 +217,7 @@ const Expense = () => {
                                     }}
                                 >
                                     {$balance.categories.map((item, index) => (
-                                        <Picker.Item key={index} label={item.title} value={item.title}/>
+                                        <Picker.Item key={index} label={item.title} value={item.title} color={'#fff'}/>
                                     ))}
                                 </Picker>
                             )}
@@ -217,18 +233,23 @@ const Expense = () => {
                             }}
                         >
                             {$balance.categories.map((item, index) => (
-                                <Picker.Item key={index} label={item.title} value={item.title}/>
+                                <Picker.Item key={index} label={item.title} value={item.title} color={'#fff'}/>
                             ))}
                         </Picker>
                     )}
                 </View>
 
-                <Button disabled={loading} onPress={() => save()}>
-                    <Text style={{color: "#fff", fontSize: 16}}>Salvar</Text>
-                    {loading && (
-                        <ActivityIndicator size="small" color="#fff" style={{marginLeft: 15}}/>
-                    )}
-                </Button>
+                <Footer>
+                    <CancelButton onPress={() => navigation.goBack()}>
+                        <Text style={{color: "#fff", fontSize: 16}}>Cancelar</Text>
+                    </CancelButton>
+                    <Button disabled={loading} onPress={() => save()}>
+                        <Text style={{color: "#000", fontSize: 16}}>Salvar</Text>
+                        {loading && (
+                            <ActivityIndicator size="small" color="#fff" style={{marginLeft: 15}}/>
+                        )}
+                    </Button>
+                </Footer>
             </Form>
         </Container>
     );

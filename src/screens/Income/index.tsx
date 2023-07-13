@@ -1,25 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Container, Form, Input, Label} from "./styles";
+import {BackButton, Button, CancelButton, Container, Footer, Form, Input, Label} from "./styles";
 import WrapperTitle from "../../components/Home/WrapperTitle";
 import {useSelector} from "react-redux";
 import {RootState} from "../../store/reducers";
-import {ActivityIndicator, Alert, Image, Platform, Pressable, Text, View} from "react-native";
+import {ActivityIndicator, Alert, Platform, Text, View} from "react-native";
 import {ref, set} from "firebase/database";
 import {database} from "../../config/firebase.config";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigation/native";
-import {
-    CurrencyFormat,
-    CurrentCategory,
-    PriceItem,
-    TextCurrentCategory,
-    WrapperCurrency,
-    WrapperPrices
-} from "../Expense/styles";
+import {CurrentCategory, PriceItem, TextCurrentCategory, WrapperCurrency, WrapperPrices} from "./styles";
 import {Picker} from "@react-native-picker/picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {DateText, DateWrapper} from "../Home/styles";
 import moment from "moment";
+import {ArrowLeft} from "phosphor-react-native";
 
 const Income = () => {
     const route: RouteProp<any> = useRoute();
@@ -108,20 +102,30 @@ const Income = () => {
         return `${month}/${year}`;
     }
 
+    const maskMoneyBr = (value: string) => {
+        const opts = {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        }
+
+        const valueMask = value
+            .replace(/\D/g, '')
+
+        const ret = new Intl
+            .NumberFormat('pt-BR', opts)
+            .format(valueMask / 100);
+
+        setPrice(ret);
+    }
+
     return (
         <Container>
-            <Pressable onPress={() => navigation.goBack()} style={{marginBottom: 20}}>
-                <Image
-                    source={require('../../assets/caret-left.png')}
-                    style={{
-                        width: 30,
-                        height: 30,
-                    }}
-                />
-            </Pressable>
+            <BackButton onPress={() => navigation.goBack()}>
+                <ArrowLeft size={24} color={'#fff'}/>
+            </BackButton>
 
             <WrapperTitle
-                title={'Minhas Finanças'}
+                title={''}
                 subtitle={'Nova Receita'}
             />
 
@@ -158,8 +162,12 @@ const Income = () => {
                     <Label>Valor</Label>
 
                     <WrapperCurrency>
-                        <CurrencyFormat>R$</CurrencyFormat>
-                        <Input placeholder="5900" value={price} onChangeText={setPrice} keyboardType="numeric"/>
+                        <Input
+                            keyboardType="numeric"
+                            placeholder="R$5900"
+                            value={price}
+                            onChangeText={(value) => maskMoneyBr(value)}
+                        />
                     </WrapperCurrency>
                 </View>
                 <WrapperPrices
@@ -168,7 +176,7 @@ const Income = () => {
                     contentContainerStyle={{gap: 10}}
                     renderItem={({item}) => (
                         <PriceItem onPress={() => handleClickPrice(item.label)}>
-                            <Text>{item.label}</Text>
+                            <Text style={{color: '#fff'}}>{item.label}</Text>
                         </PriceItem>
                     )}
                 />
@@ -178,7 +186,7 @@ const Income = () => {
                     {Platform.OS === 'ios' ? (
                         <View>
                             <CurrentCategory onPress={() => setShowCategoryPicker(!showCategoryPicker)}>
-                                <TextCurrentCategory color={category === '' ? '#999' : '#000'}>
+                                <TextCurrentCategory color={category === '' ? '#999' : '#fff'}>
                                     {category === '' ? 'Escolher uma categoria' : category}
                                 </TextCurrentCategory>
                             </CurrentCategory>
@@ -191,7 +199,7 @@ const Income = () => {
                                     }}
                                 >
                                     {$balance.categoriesIncome.map((item, index) => (
-                                        <Picker.Item key={index} label={item.title} value={item.title}/>
+                                        <Picker.Item key={index} label={item.title} value={item.title} color={'#fff'}/>
                                     ))}
                                 </Picker>
                             )}
@@ -213,12 +221,17 @@ const Income = () => {
                     )}
                 </View>
 
-                <Button disabled={loading} onPress={() => save()}>
-                    <Text style={{color: "#fff", fontSize: 16}}>Salvar</Text>
-                    {loading && (
-                        <ActivityIndicator size="small" color="#fff" style={{marginLeft: 15}}/>
-                    )}
-                </Button>
+                <Footer>
+                    <CancelButton onPress={() => navigation.goBack()}>
+                        <Text style={{color: "#fff", fontSize: 16}}>Cancelar</Text>
+                    </CancelButton>
+                    <Button disabled={loading} onPress={() => save()}>
+                        <Text style={{color: "#000", fontSize: 16}}>Salvar</Text>
+                        {loading && (
+                            <ActivityIndicator size="small" color="#000" style={{marginLeft: 15}}/>
+                        )}
+                    </Button>
+                </Footer>
             </Form>
         </Container>
     );
