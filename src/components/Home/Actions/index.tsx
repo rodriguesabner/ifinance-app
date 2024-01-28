@@ -51,48 +51,55 @@ const Actions = (props: ActionsProps) => {
 
     const items = [
         {
-            id: 1,
-            name: 'Despesa',
-            icon: <Minus color={'#fff'}/>,
-            onPress: () => goToScreen('Expense')
-        },
-        {
             id: 2,
             name: 'Receita',
-            icon: <Plus color={'#fff'}/>,
-            onPress: () => goToScreen('Revenue')
+            icon: <Plus size={20} color={'#1e5b02'}/>,
+            onPress: () => goToScreen('Transaction', 'income'),
+            backgroundColor: "#9fe771"
+        },
+        {
+            id: 1,
+            name: 'Despesa',
+            icon: <Minus size={20} color={'#1e5b02'}/>,
+            onPress: () => goToScreen('Transaction', 'outcome')
         },
         {
             id: 3,
             name: 'Reserva',
-            icon: <Wallet color={'#fff'}/>,
+            icon: <Wallet size={20} color={'#1e5b02'}/>,
             onPress: () => goToScreen('Reserve')
-        },
-        {
-            id: 4,
-            name: 'Investimentos',
-            icon: <Bank color={'#fff'}/>,
-            onPress: () => goToScreen('Investments')
         },
         {
             id: 5,
             name: 'Gerar Planilha',
-            icon: <Table color={'#fff'}/>,
+            icon: <Table size={20} color={'#1e5b02'}/>,
             onPress: () => generateSheet()
         }
     ]
     const navigation: NavigationProp<any> = useNavigation();
 
-    const goToScreen = (path: string) => {
-        navigation.navigate(path, {date: moment(props.date).toISOString()});
+    const goToScreen = (path: string, type?: string) => {
+        const propsNavigation = {};
+
+        if(type === 'outcome' || type === 'income') {
+            Object.assign(propsNavigation, {
+                date: moment(props.date).toISOString(),
+                type: type.toLowerCase()
+            })
+
+            navigation.navigate(path, propsNavigation);
+            return;
+        }
+
+        navigation.navigate(path);
     }
 
     return (
         <Layout>
             <WrapperActions
                 data={items}
-                renderItem={({item}) => (
-                    <ActionItem onPress={item.onPress}>
+                renderItem={({item}: {item: any}) => (
+                    <ActionItem backgroundColor={item.backgroundColor} onPress={item.onPress}>
                         <ActionIcon>{item.icon}</ActionIcon>
                         <ActionText>{item.name}</ActionText>
                     </ActionItem>

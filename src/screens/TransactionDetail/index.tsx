@@ -16,12 +16,10 @@ import {
     DateText
 } from "./styles";
 import {convertToPrice, disableLoading, enableLoading} from "../../store/reducers/balance";
-import {ref, remove, update} from "firebase/database";
-import {database} from "../../config/firebase.config";
 import Toast from "react-native-root-toast";
 import {Checkbox} from "expo-checkbox";
 import * as Clipboard from "expo-clipboard";
-import {BackButton} from "../Income/styles";
+import {BackButton} from "../Transaction/SelectCategory/styles";
 import {ArrowLeft, Pencil, Clipboard as ClipboardIcon, Ticket} from "phosphor-react-native";
 
 export interface TransactionDetailProps {
@@ -97,7 +95,7 @@ const TransactionDetail = () => {
         const getMonth = date.getMonth() + 1;
         const getYear = date.getFullYear();
 
-        const db = ref(database, $balance.databaseRef + `/${getYear}/${getMonth}/${id}`);
+        // const db = ref(database, $balance.databaseRef + `/${getYear}/${getMonth}/${id}`);
         const newExpense = {
             id,
             name,
@@ -108,7 +106,7 @@ const TransactionDetail = () => {
             paid: newPaidState
         }
 
-        await update(db, newExpense);
+        // await update(db, newExpense);
 
         if (newPaidState) Toast.show('A transação foi marcada como paga!');
         else Toast.show('A transação foi marcada como não paga!');
@@ -141,7 +139,7 @@ const TransactionDetail = () => {
         const year = moment(route.params?.transaction.date).format('YYYY');
 
         const path = $balance.databaseRef + `${year}/${month}/${route.params?.transaction.id}`;
-        await remove(ref(database, path));
+        // await remove(ref(database, path));
 
         dispatch(disableLoading());
         Toast.show('A transação foi excluída com sucesso!');
@@ -170,7 +168,7 @@ const TransactionDetail = () => {
                 }}
             >
                 <BackButton onPress={() => navigation.goBack()}>
-                    <ArrowLeft size={24} color={'#fff'}/>
+                    <ArrowLeft size={24} color={'#000'}/>
                 </BackButton>
                 <View style={{width: 30}}/>
             </View>
@@ -193,11 +191,11 @@ const TransactionDetail = () => {
             ) && (
                 <WrapperPaidTransaction>
                     <Checkbox
-                        style={{marginRight: 10, borderColor: '#fff', borderRadius: 5}}
+                        style={{marginRight: 10, borderColor: '#000', borderRadius: 5}}
                         value={paid}
                         onValueChange={(value) => void markPaid(value)}
                     />
-                    <Label style={{marginBottom: 0, fontSize: 14, color: '#fff', opacity: .5, fontWeight: '500'}}>
+                    <Label style={{marginBottom: 0, fontSize: 14, color: '#000', opacity: .5, fontWeight: '500'}}>
                         Essa transação foi paga?
                     </Label>
                 </WrapperPaidTransaction>
@@ -205,9 +203,9 @@ const TransactionDetail = () => {
 
             <View style={{gap: 10}}>
                 <WrapperDetail style={{marginTop: 42}}>
-                    <Ticket size={30} color={'#fff'} style={{marginRight: 15}}/>
+                    <Ticket size={30} color={'#999'} style={{marginRight: 15}}/>
                     <View>
-                        <Text style={{fontSize: 16, fontWeight: '500', color: '#fff'}}>
+                        <Text style={{fontSize: 16, fontWeight: '500', color: '#000'}}>
                             Tipo de transação
                         </Text>
                         <Text style={{fontSize: 15, fontWeight: '500', marginTop: 5, color: '#999'}}>
@@ -222,9 +220,9 @@ const TransactionDetail = () => {
                     && description !== ''
                 ) && (
                     <WrapperDetail>
-                        <ClipboardIcon size={30} color={'#fff'} style={{marginRight: 15}}/>
+                        <ClipboardIcon size={30} color={'#999'} style={{marginRight: 15}}/>
                         <TouchableOpacity onLongPress={() => copyDescription()}>
-                            <Text style={{fontSize: 16, fontWeight: '500', color: '#fff'}}>
+                            <Text style={{fontSize: 16, fontWeight: '500', color: '#000'}}>
                                 Descrição/Observação
                             </Text>
                             <Text
@@ -242,9 +240,9 @@ const TransactionDetail = () => {
                         onPress={() => navigation.navigate('Edit', {transaction: route.params?.transaction})}
                         style={{width: "100%", flexDirection: 'row'}}
                     >
-                        <Pencil size={30} color={'#fff'} style={{marginRight: 15}}/>
+                        <Pencil size={30} color={'#999'} style={{marginRight: 15}}/>
                         <View>
-                            <Text style={{fontSize: 16, fontWeight: '500', color: '#fff'}}>
+                            <Text style={{fontSize: 16, fontWeight: '500', color: '#000'}}>
                                 Há algo errado?
                             </Text>
                             <Text style={{fontSize: 15, fontWeight: '500', marginTop: 5, color: '#999'}}>
@@ -262,7 +260,7 @@ const TransactionDetail = () => {
                         <Image source={require('../../assets/trash.png')}
                                style={{width: 30, height: 30, marginRight: 15}}/>
                         <View>
-                            <Text style={{fontSize: 16, fontWeight: '500', color: '#fff'}}>
+                            <Text style={{fontSize: 16, fontWeight: '500', color: '#000'}}>
                                 Cadastrou errado?
                             </Text>
                             <Text style={{fontSize: 15, fontWeight: '500', marginTop: 5, color: '#999'}}>

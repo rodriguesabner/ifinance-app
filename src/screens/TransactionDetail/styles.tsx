@@ -1,7 +1,7 @@
 import styled from "styled-components/native";
 
 export const Layout = styled.View`
-  background-color: #222222;
+  background-color: #fff;
   flex: 1;
   padding: 24px 36px;
 `;
@@ -9,20 +9,20 @@ export const Layout = styled.View`
 export const Title = styled.Text`
   font-size: 36px;
   font-weight: 500;
-  color: #fff;
+  color: #000;
 `;
 
 export const Category = styled.Text`
   font-size: 18px;
   opacity: .3;
   text-transform: lowercase;
-  color: #fff;
+  color: #555;
 `;
 
 export const Price = styled.Text`
   font-size: 30px;
   font-weight: 600;
-  color: #fff;
+  color: #000;
 `;
 
 export const Label = styled.Text`
@@ -41,7 +41,7 @@ export const WrapperView = styled.View`
 `;
 
 export const WrapperPaidTransaction = styled.View`
-  background-color: #3e3e3e;
+  background-color: #eee;
   flex-direction: row;
   padding: 10px 30px;
   border-radius: 20px;

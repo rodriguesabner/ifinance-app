@@ -1,6 +1,5 @@
 import styled from "styled-components/native";
 import {FlatListProps, Platform} from "react-native";
-import CurrencyInput from 'react-native-currency-input';
 
 export const Container = styled.ScrollView.attrs({
     showsVerticalScrollIndicator: false,
@@ -8,42 +7,42 @@ export const Container = styled.ScrollView.attrs({
         paddingBottom: 120
     },
 })`
-  flex: 1;
-  background-color: #222222;
-  padding: 60px 20px;
-  padding-top: ${Platform.OS === 'android' ? 30 : 60}px;
+    flex: 1;
+    background-color: #fff;
+    padding: 60px 20px;
+    padding-top: ${Platform.OS === 'android' ? 30 : 60}px;
 `;
 
 export const BackButton = styled.TouchableOpacity`
-  background-color: #3e3e3e;
-  margin-bottom: 20px;
-  width: 40px;
-  height: 40px;
-  border-radius: 500px;
-  justify-content: center;
-  align-items: center;
+    background-color: #a0e673;
+    margin-bottom: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 500px;
+    justify-content: center;
+    align-items: center;
 `;
 
 export const Form = styled.View`
-  margin-top: 20px;
-  gap: 20px;
+    margin-top: 20px;
+    gap: 20px;
 `;
 
 export const Label = styled.Text`
-  color: #999;
-  margin-bottom: 5px;
+    color: #999;
+    margin-bottom: 5px;
 `;
 
 export const Input = styled.TextInput.attrs({
     placeholderTextColor: '#999',
     returnKeyType: 'done',
 })`
-  background-color: #3e3e3e;
-  height: 42px;
-  padding-left: 10px;
-  border-radius: 4px;
-  width: 100%;
-  color: #fff;
+    background-color: #eaeee8;
+    height: 42px;
+    padding-left: 10px;
+    border-radius: 4px;
+    width: 100%;
+    color: #000;
 `;
 
 export const Footer = styled.View`
@@ -56,23 +55,23 @@ export const Footer = styled.View`
 `;
 
 export const CancelButton = styled.TouchableOpacity`
-  background-color: #3e3e3e;
-  height: 48px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 20px;
-  flex-direction: row;
-  width: 47%;
+    background-color: #eaeee8;
+    height: 48px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    flex-direction: row;
+    width: 47%;
 `;
 
 export const Button = styled.TouchableOpacity`
-  background-color: #a1f062;
-  height: 48px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 20px;
-  flex-direction: row;
-  width: 47%;
+    background-color: #a0e76d;
+    height: 48px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    flex-direction: row;
+    width: 47%;
 `;
 
 interface TextCurrentCategoryProps {
@@ -98,16 +97,16 @@ export const WrapperPrices = styled.FlatList.attrs({
 `;
 
 export const PriceItem = styled.TouchableOpacity`
-  background-color: #3e3e3e;
-  padding: 10px 14px;
-  border-radius: 20px;
+    background-color: #eaeee8;
+    padding: 10px 14px;
+    border-radius: 20px;
 `;
 
 export const CurrentCategory = styled.TouchableOpacity`
-  background-color: #3e3e3e;
-  height: 42px;
-  padding-left: 10px;
-  border-radius: 4px;
-  width: 100%;
-  padding-top: 15px;
+    background-color: #eaeee8;
+    height: 42px;
+    padding-left: 10px;
+    border-radius: 4px;
+    width: 100%;
+    padding-top: 15px;
 `;

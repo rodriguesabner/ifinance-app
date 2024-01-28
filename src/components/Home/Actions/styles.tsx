@@ -1,8 +1,7 @@
 import styled from "styled-components/native";
+import {TouchableOpacityProps} from "react-native";
 
 export const Layout = styled.View`
-  margin-top: -20px;
-  margin-bottom: 20px;
 `;
 
 export const WrapperActions = styled.FlatList.attrs({
@@ -12,25 +11,29 @@ export const WrapperActions = styled.FlatList.attrs({
   
 `;
 
-export const ActionItem = styled.TouchableOpacity`
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #333333;
-  border-radius: 500px;
-  width: 100px;
-  height: 100px;
-  margin-right: 15px;
+interface ActionItemProps extends TouchableOpacityProps {
+    backgroundColor?: string;
+}
+
+export const ActionItem = styled.TouchableOpacity<ActionItemProps>`
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background-color: ${props => props.backgroundColor != null ? props.backgroundColor : "#eaeee8"};
+    height: 30px;
+    margin-right: 15px;
+    gap: 5px;
+    border-radius: 20px;
+    padding: 0 20px;
 `;
 
 export const ActionIcon = styled.View`
   align-items: center;
   justify-content: center;
-  margin-bottom: 10px;
 `;
 
 export const ActionText = styled.Text`
-  color: #777;  
-  max-width: 60px;
-  text-align: center;
+    color: #1e5b02;
+    text-align: center;
+    font-weight: bold;
 `;

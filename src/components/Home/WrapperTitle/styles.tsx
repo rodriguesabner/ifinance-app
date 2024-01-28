@@ -12,11 +12,11 @@ export const AppTitle = styled.Text`
   font-size: ${Platform.OS === 'ios' ? 20 : 18}px;
   font-weight: 500;
   opacity: .3;
-  color: #fff;
+  color: #000;
 `;
 
 export const ControlTitle = styled.Text`
   font-size: ${Platform.OS === 'ios' ? 30 : 26}px;
   font-weight: 600;
-  color: #fff;
+  color: #000;
 `;

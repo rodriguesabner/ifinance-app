@@ -4,8 +4,6 @@ import {Alert, Text, Vibration, View} from "react-native";
 import moment from 'moment';
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../../store/reducers";
-import {database} from "../../../config/firebase.config";
-import {ref, remove} from "firebase/database";
 import {convertToPrice, disableLoading, enableLoading} from "../../../store/reducers/balance";
 import {NavigationProp, useNavigation} from "@react-navigation/native";
 import Toast from "react-native-root-toast";
@@ -94,8 +92,8 @@ const LastTransactionItem = (props: LastTransactionProps) => {
         const month = moment(props.transaction.date).format('M');
         const year = moment(props.transaction.date).format('YYYY');
 
-        const path = $balance.databaseRef + `${year}/${month}/${id}`;
-        await remove(ref(database, path));
+        // const path = $balance.databaseRef + `${year}/${month}/${id}`;
+        // await remove(ref(database, path));
 
         dispatch(disableLoading());
         Toast.show('A transação foi excluída com sucesso!');
@@ -113,7 +111,7 @@ const LastTransactionItem = (props: LastTransactionProps) => {
                 </LeftWrapper>
             </View>
 
-            <Text style={{fontSize: 16, fontWeight: 'bold', color: '#fff'}}>
+            <Text style={{fontSize: 16, fontWeight: 'bold', color: '#000'}}>
                 {hiddePriceValue()}
             </Text>
         </Layout>

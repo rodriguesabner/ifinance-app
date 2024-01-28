@@ -2,28 +2,26 @@ import React, {useEffect, useState} from 'react';
 import WrapperTitle from "../../components/Home/WrapperTitle";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../store/reducers";
-import {ActivityIndicator, Alert, Image, Platform, Pressable, Text, View} from "react-native";
-import {ref, update} from "firebase/database";
-import {database} from "../../config/firebase.config";
+import {ActivityIndicator, Alert, Text, View} from "react-native";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigation/native";
-import {Picker} from "@react-native-picker/picker";
 import {disableLoading, enableLoading} from "../../store/reducers/balance";
 import Toast from "react-native-root-toast";
 import {
     BackButton,
-    Button, CancelButton,
+    Button,
+    CancelButton,
     Container,
-    CurrentCategory, Footer,
+    Footer,
     Form,
     Input,
-    Label,
-    TextCurrentCategory
-} from "../Income/styles";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+    Label
+} from "../Transaction/SelectCategory/styles";
 import {DateText, DateWrapper} from "../Home/styles";
 import moment from "moment/moment";
 import {ArrowLeft} from "phosphor-react-native";
+import CategorySelect from "../Transaction/SelectCategory";
+import api from "../../services/api";
 
 const Edit = () => {
     const dispatch = useDispatch();
@@ -67,29 +65,19 @@ const Edit = () => {
         setLoading(true);
         dispatch(enableLoading());
 
-        const getMonth = date.getMonth() + 1;
-        const getYear = date.getFullYear();
-
-        const user: any = await AsyncStorage.getItem('@iFinance-status');
-        const sanitizedUser = JSON.parse(user);
-
         const sanitizedPrice = price
             .replace('.', '')
             .replace(',', '.')
 
-        const db = ref(database, $balance.databaseRef + `/${getYear}/${getMonth}/${id}`);
-        const expense = {
-            id,
+        await api.patch(`/v1/transactions/${id}?type=${type}`, {
             name,
             price: sanitizedPrice,
             category,
-            date: date.toISOString(),
             type,
-            description: description ?? '',
-            userId: sanitizedUser.id
-        }
-
-        await update(db, expense);
+            date: date.toISOString(),
+            description,
+            paid: false,
+        })
 
         setLoading(false);
         dispatch(disableLoading());
@@ -114,7 +102,7 @@ const Edit = () => {
             maximumFractionDigits: 2,
         }
 
-        const valueMask = value
+        const valueMask: any = value
             .replace(/\D/g, '')
 
         const ret = new Intl
@@ -127,7 +115,7 @@ const Edit = () => {
     return (
         <Container>
             <BackButton onPress={() => navigation.goBack()}>
-                <ArrowLeft size={24} color={'#fff'}/>
+                <ArrowLeft size={24} color={'#000'}/>
             </BackButton>
 
             <WrapperTitle
@@ -164,79 +152,36 @@ const Edit = () => {
                     <Input placeholder="Netflix" value={name} onChangeText={setName}/>
                 </View>
 
-                {type === 'outcome' && (
-                    <View>
-                        <Label>Descrição (opcional)</Label>
-                        <Input placeholder="Código do boleto/pix ou alguma observação" value={description}
-                               onChangeText={setDescription}/>
-                    </View>
-                )}
+                <View>
+                    <Label>Descrição (opcional)</Label>
+                    <Input placeholder="Código do boleto/pix ou alguma observação" value={description}
+                           onChangeText={setDescription}/>
+                </View>
 
                 <View>
                     <Label>Valor</Label>
                     <Input
                         placeholder="35"
                         value={price}
-                        onChangeText={(value) => maskMoneyBr(value)}
+                        onChangeText={(value: any) => maskMoneyBr(value)}
                         keyboardType="numeric"
                     />
                 </View>
 
                 <View>
                     <Label>Categoria</Label>
-                    {Platform.OS === 'ios' ? (
-                        <View>
-                            <CurrentCategory onPress={() => setShowCategoryPicker(!showCategoryPicker)}>
-                                <TextCurrentCategory color={category === '' ? '#999' : '#fff'}>
-                                    {category === '' ? 'Escolher uma categoria' : category}
-                                </TextCurrentCategory>
-                            </CurrentCategory>
-                            {showCategoryPicker && (
-                                <Picker
-                                    selectedValue={category}
-                                    onValueChange={(itemValue, itemIndex) => {
-                                        setCategory(itemValue)
-                                        setShowCategoryPicker(false)
-                                    }}
-                                >
-                                    {type === 'income' ? (
-                                        $balance.categoriesIncome.map((item, index) => (
-                                            <Picker.Item key={index} label={item.title} value={item.title} color={'#fff'}/>
-                                        ))
-                                    ) : (
-                                        $balance.categories.map((item, index) => (
-                                            <Picker.Item key={index} label={item.title} value={item.title} color={'#fff'}/>
-                                        ))
-                                    )}
-                                </Picker>
-                            )}
-                        </View>
-                    ) : (
-                        <Picker
-                            style={{backgroundColor: '#fafafa', borderRadius: 4}}
-                            prompt={'Selecione uma categoria'}
-                            selectedValue={category}
-                            onValueChange={(itemValue, itemIndex) => {
-                                setCategory(itemValue)
-                                setShowCategoryPicker(false)
-                            }}
-                        >
-                            {type === 'income' ? (
-                                $balance.categoriesIncome.map((item, index) => (
-                                    <Picker.Item key={index} label={item.title} value={item.title}/>
-                                ))
-                            ) : (
-                                $balance.categories.map((item, index) => (
-                                    <Picker.Item key={index} label={item.title} value={item.title}/>
-                                ))
-                            )}
-                        </Picker>
-                    )}
+                    <CategorySelect
+                        category={category}
+                        setShowCategoryPicker={setShowCategoryPicker}
+                        setCategory={setCategory}
+                        showCategoryPicker={showCategoryPicker}
+                        type={type}
+                    />
                 </View>
 
                 <Footer>
                     <CancelButton onPress={() => navigation.goBack()}>
-                        <Text style={{color: "#fff", fontSize: 16}}>
+                        <Text style={{color: "#000", fontSize: 16}}>
                             Cancelar
                         </Text>
                     </CancelButton>

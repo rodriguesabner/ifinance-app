@@ -2,7 +2,6 @@ import React, {useEffect, useRef, useState} from 'react';
 import {Container, Form, Input, Layout, MainContainer, SubTitle, Title, WrapperButton} from "./styles";
 import {ActivityIndicator, Alert, StatusBar, Text, TouchableOpacity, View} from "react-native";
 import {NavigationProp, useNavigation} from "@react-navigation/native";
-import {database} from "../../config/firebase.config";
 import {onValue, ref} from "firebase/database";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 

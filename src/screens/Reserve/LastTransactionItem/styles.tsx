@@ -1,7 +1,7 @@
 import styled from "styled-components/native";
 
 export const Layout = styled.Pressable`
-  background-color: #3e3e3e;
+  background-color: #eaeee8;
   padding: 30px 20px;
   flex-direction: row;
   justify-content: space-between;
@@ -17,7 +17,7 @@ export const LeftWrapper = styled.View`
 export const DateTransaction = styled.Text`
   font-size: 14px;
   margin-bottom: 15px;
-  color: #fff;
+  color: #999;
 `;
 
 export const Container = styled.View`
@@ -28,14 +28,14 @@ export const TitleTransaction = styled.Text`
   font-weight: 600;
   font-size: 16px;
   max-width: 200px;
-  color: #fff;
+  color: #000;
 `;
 
 export const Category = styled.Text`
   opacity: .3;
   font-size: 14px;
   font-weight: 600;
-  color: #fff;
+  color: #000;
 `;
 
 export const PayedTick = styled.Image`

@@ -1,20 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Alert, StatusBar, Text, TouchableOpacity, View} from "react-native";
-import {
-    DateText,
-    DateWrapper,
-    FlatList,
-    HeaderWrapper,
-    Layout,
-    LoadingWrapper,
-    TitleGreenText,
-    TitleHeader
-} from "./styles";
+import {ActivityIndicator, Alert, StatusBar, Text, View} from "react-native";
+import {FlatList, HeaderWrapper, Layout, LoadingWrapper} from "./styles";
 import CurrentBalance from "../../components/Home/CurrentBalance";
 import LastTransactionItem from "../../components/Home/LastTransactionItem";
 import {NavigationProp, useNavigation} from "@react-navigation/native";
-import {onValue, ref} from "firebase/database";
-import {database} from "../../config/firebase.config";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../store/reducers";
 import {
@@ -28,11 +17,10 @@ import {
 import moment from "moment";
 import 'moment/locale/pt-br';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {CaretLeft, CaretRight, SignOut} from "phosphor-react-native";
 import OverviewMoney from "../../components/Home/OverviewMoney";
 import MostOutcome from "../../components/Home/MostOutcome";
 import Actions from "../../components/Home/Actions";
-import RNDateTimePicker from "@react-native-community/datetimepicker";
+import api from "../../services/api";
 
 const Home = () => {
     const dispatch = useDispatch();
@@ -92,80 +80,73 @@ const Home = () => {
         const month = date.getMonth() + 1;
         const year = date.getFullYear();
 
-        const ret = $balance.databaseRef + `/${year}/${month}`;
-        const user: any = await AsyncStorage.getItem('@iFinance-status');
-        const sanitizedUser = JSON.parse(user);
+        const {data} = await api.get(`/v1/transactions?month=${month}&year=${year}`);
+        const values: any[] = [];
 
-        onValue(ref(database, ret), (snapshot) => {
-            const data = snapshot.val();
-            const values: any[] = [];
+        for (const transaction of data) {
+            //TODO: trocar values para uma variavel 'global', dentro de redux
+            values.push({
+                id: transaction.ID,
+                title: transaction.name,
+                value: transaction.price,
+                category: transaction.category,
+                date: transaction.date,
+                type: transaction.type,
+                paid: transaction.paid,
+                description: transaction.description,
+            })
+        }
 
-            for (let key in data) {
-                if (data[key].userId !== sanitizedUser?.id) continue;
+        const mostOutcome = values
+            .filter((item) => item.type === 'outcome' && item.category !== 'Saldo Conta')
+            .sort((a, b) => {
+                return parseFloat(b.value) - parseFloat(a.value);
+            })
+            .slice(0, 3)
+            .filter((item, index, self) =>
+                    index === self.findIndex((t) => (
+                        t.category === item.category
+                    ))
+            )
+            .map((item) => ({
+                title: item.category.toLowerCase()
+            }));
 
-                values.push({
-                    id: key,
-                    title: data[key].name,
-                    value: data[key].price,
-                    category: data[key].category,
-                    date: data[key].date,
-                    type: data[key].type,
-                    paid: data[key].paid,
-                    description: data[key].description,
-                })
+        setMostOutcome(mostOutcome);
+
+        const orderedValues = values.sort((a, b) => {
+            return new Date(b.date).getTime() - new Date(a.date).getTime();
+        });
+
+        setCountTransactions(orderedValues.length)
+
+        //group by date
+        const groupedValues = orderedValues.reduce((acc, item) => {
+            const date = moment(item.date).format('DD/MM/YYYY');
+
+            if (!acc[date]) {
+                acc[date] = [];
             }
 
-            const mostOutcome = values
-                .filter((item) => item.type === 'outcome' && item.category !== 'Saldo Conta')
-                .sort((a, b) => {
-                    return parseFloat(b.value) - parseFloat(a.value);
-                })
-                .slice(0, 3)
-                .filter((item, index, self) =>
-                        index === self.findIndex((t) => (
-                            t.category === item.category
-                        ))
-                )
-                .map((item) => ({
-                    title: item.category.toLowerCase()
-                }));
+            acc[date].push(item);
 
-            setMostOutcome(mostOutcome);
+            return acc;
+        }, {});
 
-            const orderedValues = values.sort((a, b) => {
-                return new Date(b.date).getTime() - new Date(a.date).getTime();
+        const valuesGrouped = Object
+            .keys(groupedValues)
+            .map((item) => {
+                return {
+                    date: item,
+                    values: groupedValues[item]
+                }
             });
 
-            setCountTransactions(orderedValues.length)
+        setTransactions(valuesGrouped);
+        dispatch(setTransactionsAction(orderedValues));
 
-            //group by date
-            const groupedValues = orderedValues.reduce((acc, item) => {
-                const date = moment(item.date).format('DD/MM/YYYY');
-
-                if (!acc[date]) {
-                    acc[date] = [];
-                }
-
-                acc[date].push(item);
-
-                return acc;
-            }, {});
-
-            const valuesGrouped = Object
-                .keys(groupedValues)
-                .map((item) => {
-                    return {
-                        date: item,
-                        values: groupedValues[item]
-                    }
-                });
-
-            setTransactions(valuesGrouped);
-            dispatch(setTransactionsAction(orderedValues));
-
-            calculateBalance(values)
-            dispatch(disableLoading());
-        });
+        calculateBalance(values)
+        dispatch(disableLoading());
     }
 
     const goToScreen = (path: string) => {
@@ -221,69 +202,12 @@ const Home = () => {
             <View>
                 <View style={{alignItems: 'flex-start'}}>
                     <HeaderWrapper>
-                        <TitleHeader>
-                            <TitleGreenText style={{color: '#a1f062'}}>
-                            Economize tempo e esforço</TitleGreenText> deixando
-                            {"\n"}
-                            todo trabalho <TitleGreenText>conosco!</TitleGreenText>
-                        </TitleHeader>
+                        <CurrentBalance/>
 
-                        <TouchableOpacity onPress={() => logout()}>
-                            <SignOut color={"#fff"} size={24} weight={"bold"}/>
-                        </TouchableOpacity>
+                        <Actions date={date}/>
+                        <OverviewMoney/>
                     </HeaderWrapper>
-
-                    <View style={{width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 20}}>
-                        <TouchableOpacity
-                            onPress={() => {
-                                const dateSelected = moment(date).subtract(1, 'month').toDate();
-                                setDate(dateSelected);
-                            }}
-                        >
-                            <CaretLeft color={"#fff"} size={24} weight={"bold"}/>
-                        </TouchableOpacity>
-
-                        <DateWrapper
-                            onPress={() => handleToggleDatePicker()}
-                        >
-                            <DateText>{renderMonthYear()}</DateText>
-                        </DateWrapper>
-                        <TouchableOpacity
-                            onPress={() => {
-                                const dateSelected = moment(date).add(1, 'month').toDate();
-                                setDate(dateSelected);
-                            }}
-                        >
-                            <CaretRight color={"#fff"} size={24} weight={"bold"}/>
-                        </TouchableOpacity>
-                    </View>
-
-                    {showDatePicker && (
-                        <View style={{
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            width: '100%'
-                        }}>
-                            <RNDateTimePicker
-                                style={{marginTop: 10}}
-                                mode={'date'}
-                                value={date}
-                                display={'spinner'}
-                                locale={'pt-BR'}
-                                onChange={(event, selectedDate) => {
-                                    const currentDate = selectedDate || date;
-                                    setDate(currentDate);
-                                    setShowDatePicker(false);
-                                }}
-                            />
-                        </View>
-                    )}
-
-                    <CurrentBalance/>
-                    <OverviewMoney/>
                 </View>
-
-                <Actions date={date}/>
 
                 <MostOutcome
                     countTransactions={countTransactions}
@@ -298,7 +222,7 @@ const Home = () => {
             <StatusBar
                 translucent
                 backgroundColor={'#222222'}
-                barStyle={'light-content'}
+                barStyle={'dark-content'}
             />
 
             {$balance.loading && (
@@ -309,9 +233,9 @@ const Home = () => {
 
             <FlatList
                 data={transactions}
-                keyExtractor={item => item.date}
+                keyExtractor={(item: any) => item.date}
                 contentContainerStyle={{gap: 10, paddingBottom: 200, paddingHorizontal: 16}}
-                renderItem={({item}) => <LastTransactionItem transaction={item}/>}
+                renderItem={({item}: {item: any}) => <LastTransactionItem transaction={item}/>}
                 ListHeaderComponent={() => <TopContent/>}
                 ListEmptyComponent={() => (
                     <View>

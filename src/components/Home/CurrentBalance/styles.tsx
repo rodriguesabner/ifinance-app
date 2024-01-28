@@ -2,19 +2,16 @@ import styled from "styled-components/native";
 import {Platform} from "react-native";
 
 export const Layout = styled.View`
-  margin-top: 10px;
+    margin-bottom: 20px;
 `;
 
 export const TopContainer = styled.View`
   flex-direction: row;
-  align-items: center;
-  justify-content: center;
 `;
 
 export const BottomContainer = styled.View`
   flex-direction: row;
   align-items: center;
-  justify-content: center;
   margin-bottom: 5px;
   opacity: .5;
 `;
@@ -24,16 +21,17 @@ type TotalProps = {
 }
 
 export const Total = styled.Text<TotalProps>`
-  font-size: ${Platform.OS === 'ios' ? 46 : 40}px;
+  font-size: ${Platform.OS === 'ios' ? 36 : 30}px;
   font-weight: 500;
   border-radius: 20px;
-  color: #ffffff;
+  color: #000;
 `;
 
 export const Currency = styled.Text`
-  font-size: ${Platform.OS === 'ios' ? 46 : 40}px;
-  opacity: 1;
-  color: #555555;
+    font-size: ${Platform.OS === 'ios' ? 36 : 30}px;
+    margin-left: 5px;
+    opacity: 1;
+    color: #555555;
 `;
 
 export const OutcomeValue = styled.Text`

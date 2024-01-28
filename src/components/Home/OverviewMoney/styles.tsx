@@ -9,17 +9,17 @@ export const Layout = styled.View`
 `;
 
 export const Container = styled.View`
-  flex-direction: column;
-  background-color: #3e3e3e;
-  width: 49%;
-  border-radius: 20px;
-  padding: 15px;
+    flex-direction: column;
+    background-color: #eaeee8;
+    width: 49%;
+    border-radius: 20px;
+    padding: 15px;
 `;
 
 export const Money = styled.Text`
   font-size: 22px;
   font-weight: 600;
-  color: #fff;
+  color: #000;
   margin-bottom: 40px;
 `;
 

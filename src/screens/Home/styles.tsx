@@ -7,18 +7,17 @@ interface LayoutProps {
 export const Layout = styled.View.attrs({
 })<LayoutProps>`
   flex: 1;
-  background-color: #222222;
+  background-color: #fff;
   padding: 10px 0;
 `;
 
 export const HeaderWrapper = styled.View`
   width: 100%;
-  flex-direction: row;
-  justify-content: space-between;
+  flex-direction: column;
 `;
 
 export const TitleHeader = styled.Text`
-  color: #fff;  
+  color: #000;  
 `;
 
 export const TitleGreenText = styled.Text`
@@ -64,5 +63,5 @@ export const DateWrapper = styled.TouchableOpacity<DateWrapperProps>`
 export const DateText = styled.Text`
   font-size: 15px;
   font-weight: 500;
-  color: #fff;
+  color: #000;
 `;

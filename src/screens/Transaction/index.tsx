@@ -1,21 +1,30 @@
 import React, {useEffect, useState} from 'react';
-import {BackButton, Button, CancelButton, Container, Footer, Form, Input, Label} from "./styles";
+import {
+    BackButton,
+    Button,
+    CancelButton,
+    Container,
+    Footer,
+    Form,
+    Input,
+    Label,
+    PriceItem,
+    WrapperCurrency,
+    WrapperPrices
+} from "./styles";
 import WrapperTitle from "../../components/Home/WrapperTitle";
 import {useSelector} from "react-redux";
 import {RootState} from "../../store/reducers";
-import {ActivityIndicator, Alert, Platform, Text, View} from "react-native";
-import {ref, set} from "firebase/database";
-import {database} from "../../config/firebase.config";
+import {ActivityIndicator, Alert, Text, View} from "react-native";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigation/native";
-import {CurrentCategory, PriceItem, TextCurrentCategory, WrapperCurrency, WrapperPrices} from "./styles";
-import {Picker} from "@react-native-picker/picker";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {DateText, DateWrapper} from "../Home/styles";
 import moment from "moment";
 import {ArrowLeft} from "phosphor-react-native";
+import api from "../../services/api";
+import CategorySelect from "./SelectCategory";
 
-const Income = () => {
+const Transaction = () => {
     const route: RouteProp<any> = useRoute();
     const navigation: NavigationProp<any> = useNavigation();
     const $balance = useSelector((state: RootState) => state.balance);
@@ -23,18 +32,17 @@ const Income = () => {
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
     const [category, setCategory] = useState('');
-    const [showCategoryPicker, setShowCategoryPicker] = useState(false);
     const [date, setDate] = useState<Date>(new Date());
+    const [type, setType] = useState<string>('');
     const [loading, setLoading] = useState(false);
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const [showCategoryPicker, setShowCategoryPicker] = useState(false);
+    const [description, setDescription] = useState('');
 
     useEffect(() => {
-        if (route.params?.date) {
-            setDate(new Date(route.params.date));
-        } else {
-            setDate(new Date());
-        }
-    }, [route.params?.date])
+        setDate(route.params?.date != null ? new Date(route.params.date) : new Date());
+        setType(route.params?.type ?? 'income');
+    }, [route.params])
 
     async function save() {
         if (!name || !price) {
@@ -44,31 +52,18 @@ const Income = () => {
 
         setLoading(true);
 
-        const getMonth = date.getMonth() + 1;
-        const getYear = date.getFullYear();
-
-        const id = Date.now();
-        const db = ref(database, $balance.databaseRef + `/${getYear}/${getMonth}/${id}`);
-
-        const user: any = await AsyncStorage.getItem('@iFinance-status');
-        const sanitizedUser = JSON.parse(user);
-
         const sanitizedPrice = price
             .replace('.', '')
             .replace(',', '.')
 
-        const newExpense = {
-            id,
+        await api.post(`/v1/transactions?type=${type}`, {
             name,
             price: sanitizedPrice,
-            category: 'Salário',
+            category,
             date: date.toISOString(),
-            type: 'income',
+            description,
             paid: false,
-            userId: sanitizedUser.id
-        }
-
-        await set(db, newExpense);
+        })
 
         setLoading(false);
         navigation.navigate('Home');
@@ -108,7 +103,7 @@ const Income = () => {
             maximumFractionDigits: 2,
         }
 
-        const valueMask = value
+        const valueMask: any = value
             .replace(/\D/g, '')
 
         const ret = new Intl
@@ -121,12 +116,12 @@ const Income = () => {
     return (
         <Container>
             <BackButton onPress={() => navigation.goBack()}>
-                <ArrowLeft size={24} color={'#fff'}/>
+                <ArrowLeft size={24} color={'#000'}/>
             </BackButton>
 
             <WrapperTitle
                 title={''}
-                subtitle={'Nova Receita'}
+                subtitle={type === 'income' ? 'Nova Receita' : 'Nova Despesa'}
             />
 
             <Form>
@@ -155,7 +150,17 @@ const Income = () => {
 
                 <View>
                     <Label>Título</Label>
-                    <Input placeholder="Salário" value={name} onChangeText={setName}/>
+                    <Input
+                        placeholder={type === 'income' ? "Salário" : "Netflix"}
+                        value={name}
+                        onChangeText={setName}
+                    />
+                </View>
+
+                <View>
+                    <Label>Descrição (opcional)</Label>
+                    <Input placeholder="Código do boleto/pix ou alguma observação" value={description}
+                           onChangeText={setDescription}/>
                 </View>
 
                 <View>
@@ -164,66 +169,37 @@ const Income = () => {
                     <WrapperCurrency>
                         <Input
                             keyboardType="numeric"
-                            placeholder="R$5900"
+                            placeholder={type === 'income' ? "R$5900" : 'R$30'}
                             value={price}
-                            onChangeText={(value) => maskMoneyBr(value)}
+                            onChangeText={(value: string) => maskMoneyBr(value)}
                         />
                     </WrapperCurrency>
                 </View>
                 <WrapperPrices
                     data={prices()}
-                    keyExtractor={(item) => item.value}
+                    keyExtractor={(item: any) => item.value}
                     contentContainerStyle={{gap: 10}}
-                    renderItem={({item}) => (
+                    renderItem={({item}: {item: any}) => (
                         <PriceItem onPress={() => handleClickPrice(item.label)}>
-                            <Text style={{color: '#fff'}}>{item.label}</Text>
+                            <Text style={{color: '#000'}}>{item.label}</Text>
                         </PriceItem>
                     )}
                 />
 
                 <View>
                     <Label>Categoria</Label>
-                    {Platform.OS === 'ios' ? (
-                        <View>
-                            <CurrentCategory onPress={() => setShowCategoryPicker(!showCategoryPicker)}>
-                                <TextCurrentCategory color={category === '' ? '#999' : '#fff'}>
-                                    {category === '' ? 'Escolher uma categoria' : category}
-                                </TextCurrentCategory>
-                            </CurrentCategory>
-                            {showCategoryPicker && (
-                                <Picker
-                                    selectedValue={category}
-                                    onValueChange={(itemValue, itemIndex) => {
-                                        setCategory(itemValue)
-                                        setShowCategoryPicker(false)
-                                    }}
-                                >
-                                    {$balance.categoriesIncome.map((item, index) => (
-                                        <Picker.Item key={index} label={item.title} value={item.title} color={'#fff'}/>
-                                    ))}
-                                </Picker>
-                            )}
-                        </View>
-                    ) : (
-                        <Picker
-                            style={{backgroundColor: '#fafafa', borderRadius: 4}}
-                            prompt={'Selecione uma categoria'}
-                            selectedValue={category}
-                            onValueChange={(itemValue, itemIndex) => {
-                                setCategory(itemValue)
-                                setShowCategoryPicker(false)
-                            }}
-                        >
-                            {$balance.categoriesIncome.map((item, index) => (
-                                <Picker.Item key={index} label={item.title} value={item.title}/>
-                            ))}
-                        </Picker>
-                    )}
+                    <CategorySelect
+                        category={category}
+                        setShowCategoryPicker={setShowCategoryPicker}
+                        setCategory={setCategory}
+                        showCategoryPicker={showCategoryPicker}
+                        type={type}
+                    />
                 </View>
 
                 <Footer>
                     <CancelButton onPress={() => navigation.goBack()}>
-                        <Text style={{color: "#fff", fontSize: 16}}>Cancelar</Text>
+                        <Text style={{color: "#000", fontSize: 16}}>Cancelar</Text>
                     </CancelButton>
                     <Button disabled={loading} onPress={() => save()}>
                         <Text style={{color: "#000", fontSize: 16}}>Salvar</Text>
@@ -237,4 +213,4 @@ const Income = () => {
     );
 };
 
-export default Income;
+export default Transaction;

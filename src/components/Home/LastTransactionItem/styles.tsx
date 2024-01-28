@@ -6,15 +6,15 @@ interface LayoutProps {
 export const Layout = styled.TouchableOpacity.attrs({
     activeOpacity: .8
 })<LayoutProps>`
-  border-bottom-width: 1px;
-  border-bottom-color: rgba(0, 0, 0, .1);
-  padding: 20px;
-  flex-direction: row;
-  justify-content: space-between;
-  border-radius: 20px;
-  align-items: center;
-  background-color: #3e3e3e;
-  margin-bottom: 5px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(0, 0, 0, .1);
+    padding: 20px;
+    flex-direction: row;
+    justify-content: space-between;
+    border-radius: 20px;
+    align-items: center;
+    background-color: #fff;
+    margin-bottom: 5px;
 `;
 
 export const LeftWrapper = styled.View`
@@ -36,7 +36,7 @@ export const TitleTransaction = styled.Text`
   font-weight: 600;
   font-size: 16px;
   max-width: 200px;
-  color: #fff;
+  color: #000;
 `;
 
 export const Category = styled.Text`
