@@ -67,8 +67,6 @@ const Transaction = () => {
             paid: false,
         })
 
-        console.log(data);
-
         setLoading(false);
         navigation.navigate('Home');
 

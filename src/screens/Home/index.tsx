@@ -42,7 +42,6 @@ const Home = () => {
 
     useEffect(() => {
         if($balance.transactionChanged === true) {
-            console.log('mudou, hein. Pra true!')
             getTransactions($balance.transactions);
         }
     }, [$balance.transactionChanged, $balance.transactions])
@@ -91,7 +90,6 @@ const Home = () => {
     }
 
     async function getTransactions(transactions: any[]) {
-        console.log('to mostrando o getTransactions agora --> ', transactions)
         dispatch(enableLoading());
 
         if (transactions.length <= 0) {
@@ -159,8 +157,6 @@ const Home = () => {
             });
 
         setTransactions(valuesGrouped);
-        console.log(valuesGrouped)
-
         dispatch(setTransactionsAction(orderedValues));
 
         calculateBalance(list)

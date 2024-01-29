@@ -18,9 +18,9 @@ const MostOutcome = (props: MostOutcomeProps) => {
             {props.mostOutcome.length > 0 && (
                 <Text>
                     Suas maiores saídas são em {
-                    props.mostOutcome.map((item: any, index) => (
+                    props.mostOutcome.map((item: any, index: number) => (
                         <Text key={index}>
-                            {item.title}{index < props.mostOutcome.length - 1 ? ', ' : ''}
+                            {item.name}{index < props.mostOutcome.length - 1 ? ', ' : ''}
                         </Text>
                     ))}
                 </Text>
