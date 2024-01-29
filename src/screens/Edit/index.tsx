@@ -45,13 +45,13 @@ const Edit = () => {
             const transaction = route.params?.transaction;
 
             setId(transaction.id)
-            setName(transaction.title);
+            setName(transaction.name);
             setCategory(transaction.category);
             setDate(new Date(transaction.date));
             setType(transaction.type);
             setDescription(transaction.description)
 
-            const price = transaction.value.toString();
+            const price = transaction.price.toString();
             setPrice(price.replace('.', ','));
         }
     }, [route.params?.transaction])

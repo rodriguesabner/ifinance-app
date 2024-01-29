@@ -7,13 +7,14 @@ import {RootState} from "../../../store/reducers";
 import {convertToPrice, disableLoading, enableLoading} from "../../../store/reducers/balance";
 import {NavigationProp, useNavigation} from "@react-navigation/native";
 import Toast from "react-native-root-toast";
+import api from "../../../services/api";
 
 export interface LastTransactionProps {
     backgroundColor?: string,
     transaction: {
         id: string,
-        title: string
-        value: number
+        name: string
+        price: number
         type: string
         category: string,
         date: Date,
@@ -29,16 +30,16 @@ const LastTransactionItem = (props: LastTransactionProps) => {
 
     const renderValue = () => {
         if (props.transaction.type === 'outcome') {
-            return `-R$${convertToPrice(props.transaction.value)}`
+            return `-R$${convertToPrice(props.transaction.price)}`
         }
 
-        return `R$${convertToPrice(props.transaction.value)}`
+        return `R$${convertToPrice(props.transaction.price)}`
     }
 
     const hiddeTitleValue = (): string => {
         if ($balance.hiddeValue) return '*****';
 
-        return props.transaction.title;
+        return props.transaction.name;
     }
 
     const hiddePriceValue = (): string => {
@@ -47,7 +48,7 @@ const LastTransactionItem = (props: LastTransactionProps) => {
         return renderValue();
     }
 
-    function onLongPress(transaction) {
+    function onLongPress(transaction: any) {
         Vibration.vibrate(50);
         Alert.alert(
             'O que deseja fazer?',
@@ -89,11 +90,7 @@ const LastTransactionItem = (props: LastTransactionProps) => {
     async function deleteTransaction(idTransaction: string) {
         dispatch(enableLoading());
 
-        const month = moment(props.transaction.date).format('M');
-        const year = moment(props.transaction.date).format('YYYY');
-
-        // const path = $balance.databaseRef + `${year}/${month}/${id}`;
-        // await remove(ref(database, path));
+        await api.delete(`/v1/transactions/${idTransaction}`);
 
         dispatch(disableLoading());
         Toast.show('A transação foi excluída com sucesso!');

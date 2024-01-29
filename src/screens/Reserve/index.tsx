@@ -29,7 +29,7 @@ const Reserve = () => {
         const total = transactions
             .filter((item) => item?.type === 'income')
             .reduce((acc, item) => {
-                return acc + parseFloat(item.value);
+                return acc + parseFloat(item.price);
             }, 0);
 
         setTotalBalance(total.toFixed(2));
@@ -41,9 +41,9 @@ const Reserve = () => {
 
         for (const transaction of data) {
             values.push({
-                id: transaction.ID,
-                title: transaction.name,
-                value: transaction.price,
+                id: transaction.ID ?? transaction.id,
+                name: transaction.name,
+                price: transaction.price,
                 category: transaction.category,
                 date: transaction.date,
                 type: 'income'

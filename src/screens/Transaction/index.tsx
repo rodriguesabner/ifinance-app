@@ -13,7 +13,7 @@ import {
     WrapperPrices
 } from "./styles";
 import WrapperTitle from "../../components/Home/WrapperTitle";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../store/reducers";
 import {ActivityIndicator, Alert, Text, View} from "react-native";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
@@ -23,10 +23,12 @@ import moment from "moment";
 import {ArrowLeft} from "phosphor-react-native";
 import api from "../../services/api";
 import CategorySelect from "./SelectCategory";
+import {setTransactionsAction, setTransactionsChanged} from "../../store/reducers/balance";
 
 const Transaction = () => {
     const route: RouteProp<any> = useRoute();
     const navigation: NavigationProp<any> = useNavigation();
+    const dispatch = useDispatch();
     const $balance = useSelector((state: RootState) => state.balance);
 
     const [name, setName] = useState('');
@@ -56,7 +58,7 @@ const Transaction = () => {
             .replace('.', '')
             .replace(',', '.')
 
-        await api.post(`/v1/transactions?type=${type}`, {
+        const {data} = await api.post(`/v1/transactions?type=${type}`, {
             name,
             price: sanitizedPrice,
             category,
@@ -65,8 +67,24 @@ const Transaction = () => {
             paid: false,
         })
 
+        console.log(data);
+
         setLoading(false);
         navigation.navigate('Home');
+
+        const result = [...$balance.transactions, {
+            id: data.InsertedID,
+            name,
+            price: sanitizedPrice,
+            category,
+            date: date.toISOString(),
+            type: type,
+            paid: false,
+            description: description,
+        }]
+        dispatch(setTransactionsAction(result));
+        dispatch(setTransactionsChanged(true));
+        dispatch(setTransactionsChanged(false));
     }
 
     const prices = () => ([

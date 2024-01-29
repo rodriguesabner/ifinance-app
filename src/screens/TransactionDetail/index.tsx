@@ -21,6 +21,7 @@ import {Checkbox} from "expo-checkbox";
 import * as Clipboard from "expo-clipboard";
 import {BackButton} from "../Transaction/SelectCategory/styles";
 import {ArrowLeft, Pencil, Clipboard as ClipboardIcon, Ticket} from "phosphor-react-native";
+import api from "../../services/api";
 
 export interface TransactionDetailProps {
     transaction: {
@@ -53,14 +54,14 @@ const TransactionDetail = () => {
             const transaction = route.params?.transaction;
 
             setId(transaction.id)
-            setName(transaction.title);
+            setName(transaction.name);
             setCategory(transaction.category);
             setDate(new Date(transaction.date));
             setType(transaction.type);
             setPaid(transaction.paid ?? false);
             setDescription(transaction.description ?? '')
 
-            const price = transaction.value.toString();
+            const price = transaction.price.toString();
             setPrice(price);
         }
     }, [route.params?.transaction]);
@@ -135,11 +136,7 @@ const TransactionDetail = () => {
     async function deleteTransaction() {
         dispatch(enableLoading());
 
-        const month = moment(route.params?.transaction.date).format('M');
-        const year = moment(route.params?.transaction.date).format('YYYY');
-
-        const path = $balance.databaseRef + `${year}/${month}/${route.params?.transaction.id}`;
-        // await remove(ref(database, path));
+        await api.delete(`/v1/transactions/${route.params?.transaction.id}`);
 
         dispatch(disableLoading());
         Toast.show('A transação foi excluída com sucesso!');

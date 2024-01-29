@@ -37,8 +37,15 @@ const Home = () => {
 
     useEffect(() => {
         getMonthsMoment();
-        getTransactions();
+        getTransactions([]);
     }, [date])
+
+    useEffect(() => {
+        if($balance.transactionChanged === true) {
+            console.log('mudou, hein. Pra true!')
+            getTransactions($balance.transactions);
+        }
+    }, [$balance.transactionChanged, $balance.transactions])
 
     function onSwipeLeft() {
         const newDate = moment(date).add(1, 'month').toDate();
@@ -58,13 +65,13 @@ const Home = () => {
         const incomeValue = transactions
             .filter((item) => item?.type === 'income')
             .reduce((acc, item) => {
-                return acc + parseFloat(item.value);
+                return acc + parseFloat(item.price);
             }, 0);
 
         const outcomeValue = transactions
             .filter((item) => item.type === 'outcome')
             .reduce((acc, item) => {
-                return acc + parseFloat(item.value);
+                return acc + parseFloat(item.price);
             }, 0);
 
         total = incomeValue - outcomeValue;
@@ -75,20 +82,29 @@ const Home = () => {
         dispatch(setBalance(total));
     }
 
-    async function getTransactions() {
-        dispatch(enableLoading());
+    async function fetchTransactions() {
         const month = date.getMonth() + 1;
         const year = date.getFullYear();
 
         const {data} = await api.get(`/v1/transactions?month=${month}&year=${year}`);
-        const values: any[] = [];
+        return data;
+    }
 
-        for (const transaction of data) {
-            //TODO: trocar values para uma variavel 'global', dentro de redux
-            values.push({
-                id: transaction.ID,
-                title: transaction.name,
-                value: transaction.price,
+    async function getTransactions(transactions: any[]) {
+        console.log('to mostrando o getTransactions agora --> ', transactions)
+        dispatch(enableLoading());
+
+        if (transactions.length <= 0) {
+            transactions = await fetchTransactions();
+        }
+
+        const list: any[] = [];
+
+        for (const transaction of transactions) {
+            list.push({
+                id: transaction.ID ?? transaction.ID,
+                name: transaction.name,
+                price: transaction.price,
                 category: transaction.category,
                 date: transaction.date,
                 type: transaction.type,
@@ -97,10 +113,10 @@ const Home = () => {
             })
         }
 
-        const mostOutcome = values
+        const mostOutcome = list
             .filter((item) => item.type === 'outcome' && item.category !== 'Saldo Conta')
             .sort((a, b) => {
-                return parseFloat(b.value) - parseFloat(a.value);
+                return parseFloat(b.price) - parseFloat(a.price);
             })
             .slice(0, 3)
             .filter((item, index, self) =>
@@ -109,12 +125,12 @@ const Home = () => {
                     ))
             )
             .map((item) => ({
-                title: item.category.toLowerCase()
+                name: item.category.toLowerCase()
             }));
 
         setMostOutcome(mostOutcome);
 
-        const orderedValues = values.sort((a, b) => {
+        const orderedValues = list.sort((a, b) => {
             return new Date(b.date).getTime() - new Date(a.date).getTime();
         });
 
@@ -143,9 +159,11 @@ const Home = () => {
             });
 
         setTransactions(valuesGrouped);
+        console.log(valuesGrouped)
+
         dispatch(setTransactionsAction(orderedValues));
 
-        calculateBalance(values)
+        calculateBalance(list)
         dispatch(disableLoading());
     }
 
@@ -233,9 +251,8 @@ const Home = () => {
 
             <FlatList
                 data={transactions}
-                keyExtractor={(item: any) => item.date}
                 contentContainerStyle={{gap: 10, paddingBottom: 200, paddingHorizontal: 16}}
-                renderItem={({item}: {item: any}) => <LastTransactionItem transaction={item}/>}
+                renderItem={({item}: { item: any }) => <LastTransactionItem transaction={item}/>}
                 ListHeaderComponent={() => <TopContent/>}
                 ListEmptyComponent={() => (
                     <View>

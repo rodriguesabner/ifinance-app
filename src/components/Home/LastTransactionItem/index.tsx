@@ -10,13 +10,13 @@ import {
     TypeTransaction
 } from "./styles";
 import {Alert, Text, Vibration, View} from "react-native";
-import moment from 'moment';
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../../store/reducers";
 import {convertToPrice, disableLoading, enableLoading} from "../../../store/reducers/balance";
 import {NavigationProp, useNavigation} from "@react-navigation/native";
 import Toast from "react-native-root-toast";
 import {Bank, Coin, Money, Receipt} from "phosphor-react-native"
+import api from "../../../services/api";
 
 export interface LastTransactionProps {
     backgroundColor?: string,
@@ -24,8 +24,8 @@ export interface LastTransactionProps {
         date: string,
         values: [{
             id: string,
-            title: string
-            value: number
+            name: string
+            price: number
             type: string
             category: string,
             date: Date,
@@ -102,11 +102,7 @@ const LastTransactionItem = (props: LastTransactionProps) => {
     async function deleteTransaction(transaction: any) {
         dispatch(enableLoading());
 
-        const month = moment(transaction.date).format('M');
-        const year = moment(transaction.date).format('YYYY');
-
-        const path = $balance.databaseRef + `${year}/${month}/${transaction.id}`;
-        // await remove(ref(database, path));
+        await api.delete(`/v1/transactions/${transaction.id}`);
 
         dispatch(disableLoading());
         Toast.show('A transação foi excluída com sucesso!');
@@ -190,13 +186,13 @@ const LastTransactionItem = (props: LastTransactionProps) => {
                         <Container>
                             <RenderTypeTransaction type={transaction.type} paid={transaction.paid}
                                                    category={transaction.category}/>
-                            <TitleTransaction>{hiddeTitleValue(transaction.title)}</TitleTransaction>
+                            <TitleTransaction>{hiddeTitleValue(transaction.name)}</TitleTransaction>
                             <Category>{transaction.category}</Category>
                         </Container>
                     </LeftWrapper>
 
                     <Text style={{fontSize: 16, fontWeight: 'bold', color: "#000"}}>
-                        {hiddePriceValue(transaction.type, transaction.value)}
+                        {hiddePriceValue(transaction.type, transaction.price)}
                     </Text>
                 </Layout>
             ))}

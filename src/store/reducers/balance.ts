@@ -15,6 +15,7 @@ export interface BalanceProps {
     transactions: any[],
     categories: CategoryProps[],
     categoriesIncome: CategoryProps[],
+    transactionChanged: boolean,
 }
 
 const initialState: BalanceProps = {
@@ -26,6 +27,7 @@ const initialState: BalanceProps = {
     income: 0,
     outcome: 0,
     transactions: [],
+    transactionChanged: false,
     categories: [
         {title: 'Bem estar'},
         {title: 'Cartão de Crédito'},
@@ -73,6 +75,9 @@ export const balanceSlice = createSlice({
         setTransactionsAction: (state, action: PayloadAction<any>) => {
             state.transactions = action.payload
         },
+        setTransactionsChanged: (state, action: PayloadAction<boolean>) => {
+            state.transactionChanged = action.payload
+        },
         setOutcome: (state, action: PayloadAction<any>) => {
             state.outcome = action.payload
         },
@@ -97,6 +102,7 @@ export const {
     setOutcome,
     setIncome,
     toggleHiddenValues,
+    setTransactionsChanged,
     enableLoading,
     disableLoading
 } = balanceSlice.actions
