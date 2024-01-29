@@ -18,11 +18,13 @@ const MostOutcome = (props: MostOutcomeProps) => {
             {props.mostOutcome.length > 0 && (
                 <Text>
                     Suas maiores saídas são em {
-                    props.mostOutcome.map((item: any, index: number) => (
-                        <Text key={index}>
-                            {item.name}{index < props.mostOutcome.length - 1 ? ', ' : ''}
-                        </Text>
-                    ))}
+                    props.mostOutcome.length === 2
+                        ? `${props.mostOutcome[0].name} e ${props.mostOutcome[1].name}`
+                        : props.mostOutcome
+                            .map((item: any, index: number, array: any[]) =>
+                                `${item.name}${index < array.length - 2 ? ', ' : index === array.length - 2 ? ' e ' : ''}`)
+                            .join('')
+                }
                 </Text>
             )}
         </Layout>
