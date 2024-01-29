@@ -27,8 +27,8 @@ const Actions = (props: ActionsProps) => {
 
         const wb = XLSX.utils.book_new();
         const transactions = $balance.transactions.map((transaction) => ({
-            title: transaction.title,
-            value: transaction.value,
+            name: transaction.name,
+            price: transaction.price,
             category: transaction.category,
             date: moment(transaction.date).format('DD/MM/YYYY'),
             type: transaction.type === 'income' ? 'Entrada' : 'Saída',
