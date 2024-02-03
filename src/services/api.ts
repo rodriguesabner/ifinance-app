@@ -1,13 +1,19 @@
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const api = axios.create({
-    baseURL: "http://192.168.15.16:8000"
+    baseURL: process.env.EXPO_PUBLIC_API_URL
 })
 
-
 api.interceptors.request.use(
-    (config) => {
-        config.headers['Authorization'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJlbWFpbCI6ImFibmVyQGdtYWlsLmNvbSIsImV4cCI6MTcwNjUwMjgzMiwiaWQiOiI2NWI2OWUxMDFlNTQ4Y2I3YWYzN2UyZmEifQ.H-vYoYSfjWxabhGZPwHKK6B9s1D68wL_0lRR_cGifrU'
+    async (config) => {
+        let value: any = await AsyncStorage.getItem('@iFinance-status')
+
+        if(value != null) {
+            value = JSON.parse(value);
+            config.headers['Authorization'] = value.token
+        }
+
         return config
     },
     (error) => {

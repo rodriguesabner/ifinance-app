@@ -1,9 +1,10 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {Container, Form, Input, Layout, MainContainer, SubTitle, Title, WrapperButton} from "./styles";
 import {ActivityIndicator, Alert, StatusBar, Text, TouchableOpacity, View} from "react-native";
 import {NavigationProp, useNavigation} from "@react-navigation/native";
-import {off, onValue, ref, update} from "firebase/database";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from "../../services/api";
+import JWT from "expo-jwt";
 
 const Register = () => {
     const navigation: NavigationProp<any> = useNavigation();
@@ -33,40 +34,15 @@ const Register = () => {
             return;
         }
 
-        const userRef = ref(database, 'users');
-        const allUsers: any[] = [];
-        onValue(userRef, async (snapshot) => {
-            const data = snapshot.val();
-            const users = Object.keys(data).map((key) => {
-                return {
-                    id: key,
-                    ...data[key],
-                };
-            });
-
-            const user = users.find((user) => user.email === email);
-            allUsers.push(user);
-        });
-
-        off(userRef)
-
-        const currentUser = allUsers.find((user) => user.email === email)
-        if (currentUser) {
-            Alert.alert('Ops!', 'Este email já está cadastrado');
-            setLoading(false);
-        } else {
-            const id = Date.now();
-            const db = ref(database, 'users/' + id);
-
-            const newUser = {
-                id,
-                name,
+        try {
+            const {data} = await api.post("/v1/user/register", {
                 email,
                 password
-            }
+            })
 
-            await update(db, newUser);
-            await goToHome({id, name});
+            await goToHome({token: data.token});
+        } catch (e) {
+            Alert.alert('Ops!', 'Este email já está cadastrado');
         }
     }
 
@@ -88,7 +64,7 @@ const Register = () => {
                             <Form>
                                 <Input
                                     placeholder={'João da Silva'}
-                                    onChangeText={(text) => setName(text)}
+                                    onChangeText={(text: string) => setName(text)}
                                     value={name}
                                     textContentType={'name'}
                                     keyboardType={'name-phone-pad'}
@@ -102,7 +78,7 @@ const Register = () => {
                                 <Input
                                     ref={emailInputRef}
                                     placeholder={'jhon@gmail.com'}
-                                    onChangeText={(text) => setEmail(text)}
+                                    onChangeText={(text: string) => setEmail(text)}
                                     value={email}
                                     textContentType={'emailAddress'}
                                     keyboardType={'email-address'}
@@ -116,7 +92,7 @@ const Register = () => {
                                 <Input
                                     ref={passwordInputRef}
                                     placeholder={'******'}
-                                    onChangeText={(text) => setPassword(text)}
+                                    onChangeText={(text: string) => setPassword(text)}
                                     value={password}
                                     textContentType={'password'}
                                     secureTextEntry={true}
@@ -128,7 +104,8 @@ const Register = () => {
 
                             <WrapperButton onPress={() => register()}>
                                 {loading && (<ActivityIndicator size={'small'} color={'#fff'}/>)}
-                                <Text style={{fontSize: 18, fontWeight: 'bold', color: '#fff', marginLeft: 15}}>Criar Conta</Text>
+                                <Text style={{fontSize: 18, fontWeight: 'bold', color: '#fff', marginLeft: 15}}>Criar
+                                    Conta</Text>
                             </WrapperButton>
 
                             <View

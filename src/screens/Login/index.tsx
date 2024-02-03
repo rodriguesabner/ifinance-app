@@ -2,8 +2,8 @@ import React, {useEffect, useRef, useState} from 'react';
 import {Container, Form, Input, Layout, MainContainer, SubTitle, Title, WrapperButton} from "./styles";
 import {ActivityIndicator, Alert, StatusBar, Text, TouchableOpacity, View} from "react-native";
 import {NavigationProp, useNavigation} from "@react-navigation/native";
-import {onValue, ref} from "firebase/database";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from "../../services/api";
 
 const Login = () => {
     const navigation: NavigationProp<any> = useNavigation();
@@ -46,28 +46,17 @@ const Login = () => {
             return;
         }
 
-        const userRef = ref(database, 'users');
-        onValue(userRef, async (snapshot) => {
-            const data = snapshot.val();
-            const users = Object.keys(data).map((key) => {
-                return {
-                    id: key,
-                    ...data[key],
-                };
-            });
+        try {
+            const {data} = await api.post("/v1/user/login", {
+                email,
+                password
+            })
 
-            const user = users.find((user) => user.email === email);
-
-            if (user) {
-                if (user.password === password) {
-                    await goToHome({id: user.id, name: user.name});
-                } else {
-                    Alert.alert('Ops!', 'Senha incorreta');
-                }
-            } else {
-                Alert.alert('Ops!', 'Usuário não encontrado');
-            }
-        });
+            await goToHome({token: data.token});
+        } catch (e) {
+            console.log(e);
+            Alert.alert('Ops!', 'Senha incorreta');
+        }
     }
 
     return (
@@ -85,7 +74,7 @@ const Login = () => {
                     <Form>
                         <Input
                             placeholder={'jhon@gmail.com'}
-                            onChangeText={(text) => setEmail(text)}
+                            onChangeText={(text: string) => setEmail(text)}
                             value={email}
                             textContentType={'emailAddress'}
                             keyboardType={'email-address'}
@@ -99,7 +88,7 @@ const Login = () => {
                         <Input
                             ref={passwordInputRef}
                             placeholder={'******'}
-                            onChangeText={(text) => setPassword(text)}
+                            onChangeText={(text: string) => setPassword(text)}
                             value={password}
                             textContentType={'password'}
                             secureTextEntry={true}

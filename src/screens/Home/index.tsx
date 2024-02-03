@@ -41,7 +41,7 @@ const Home = () => {
     }, [date])
 
     useEffect(() => {
-        if($balance.transactionChanged === true) {
+        if ($balance.transactionChanged) {
             getTransactions($balance.transactions);
         }
     }, [$balance.transactionChanged, $balance.transactions])
@@ -86,6 +86,10 @@ const Home = () => {
         const year = date.getFullYear();
 
         const {data} = await api.get(`/v1/transactions?month=${month}&year=${year}`);
+        if (data == null) {
+            return [];
+        }
+
         return data;
     }
 
