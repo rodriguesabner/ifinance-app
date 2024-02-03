@@ -12,11 +12,19 @@ import {
 import {Alert, Text, Vibration, View} from "react-native";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../../store/reducers";
-import {convertToPrice, disableLoading, enableLoading} from "../../../store/reducers/balance";
+import {
+    convertToPrice,
+    disableLoading,
+    enableLoading,
+    setTransactionsAction,
+    setTransactionsChanged
+} from "../../../store/reducers/balance";
 import {NavigationProp, useNavigation} from "@react-navigation/native";
 import Toast from "react-native-root-toast";
 import {Bank, Coin, Money, Receipt} from "phosphor-react-native"
 import api from "../../../services/api";
+import {TransactionProps} from "../../../interfaces/transaction.interface";
+import {deleteTransactionDb} from "../../../database/config.database";
 
 export interface LastTransactionProps {
     backgroundColor?: string,
@@ -68,7 +76,7 @@ const LastTransactionItem = (props: LastTransactionProps) => {
             [
                 {
                     text: 'Editar',
-                    onPress: () => navigation.navigate('Edit', {transaction}),
+                    onPress: () => navigation.navigate('Transaction', {transaction}),
                 },
                 {
                     text: 'Excluir',
@@ -99,12 +107,21 @@ const LastTransactionItem = (props: LastTransactionProps) => {
         );
     }
 
-    async function deleteTransaction(transaction: any) {
+    async function deleteTransaction(transaction: TransactionProps) {
         dispatch(enableLoading());
 
-        await api.delete(`/v1/transactions/${transaction.id}`);
+        if($balance.isOffline) {
+            await deleteTransactionDb(transaction)
+        } else {
+            await api.delete(`/v1/transactions/${transaction.id}`);
+        }
+
+        const result = $balance.transactions.filter((t) => t.id !== transaction.id)
 
         dispatch(disableLoading());
+        dispatch(setTransactionsAction(result));
+        dispatch(setTransactionsChanged(true));
+        dispatch(setTransactionsChanged(false));
         Toast.show('A transação foi excluída com sucesso!');
     }
 

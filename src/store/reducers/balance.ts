@@ -12,10 +12,11 @@ export interface BalanceProps {
     total: number;
     income: number;
     outcome: number;
-    transactions: any[],
-    categories: CategoryProps[],
-    categoriesIncome: CategoryProps[],
-    transactionChanged: boolean,
+    transactions: any[];
+    categories: CategoryProps[];
+    categoriesIncome: CategoryProps[];
+    transactionChanged: boolean;
+    isOffline: boolean;
 }
 
 const initialState: BalanceProps = {
@@ -28,6 +29,7 @@ const initialState: BalanceProps = {
     outcome: 0,
     transactions: [],
     transactionChanged: false,
+    isOffline: process.env.EXPO_PUBLIC_OFFLINE === 'true' ?? false,
     categories: [
         {title: 'Bem estar'},
         {title: 'Cartão de Crédito'},
@@ -51,7 +53,7 @@ const initialState: BalanceProps = {
         {title: 'Saldo Conta'},
         {title: 'Tranferência'},
         {title: 'Outros'},
-    ]
+    ],
 }
 
 export const convertToPrice = (value: any) => {

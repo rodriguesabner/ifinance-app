@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Alert, StatusBar, Text, View} from "react-native";
+import {ActivityIndicator, Alert, StatusBar, Text, TouchableOpacity, View} from "react-native";
 import {FlatList, HeaderWrapper, Layout, LoadingWrapper} from "./styles";
 import CurrentBalance from "../../components/Home/CurrentBalance";
 import LastTransactionItem from "../../components/Home/LastTransactionItem";
@@ -21,6 +21,8 @@ import OverviewMoney from "../../components/Home/OverviewMoney";
 import MostOutcome from "../../components/Home/MostOutcome";
 import Actions from "../../components/Home/Actions";
 import api from "../../services/api";
+import {Calendar, SignOut} from "phosphor-react-native";
+import {getTransactionsDb} from "../../database/config.database";
 
 const Home = () => {
     const dispatch = useDispatch();
@@ -45,18 +47,6 @@ const Home = () => {
             getTransactions($balance.transactions);
         }
     }, [$balance.transactionChanged, $balance.transactions])
-
-    function onSwipeLeft() {
-        const newDate = moment(date).add(1, 'month').toDate();
-        setDate(newDate);
-        setShowDatePicker(false);
-    }
-
-    function onSwipeRight() {
-        const newDate = moment(date).subtract(1, 'month').toDate();
-        setDate(newDate);
-        setShowDatePicker(false);
-    }
 
     function calculateBalance(transactions: any[]) {
         let total: number = 0;
@@ -85,7 +75,15 @@ const Home = () => {
         const month = date.getMonth() + 1;
         const year = date.getFullYear();
 
-        const {data} = await api.get(`/v1/transactions?month=${month}&year=${year}`);
+        let data: any;
+        if ($balance.isOffline) {
+            const {rows} = await getTransactionsDb(month, year);
+            data = rows._array;
+        } else {
+            const ret = await api.get(`/v1/transactions?month=${month}&year=${year}`);
+            data = ret.data;
+        }
+
         if (data == null) {
             return [];
         }
@@ -104,13 +102,13 @@ const Home = () => {
 
         for (const transaction of transactions) {
             list.push({
-                id: transaction.ID ?? transaction.ID,
+                id: transaction.ID ?? transaction.id,
                 name: transaction.name,
                 price: transaction.price,
                 category: transaction.category,
                 date: transaction.date,
                 type: transaction.type,
-                paid: transaction.paid,
+                paid: transaction.paid === 1 || transaction.paid === true,
                 description: transaction.description,
             })
         }
@@ -220,7 +218,19 @@ const Home = () => {
             <View>
                 <View style={{alignItems: 'flex-start'}}>
                     <HeaderWrapper>
-                        <CurrentBalance/>
+                        <View style={{flexDirection: 'row', justifyContent: "space-between"}}>
+                            <CurrentBalance/>
+
+                            <View style={{flexDirection: 'row', gap: 20, marginTop: 10}}>
+                                <TouchableOpacity onPress={() => {
+                                    handleToggleDatePicker()
+                                }}>
+                                    <Calendar/>
+                                </TouchableOpacity>
+
+                                {$balance.isOffline && <SignOut/>}
+                            </View>
+                        </View>
 
                         <Actions date={date}/>
                         <OverviewMoney/>

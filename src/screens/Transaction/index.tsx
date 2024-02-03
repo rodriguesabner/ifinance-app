@@ -21,9 +21,12 @@ import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigat
 import {DateText, DateWrapper} from "../Home/styles";
 import moment from "moment";
 import {ArrowLeft} from "phosphor-react-native";
-import api from "../../services/api";
 import CategorySelect from "./SelectCategory";
 import {setTransactionsAction, setTransactionsChanged} from "../../store/reducers/balance";
+import {insertTransaction, updateTransaction} from "../../database/config.database";
+import {TransactionProps} from "../../interfaces/transaction.interface";
+import api from "../../services/api";
+import Toast from "react-native-root-toast";
 
 const Transaction = () => {
     const route: RouteProp<any> = useRoute();
@@ -31,6 +34,7 @@ const Transaction = () => {
     const dispatch = useDispatch();
     const $balance = useSelector((state: RootState) => state.balance);
 
+    const [id, setId] = useState('');
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
     const [category, setCategory] = useState('');
@@ -40,10 +44,29 @@ const Transaction = () => {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showCategoryPicker, setShowCategoryPicker] = useState(false);
     const [description, setDescription] = useState('');
+    const [paid, setPaid] = useState(false)
+    const [isEdit, setIsEdit] = useState(false)
 
     useEffect(() => {
+        setIsEdit(false);
         setDate(route.params?.date != null ? new Date(route.params.date) : new Date());
         setType(route.params?.type ?? 'income');
+
+        if (route.params?.transaction != null) {
+            const transaction = route.params?.transaction;
+
+            setId(transaction.id)
+            setName(transaction.name);
+            setCategory(transaction.category);
+            setDate(new Date(transaction.date));
+            setType(transaction.type);
+            setDescription(transaction.description)
+            setPaid(transaction.paid)
+
+            const price = transaction.price.toString();
+            setPrice(price.replace('.', ','));
+            setIsEdit(true);
+        }
     }, [route.params])
 
     async function save() {
@@ -58,20 +81,77 @@ const Transaction = () => {
             .replace('.', '')
             .replace(',', '.')
 
-        const {data} = await api.post(`/v1/transactions?type=${type}`, {
+        const transactionToInsert: TransactionProps = {
             name,
             price: sanitizedPrice,
             category,
-            date: date.toISOString(),
+            date: new Date(),
+            type,
             description,
-            paid: false,
-        })
+            paid,
+        };
+
+        let result;
+
+        if (isEdit) {
+            result = await handleUpdate(transactionToInsert);
+        } else {
+            result = await handleSave(transactionToInsert);
+        }
 
         setLoading(false);
         navigation.navigate('Home');
 
+        dispatch(setTransactionsAction(result));
+        dispatch(setTransactionsChanged(true));
+        dispatch(setTransactionsChanged(false));
+    }
+
+    async function handleUpdate(transactionToInsert: TransactionProps) {
+        const sanitizedPrice = transactionToInsert.price
+            .replace('.', '')
+            .replace(',', '.')
+
+        if ($balance.isOffline) {
+            await updateTransaction({...transactionToInsert, id});
+        } else {
+            await api.patch(`/v1/transactions/${id}?type=${type}`, transactionToInsert)
+        }
+
+        Toast.show('A transação foi editada com sucesso!');
+
+        return $balance.transactions.map((transaction) => {
+            if (transaction.id === id) {
+                return {
+                    ...transaction,
+                    name,
+                    price: sanitizedPrice,
+                    category,
+                    date: date.toISOString(),
+                    type,
+                    paid,
+                    description,
+                };
+            }
+
+            return transaction;
+        });
+    }
+
+    async function handleSave(transactionToInsert: TransactionProps) {
+        let ret: any;
+        const sanitizedPrice = price
+            .replace('.', '')
+            .replace(',', '.')
+
+        if ($balance.isOffline) {
+            ret = await insertTransaction(transactionToInsert)
+        } else {
+            ret = await api.post(`/v1/transactions?type=${type}`, transactionToInsert);
+        }
+
         const result = [...$balance.transactions, {
-            id: data.InsertedID,
+            id: ret.insertId ?? ret.InsertedID,
             name,
             price: sanitizedPrice,
             category,
@@ -80,9 +160,8 @@ const Transaction = () => {
             paid: false,
             description: description,
         }]
-        dispatch(setTransactionsAction(result));
-        dispatch(setTransactionsChanged(true));
-        dispatch(setTransactionsChanged(false));
+
+        return result;
     }
 
     const prices = () => ([
@@ -137,7 +216,7 @@ const Transaction = () => {
 
             <WrapperTitle
                 title={''}
-                subtitle={type === 'income' ? 'Nova Receita' : 'Nova Despesa'}
+                subtitle={isEdit ? 'Editar Transação' : type === 'income' ? 'Nova Receita' : 'Nova Despesa'}
             />
 
             <Form>
@@ -195,7 +274,7 @@ const Transaction = () => {
                     data={prices()}
                     keyExtractor={(item: any) => item.value}
                     contentContainerStyle={{gap: 10}}
-                    renderItem={({item}: {item: any}) => (
+                    renderItem={({item}: { item: any }) => (
                         <PriceItem onPress={() => handleClickPrice(item.label)}>
                             <Text style={{color: '#000'}}>{item.label}</Text>
                         </PriceItem>

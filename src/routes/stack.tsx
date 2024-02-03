@@ -3,14 +3,17 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeScreen from '../screens/Home';
 import ReserveScreen from "../screens/Reserve";
 import Login from "../screens/Login";
-import Edit from "../screens/Edit";
 import TransactionDetail from "../screens/TransactionDetail";
 import Register from "../screens/Register";
 import TransactionScreen from "../screens/Transaction";
+import {useSelector} from "react-redux";
+import {RootState} from "../store/reducers";
 
 const StackRoutes = createNativeStackNavigator();
 
 function StackNativeRoutes() {
+    const $balance = useSelector((state: RootState) => state.balance);
+
     return (
         <StackRoutes.Navigator
             screenOptions={{
@@ -21,23 +24,13 @@ function StackNativeRoutes() {
                     backgroundColor: 'transparent',
                 },
             }}
-            initialRouteName="Login"
+            initialRouteName={$balance.isOffline ? "Home" : "Login"}
         >
             <StackRoutes.Screen name="Login" component={Login}/>
             <StackRoutes.Screen name="Register" component={Register}/>
             <StackRoutes.Screen
                 name="Home"
                 component={HomeScreen}
-            />
-            <StackRoutes.Screen
-                name="Edit"
-                component={Edit}
-                options={{
-                    animation: 'slide_from_right',
-                    presentation: 'modal',
-                    statusBarStyle: 'dark',
-                    statusBarColor: '#fff'
-                }}
             />
             <StackRoutes.Screen
                 name="Reserve"

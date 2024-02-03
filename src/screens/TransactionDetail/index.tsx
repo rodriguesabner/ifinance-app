@@ -15,13 +15,21 @@ import {
     WrapperPaidTransaction,
     DateText
 } from "./styles";
-import {convertToPrice, disableLoading, enableLoading} from "../../store/reducers/balance";
+import {
+    convertToPrice,
+    disableLoading,
+    enableLoading,
+    setTransactionsAction,
+    setTransactionsChanged
+} from "../../store/reducers/balance";
 import Toast from "react-native-root-toast";
 import {Checkbox} from "expo-checkbox";
 import * as Clipboard from "expo-clipboard";
 import {BackButton} from "../Transaction/SelectCategory/styles";
 import {ArrowLeft, Pencil, Clipboard as ClipboardIcon, Ticket} from "phosphor-react-native";
 import api from "../../services/api";
+import {TransactionProps} from "../../interfaces/transaction.interface";
+import {deleteTransactionDb} from "../../database/config.database";
 
 export interface TransactionDetailProps {
     transaction: {
@@ -136,9 +144,18 @@ const TransactionDetail = () => {
     async function deleteTransaction() {
         dispatch(enableLoading());
 
-        await api.delete(`/v1/transactions/${route.params?.transaction.id}`);
+        if($balance.isOffline) {
+            await deleteTransactionDb(route.params?.transaction)
+        } else {
+            await api.delete(`/v1/transactions/${route.params?.transaction.id}`);
+        }
+
+        const result = $balance.transactions.filter((t) => t.id !== route.params?.transaction.id)
 
         dispatch(disableLoading());
+        dispatch(setTransactionsAction(result));
+        dispatch(setTransactionsChanged(true));
+        dispatch(setTransactionsChanged(false));
         Toast.show('A transação foi excluída com sucesso!');
 
         navigation.goBack();
@@ -234,7 +251,7 @@ const TransactionDetail = () => {
 
                 <WrapperDetail>
                     <TouchableOpacity
-                        onPress={() => navigation.navigate('Edit', {transaction: route.params?.transaction})}
+                        onPress={() => navigation.navigate('Transaction', {transaction: route.params?.transaction})}
                         style={{width: "100%", flexDirection: 'row'}}
                     >
                         <Pencil size={30} color={'#999'} style={{marginRight: 15}}/>
