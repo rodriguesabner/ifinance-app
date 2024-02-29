@@ -108,7 +108,7 @@ const Transaction = () => {
     }
 
     async function handleUpdate(transactionToInsert: TransactionProps) {
-        const sanitizedPrice = transactionToInsert.price
+        const sanitizedPrice = price
             .replace('.', '')
             .replace(',', '.')
 
