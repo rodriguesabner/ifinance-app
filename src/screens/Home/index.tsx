@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Alert, StatusBar, Text, TouchableOpacity, View} from "react-native";
+import {ActivityIndicator, StatusBar, Text, TouchableOpacity, View} from "react-native";
 import {FlatList, HeaderWrapper, Layout, LoadingWrapper} from "./styles";
 import CurrentBalance from "../../components/Home/CurrentBalance";
 import LastTransactionItem from "../../components/Home/LastTransactionItem";
@@ -16,13 +16,13 @@ import {
 } from "../../store/reducers/balance";
 import moment from "moment";
 import 'moment/locale/pt-br';
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import OverviewMoney from "../../components/Home/OverviewMoney";
 import MostOutcome from "../../components/Home/MostOutcome";
 import Actions from "../../components/Home/Actions";
 import api from "../../services/api";
 import {Calendar, SignOut} from "phosphor-react-native";
 import {getTransactionsDb} from "../../database/config.database";
+import Assistant from "../../components/Home/Assistant";
 
 const Home = () => {
     const dispatch = useDispatch();
@@ -31,16 +31,12 @@ const Home = () => {
 
     const [transactions, setTransactions] = useState<any[]>([]);
     const [mostOutcome, setMostOutcome] = useState<any[]>([]);
-    const [date, setDate] = useState(new Date());
-    const [totalBalance, setTotalBalance] = useState(0);
-    const [showDatePicker, setShowDatePicker] = useState(false);
-    const [months, setMonths] = useState<any>([]);
+    const [, setTotalBalance] = useState(0);
     const [countTransactions, setCountTransactions] = useState(0);
 
     useEffect(() => {
-        getMonthsMoment();
         getTransactions([]);
-    }, [date])
+    }, [$balance.currentDate])
 
     useEffect(() => {
         if ($balance.transactionChanged) {
@@ -72,8 +68,8 @@ const Home = () => {
     }
 
     async function fetchTransactions() {
-        const month = date.getMonth() + 1;
-        const year = date.getFullYear();
+        const month = new Date($balance.currentDate).getMonth() + 1;
+        const year = new Date($balance.currentDate).getFullYear();
 
         let data: any;
         if ($balance.isOffline) {
@@ -136,7 +132,6 @@ const Home = () => {
 
         setCountTransactions(orderedValues.length)
 
-        //group by date
         const groupedValues = orderedValues.reduce((acc, item) => {
             const date = moment(item.date).format('DD/MM/YYYY');
 
@@ -165,54 +160,6 @@ const Home = () => {
         dispatch(disableLoading());
     }
 
-    const goToScreen = (path: string) => {
-        navigation.navigate(path, {date: moment(date).toISOString()});
-    }
-
-    const renderMonthYear = () => {
-        const month = moment(date).format('MM');
-        const year = moment(date).format('YYYY');
-
-        return `${month}/${year}`;
-    }
-
-    const handleToggleDatePicker = () => setShowDatePicker((prevState) => !prevState);
-
-    const getMonthsMoment = () => {
-        const months = moment
-            .months()
-            .map((item, index) => {
-                return {
-                    id: index + 1,
-                    name: item
-                }
-            });
-
-        setMonths(months);
-    }
-
-    async function logout() {
-        Alert.alert(
-            'Sair da conta',
-            'Tem certeza que deseja sair da sua conta?',
-            [
-                {
-                    text: 'Sim, sair',
-                    onPress: async () => {
-                        await AsyncStorage.removeItem('@iFinance-status');
-
-                        navigation.reset({
-                            index: 0,
-                            routes: [{name: 'Login'}],
-                        })
-                    }
-                },
-                {
-                    text: 'Não, ficar na conta'
-                }
-            ])
-    }
-
     const TopContent = () => {
         return (
             <View>
@@ -223,7 +170,7 @@ const Home = () => {
 
                             <View style={{flexDirection: 'row', gap: 20, marginTop: 10}}>
                                 <TouchableOpacity onPress={() => {
-                                    handleToggleDatePicker()
+                                    navigation.navigate('DateChooser')
                                 }}>
                                     <Calendar/>
                                 </TouchableOpacity>
@@ -232,7 +179,7 @@ const Home = () => {
                             </View>
                         </View>
 
-                        <Actions date={date}/>
+                        <Actions date={new Date($balance.currentDate)}/>
                         <OverviewMoney/>
                     </HeaderWrapper>
                 </View>

@@ -1,19 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import {Alert, Image, Pressable, Text, TouchableOpacity, View} from "react-native";
+import {Alert, Image, Text, TouchableOpacity, View} from "react-native";
 import moment from "moment/moment";
 import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigation/native";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../store/reducers";
 import {
     Category,
+    DateText,
     Label,
     Layout,
     Price,
     Title,
     WrapperDetail,
-    WrapperView,
     WrapperPaidTransaction,
-    DateText
+    WrapperView
 } from "./styles";
 import {
     convertToPrice,
@@ -26,10 +26,10 @@ import Toast from "react-native-root-toast";
 import {Checkbox} from "expo-checkbox";
 import * as Clipboard from "expo-clipboard";
 import {BackButton} from "../Transaction/SelectCategory/styles";
-import {ArrowLeft, Pencil, Clipboard as ClipboardIcon, Ticket} from "phosphor-react-native";
+import {ArrowLeft, Clipboard as ClipboardIcon, Pencil, Ticket} from "phosphor-react-native";
 import api from "../../services/api";
 import {TransactionProps} from "../../interfaces/transaction.interface";
-import {deleteTransactionDb} from "../../database/config.database";
+import {deleteTransactionDb, updateTransaction} from "../../database/config.database";
 
 export interface TransactionDetailProps {
     transaction: {
@@ -98,29 +98,39 @@ const TransactionDetail = () => {
         return category;
     }
 
-    async function markPaid(newPaidState: boolean) {
-        setPaid(newPaidState);
+    async function markPaid(isPaid: TransactionProps) {
+        dispatch(enableLoading());
+        if ($balance.isOffline) {
+            const transaction = route.params?.transaction;
+            const newTransaction = {
+                ...transaction,
+                id,
+                date: new Date(transaction.date),
+                paid: isPaid,
+            }
 
-        const getMonth = date.getMonth() + 1;
-        const getYear = date.getFullYear();
-
-        // const db = ref(database, $balance.databaseRef + `/${getYear}/${getMonth}/${id}`);
-        const newExpense = {
-            id,
-            name,
-            price: price.replace(',', '.'),
-            category,
-            date: date.toISOString(),
-            type,
-            paid: newPaidState
+            navigation.goBack();
+            await updateTransaction(newTransaction)
+        } else {
+            await api.put(`/v1/transactions/${route.params?.transaction.id}`);
         }
 
-        // await update(db, newExpense);
+        const result = $balance.transactions.map((transaction) => {
+            if (transaction.id === id) {
+                return {
+                    ...transaction,
+                    paid: isPaid,
+                };
+            }
 
-        if (newPaidState) Toast.show('A transação foi marcada como paga!');
-        else Toast.show('A transação foi marcada como não paga!');
+            return transaction;
+        });
 
-        navigation.goBack();
+        dispatch(disableLoading());
+        dispatch(setTransactionsAction(result));
+        dispatch(setTransactionsChanged(true));
+        dispatch(setTransactionsChanged(false));
+        Toast.show('A transação foi atualizada com sucesso!');
     }
 
     function deleteItem() {
@@ -144,7 +154,7 @@ const TransactionDetail = () => {
     async function deleteTransaction() {
         dispatch(enableLoading());
 
-        if($balance.isOffline) {
+        if ($balance.isOffline) {
             await deleteTransactionDb(route.params?.transaction)
         } else {
             await api.delete(`/v1/transactions/${route.params?.transaction.id}`);
