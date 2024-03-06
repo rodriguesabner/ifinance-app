@@ -1,94 +1,68 @@
 import React, {useEffect, useState} from 'react';
-import {
-    BackButton,
-    Button,
-    CancelButton,
-    Container,
-    Footer,
-    Form,
-    Input,
-    Label,
-    PriceItem,
-    WrapperCurrency,
-    WrapperPrices
-} from "./styles";
-import WrapperTitle from "../../components/Home/WrapperTitle";
+import {BackButton, Button, CancelButton, Container, Footer, Form, Input, Label, WrapperCurrency} from "./styles";
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../../store/reducers";
 import {ActivityIndicator, Alert, Text, View} from "react-native";
-import RNDateTimePicker from "@react-native-community/datetimepicker";
 import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigation/native";
-import {DateText, DateWrapper} from "../Home/styles";
-import moment from "moment";
 import {ArrowLeft} from "phosphor-react-native";
-import CategorySelect from "./SelectCategory";
-import {setTransactionsAction, setTransactionsChanged} from "../../store/reducers/balance";
-import {insertTransaction, updateTransaction} from "../../database/transaction";
-import {TransactionProps} from "../../interfaces/transaction.interface";
-import api from "../../services/api";
 import Toast from "react-native-root-toast";
+import {RootState} from "../../../store/reducers";
+import WrapperTitle from "../../../components/Home/WrapperTitle";
 
-const Transaction = () => {
+const Debt = () => {
     const route: RouteProp<any> = useRoute();
     const navigation: NavigationProp<any> = useNavigation();
     const dispatch = useDispatch();
     const $balance = useSelector((state: RootState) => state.balance);
 
+    const [loading, setLoading] = useState(false);
     const [id, setId] = useState('');
     const [name, setName] = useState('');
-    const [price, setPrice] = useState('');
-    const [category, setCategory] = useState('');
-    const [date, setDate] = useState<Date>(new Date());
-    const [type, setType] = useState<string>('');
-    const [loading, setLoading] = useState(false);
-    const [showDatePicker, setShowDatePicker] = useState(false);
-    const [showCategoryPicker, setShowCategoryPicker] = useState(false);
-    const [description, setDescription] = useState('');
+    const [installmentPrice, setInstallmentPrice] = useState('');
+    const [installmentQtd, setInstallmentQtd] = useState('');
+    const [installmentCurrent, setInstallmentCurrent] = useState('');
+    const [reason, setReason] = useState('');
     const [paid, setPaid] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
 
     useEffect(() => {
         setIsEdit(false);
-        setDate(route.params?.date != null ? new Date(route.params.date) : new Date());
-        setType(route.params?.type ?? 'income');
 
         if (route.params?.transaction != null) {
             const transaction = route.params?.transaction;
 
             setId(transaction.id)
             setName(transaction.name);
-            setCategory(transaction.category);
-            setDate(new Date(transaction.date));
-            setType(transaction.type);
-            setDescription(transaction.description)
+            setReason(transaction.description)
             setPaid(transaction.paid)
+            setInstallmentQtd(transaction.paid)
 
             const price = transaction.price.toString();
-            setPrice(price.replace('.', ','));
+            setInstallmentPrice(price.replace('.', ','));
             setIsEdit(true);
         }
     }, [route.params])
 
     async function save() {
-        if (!name || !price) {
+        if (!name || !installmentPrice) {
             Alert.alert('Ops!', 'Preencha todos os campos');
             return;
         }
 
         setLoading(true);
 
-        const sanitizedPrice = price
+        const sanitizedPrice = installmentPrice
             .replace('.', '')
             .replace(',', '.')
 
-        const transactionToInsert: TransactionProps = {
+        const transactionToInsert: any = {
             name,
             price: sanitizedPrice,
-            category,
-            date,
-            type,
-            description,
+            date: new Date(),
+            reason,
             paid,
+            installmentPrice,
+            installmentQtd,
+            installmentCurrent
         };
 
         let result;
@@ -108,7 +82,7 @@ const Transaction = () => {
     }
 
     async function handleUpdate(transactionToInsert: TransactionProps) {
-        const sanitizedPrice = price
+        const sanitizedPrice = installmentPrice
             .replace('.', '')
             .replace(',', '.')
 
@@ -130,7 +104,7 @@ const Transaction = () => {
                     date: date.toISOString(),
                     type,
                     paid,
-                    description,
+                    description: reason,
                 };
             }
 
@@ -140,7 +114,7 @@ const Transaction = () => {
 
     async function handleSave(transactionToInsert: TransactionProps) {
         let ret: any;
-        const sanitizedPrice = price
+        const sanitizedPrice = installmentPrice
             .replace('.', '')
             .replace(',', '.')
 
@@ -158,38 +132,10 @@ const Transaction = () => {
             date: date.toISOString(),
             type: type,
             paid: false,
-            description: description,
+            description: reason,
         }]
 
         return result;
-    }
-
-    const prices = () => ([
-        {value: '1', label: 'R$1'},
-        {value: '2', label: 'R$10'},
-        {value: '3', label: 'R$100'},
-        {value: '4', label: 'R$500'},
-        {value: '5', label: 'R$1000'},
-    ])
-
-    const handleClickPrice = (value: string) => {
-        const sanitizedValue = value.replace('R$', '');
-
-        const currentPrice = price === '' ? 0 : parseInt(price, 10);
-        const total = currentPrice + parseInt(sanitizedValue, 10);
-
-        setPrice(total.toString());
-    }
-
-    const handleToggleDatePicker = () => {
-        setShowDatePicker((prevState) => !prevState)
-    };
-
-    const renderMonthYear = () => {
-        const month = moment(date).format('MM');
-        const year = moment(date).format('YYYY');
-
-        return `${month}/${year}`;
     }
 
     const maskMoneyBr = (value: string) => {
@@ -205,7 +151,7 @@ const Transaction = () => {
             .NumberFormat('pt-BR', opts)
             .format(valueMask / 100);
 
-        setPrice(ret);
+        setInstallmentPrice(ret);
     }
 
     return (
@@ -216,79 +162,58 @@ const Transaction = () => {
 
             <WrapperTitle
                 title={''}
-                subtitle={isEdit ? 'Editar Transação' : type === 'income' ? 'Nova Receita' : 'Nova Despesa'}
+                subtitle={isEdit ? 'Editar Dívida' : 'Cadastrar Dívida'}
             />
 
             <Form>
-                <View style={{alignItems: 'flex-start'}}>
-                    <Label>Data</Label>
-                    <DateWrapper
-                        onPress={() => handleToggleDatePicker()}
-                    >
-                        <DateText>{renderMonthYear()}</DateText>
-                    </DateWrapper>
-
-                    {showDatePicker && (
-                        <RNDateTimePicker
-                            style={{marginTop: 10}}
-                            mode={'date'}
-                            display={'spinner'}
-                            value={date}
-                            onChange={(event, selectedDate) => {
-                                const currentDate = selectedDate || date;
-                                setDate(currentDate);
-                                setShowDatePicker(false)
-                            }}
-                        />
-                    )}
-                </View>
-
                 <View>
-                    <Label>Título</Label>
+                    <Label>Nome da Empresa</Label>
                     <Input
-                        placeholder={type === 'income' ? "Salário" : "Netflix"}
+                        placeholder={"Renner"}
                         value={name}
                         onChangeText={setName}
                     />
                 </View>
 
                 <View>
-                    <Label>Descrição (opcional)</Label>
-                    <Input placeholder="Código do boleto/pix ou alguma observação" value={description}
-                           onChangeText={setDescription}/>
+                    <Label>Motivo</Label>
+                    <Input
+                        placeholder="Qual o motívo da dívida"
+                        value={reason}
+                        onChangeText={setReason}
+                    />
                 </View>
 
                 <View>
-                    <Label>Valor</Label>
+                    <Label>Valor da Parcela</Label>
 
                     <WrapperCurrency>
                         <Input
                             keyboardType="numeric"
-                            placeholder={type === 'income' ? "R$5900" : 'R$30'}
-                            value={price}
+                            placeholder={"R$590"}
+                            value={installmentPrice}
                             onChangeText={(value: string) => maskMoneyBr(value)}
                         />
                     </WrapperCurrency>
                 </View>
-                <WrapperPrices
-                    data={prices()}
-                    keyExtractor={(item: any) => item.value}
-                    contentContainerStyle={{gap: 10}}
-                    renderItem={({item}: { item: any }) => (
-                        <PriceItem onPress={() => handleClickPrice(item.label)}>
-                            <Text style={{color: '#000'}}>{item.label}</Text>
-                        </PriceItem>
-                    )}
-                />
 
                 <View>
-                    <Label>Categoria</Label>
-                    <CategorySelect
-                        category={category}
-                        setShowCategoryPicker={setShowCategoryPicker}
-                        setCategory={setCategory}
-                        showCategoryPicker={showCategoryPicker}
-                        type={type}
+                    <Label>Quantidade de Parcelas</Label>
+                    <Input
+                        keyboardType="numeric"
+                        placeholder={"5"}
+                        value={installmentQtd}
+                        onChangeText={setInstallmentQtd}
+                    />
+                </View>
+
+                <View>
+                    <Label>Parcela Atual</Label>
+                    <Input
+                        keyboardType="numeric"
+                        placeholder={"2"}
+                        value={installmentCurrent}
+                        onChangeText={setInstallmentCurrent}
                     />
                 </View>
 
@@ -308,4 +233,4 @@ const Transaction = () => {
     );
 };
 
-export default Transaction;
+export default Debt;

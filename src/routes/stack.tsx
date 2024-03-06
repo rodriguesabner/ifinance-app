@@ -9,6 +9,7 @@ import TransactionScreen from "../screens/Transaction";
 import {useSelector} from "react-redux";
 import {RootState} from "../store/reducers";
 import DateChooser from "../screens/DateChooser";
+import Debts from "../screens/Debts";
 
 const StackRoutes = createNativeStackNavigator();
 
@@ -71,6 +72,13 @@ function StackNativeRoutes() {
                     presentation: 'modal',
                     statusBarStyle: 'dark',
                     statusBarColor: '#fff',
+                }}
+            />
+            <StackRoutes.Screen
+                name="Debts"
+                component={Debts}
+                options={{
+                    animation: 'slide_from_left',
                 }}
             />
         </StackRoutes.Navigator>

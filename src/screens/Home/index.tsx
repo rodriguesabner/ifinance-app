@@ -21,8 +21,7 @@ import MostOutcome from "../../components/Home/MostOutcome";
 import Actions from "../../components/Home/Actions";
 import api from "../../services/api";
 import {Calendar, SignOut} from "phosphor-react-native";
-import {getTransactionsDb} from "../../database/config.database";
-import Assistant from "../../components/Home/Assistant";
+import {getTransactionsDb} from "../../database/transaction";
 
 const Home = () => {
     const dispatch = useDispatch();

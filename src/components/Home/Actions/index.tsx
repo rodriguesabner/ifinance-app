@@ -64,6 +64,12 @@ const Actions = (props: ActionsProps) => {
             onPress: () => goToScreen('Transaction', 'outcome')
         },
         {
+            id: 2,
+            name: 'Dívidas',
+            icon: <Bank size={20} color={'#1e5b02'}/>,
+            onPress: () => goToScreen('Debts')
+        },
+        {
             id: 3,
             name: 'Reserva',
             icon: <Wallet size={20} color={'#1e5b02'}/>,

@@ -29,7 +29,7 @@ import {BackButton} from "../Transaction/SelectCategory/styles";
 import {ArrowLeft, Clipboard as ClipboardIcon, Pencil, Ticket} from "phosphor-react-native";
 import api from "../../services/api";
 import {TransactionProps} from "../../interfaces/transaction.interface";
-import {deleteTransactionDb, updateTransaction} from "../../database/config.database";
+import {deleteTransactionDb, updateTransaction} from "../../database/transaction";
 
 export interface TransactionDetailProps {
     transaction: {
