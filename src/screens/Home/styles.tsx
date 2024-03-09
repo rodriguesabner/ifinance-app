@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-import {Dimensions, FlatListProps} from "react-native";
+import {Dimensions, FlatListProps, Platform} from "react-native";
 
 interface LayoutProps {
     backgroundColor?: string;
@@ -39,7 +39,7 @@ export const FlatList = styled.FlatList.attrs({
     showsVerticalScrollIndicator: false,
 })<FlatListProps<any>>`
   flex: 1;
-  padding-top: 60px;
+  padding-top: ${Platform.OS === 'android' ? 0 : '60px'};
   padding-bottom: 120px;
 `;
 

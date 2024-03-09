@@ -51,26 +51,26 @@ const Actions = (props: ActionsProps) => {
 
     const items = [
         {
-            id: 2,
+            id: 1,
             name: 'Receita',
             icon: <Plus size={20} color={'#1e5b02'}/>,
             onPress: () => goToScreen('Transaction', 'income'),
             backgroundColor: "#9fe771"
         },
         {
-            id: 1,
+            id: 2,
             name: 'Despesa',
             icon: <Minus size={20} color={'#1e5b02'}/>,
             onPress: () => goToScreen('Transaction', 'outcome')
         },
         {
-            id: 2,
+            id: 3,
             name: 'Dívidas',
             icon: <Bank size={20} color={'#1e5b02'}/>,
             onPress: () => goToScreen('Debts')
         },
         {
-            id: 3,
+            id: 4,
             name: 'Reserva',
             icon: <Wallet size={20} color={'#1e5b02'}/>,
             onPress: () => goToScreen('Reserve')

@@ -13,6 +13,7 @@ export interface BalanceProps {
     income: number;
     outcome: number;
     transactions: any[];
+    debts: any[];
     currentDate: string;
     categories: CategoryProps[];
     categoriesIncome: CategoryProps[];
@@ -29,6 +30,7 @@ const initialState: BalanceProps = {
     income: 0,
     outcome: 0,
     transactions: [],
+    debts: [],
     currentDate: new Date().toISOString(),
     transactionChanged: false,
     isOffline: process.env.EXPO_PUBLIC_OFFLINE === 'true' ?? false,
@@ -79,7 +81,13 @@ export const balanceSlice = createSlice({
         setTransactionsAction: (state, action: PayloadAction<any>) => {
             state.transactions = action.payload
         },
+        setDebtsAction: (state, action: PayloadAction<any>) => {
+            state.debts = action.payload
+        },
         setTransactionsChanged: (state, action: PayloadAction<boolean>) => {
+            state.transactionChanged = action.payload
+        },
+        setDebtsChanged: (state, action: PayloadAction<boolean>) => {
             state.transactionChanged = action.payload
         },
         setOutcome: (state, action: PayloadAction<any>) => {
@@ -106,10 +114,12 @@ export const balanceSlice = createSlice({
 export const {
     setBalance,
     setTransactionsAction,
+    setDebtsAction,
     setOutcome,
     setIncome,
     toggleHiddenValues,
     setTransactionsChanged,
+    setDebtsChanged,
     enableLoading,
     disableLoading,
     setCurrentDate

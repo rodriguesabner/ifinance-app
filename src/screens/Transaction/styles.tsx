@@ -14,13 +14,11 @@ export const Container = styled.ScrollView.attrs({
 `;
 
 export const BackButton = styled.TouchableOpacity`
-  background-color: #a0e673;
-  margin-bottom: 20px;
-  width: 40px;
-  height: 40px;
-  border-radius: 500px;
-  justify-content: center;
-  align-items: center;
+    background-color: #eaeee8;
+    border-radius: 10px;
+    padding: 7px;
+    width: 40px;
+    align-items: center;
 `;
 
 export const Form = styled.View`

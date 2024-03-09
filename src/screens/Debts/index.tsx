@@ -8,8 +8,10 @@ import {FlatList} from "../Home/styles";
 import LastDebtItem from "../../components/Debts/LastDebtItem";
 import {DebtProps} from "../../interfaces/debts.interface";
 import {getDebtsDb} from "../../database/debts";
+import {useNavigation} from "@react-navigation/native";
 
 const Debts = () => {
+    const navigation = useNavigation();
     const [debts, setDebts] = useState<DebtProps[]>([]);
 
     useEffect(() => {
@@ -25,11 +27,11 @@ const Debts = () => {
         return (
             <View>
                 <Header>
-                    <Button>
+                    <Button onPress={() => navigation.goBack()}>
                         <ArrowLeft/>
                     </Button>
 
-                    <Button>
+                    <Button onPress={() => navigation.navigate('Debt')}>
                         <Plus/>
                     </Button>
                 </Header>

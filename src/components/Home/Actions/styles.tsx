@@ -21,9 +21,9 @@ export const ActionItem = styled.TouchableOpacity<ActionItemProps>`
     justify-content: center;
     background-color: ${props => props.backgroundColor != null ? props.backgroundColor : "#eaeee8"};
     height: 30px;
-    margin-right: 15px;
+    margin-right: 5px;
     gap: 5px;
-    border-radius: 20px;
+    border-radius: 10px;
     padding: 0 20px;
 `;
 

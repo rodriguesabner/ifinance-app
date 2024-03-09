@@ -13,7 +13,7 @@ const getDebtsDb = () => {
 
 const insertDebt = (transaction: DebtProps) => {
     return dbTransactionPromise(
-        `INSERT INTO transactions (company, price, reason, installmentValue, installmentNumbers, installmentCurrent)
+        `INSERT INTO debts (company, reason, installmentValue, installmentNumbers, installmentCurrent)
          VALUES (?, ?, ?, ?, ?, ?);`,
         [
             transaction.company,

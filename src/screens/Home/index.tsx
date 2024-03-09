@@ -174,7 +174,7 @@ const Home = () => {
                                     <Calendar/>
                                 </TouchableOpacity>
 
-                                {$balance.isOffline && <SignOut/>}
+                                {!$balance.isOffline && <SignOut/>}
                             </View>
                         </View>
 
@@ -194,8 +194,7 @@ const Home = () => {
     return (
         <Layout>
             <StatusBar
-                translucent
-                backgroundColor={'#222222'}
+                backgroundColor={"#fff"}
                 barStyle={'dark-content'}
             />
 

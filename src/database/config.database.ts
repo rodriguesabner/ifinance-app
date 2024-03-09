@@ -1,5 +1,4 @@
 import * as SQLite from 'expo-sqlite';
-import {TransactionProps} from "../interfaces/transaction.interface";
 
 const configDatabase = SQLite.openDatabase('transactions.db');
 

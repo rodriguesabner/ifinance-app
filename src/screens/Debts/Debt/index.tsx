@@ -7,6 +7,10 @@ import {ArrowLeft} from "phosphor-react-native";
 import Toast from "react-native-root-toast";
 import {RootState} from "../../../store/reducers";
 import WrapperTitle from "../../../components/Home/WrapperTitle";
+import {insertDebt} from "../../../database/debts";
+import {DebtProps} from "../../../interfaces/debts.interface";
+import api from "../../../services/api";
+import {setDebtsAction, setDebtsChanged} from "../../../store/reducers/balance";
 
 const Debt = () => {
     const route: RouteProp<any> = useRoute();
@@ -48,7 +52,7 @@ const Debt = () => {
             return;
         }
 
-        setLoading(true);
+        // setLoading(true);
 
         const sanitizedPrice = installmentPrice
             .replace('.', '')
@@ -73,23 +77,23 @@ const Debt = () => {
             result = await handleSave(transactionToInsert);
         }
 
-        setLoading(false);
+        // setLoading(false);
         navigation.navigate('Home');
 
-        dispatch(setTransactionsAction(result));
-        dispatch(setTransactionsChanged(true));
-        dispatch(setTransactionsChanged(false));
+        dispatch(setDebtsAction(result));
+        dispatch(setDebtsChanged(true));
+        dispatch(setDebtsChanged(false));
     }
 
-    async function handleUpdate(transactionToInsert: TransactionProps) {
+    async function handleUpdate(debtsToInsert: DebtProps) {
         const sanitizedPrice = installmentPrice
             .replace('.', '')
             .replace(',', '.')
 
         if ($balance.isOffline) {
-            await updateTransaction({...transactionToInsert, id});
+            await updateTransaction({...debtsToInsert, id});
         } else {
-            await api.patch(`/v1/transactions/${id}?type=${type}`, transactionToInsert)
+            await api.patch(`/v1/transactions/${id}?type=${type}`, debtsToInsert)
         }
 
         Toast.show('A transação foi editada com sucesso!');
@@ -112,27 +116,23 @@ const Debt = () => {
         });
     }
 
-    async function handleSave(transactionToInsert: TransactionProps) {
-        let ret: any;
+    async function handleSave(transactionToInsert: DebtProps) {
         const sanitizedPrice = installmentPrice
             .replace('.', '')
             .replace(',', '.')
 
-        if ($balance.isOffline) {
-            ret = await insertTransaction(transactionToInsert)
-        } else {
-            ret = await api.post(`/v1/transactions?type=${type}`, transactionToInsert);
-        }
+       const ret = await insertDebt(transactionToInsert)
 
         const result = [...$balance.transactions, {
             id: ret.insertId ?? ret.InsertedID,
             name,
             price: sanitizedPrice,
-            category,
-            date: date.toISOString(),
-            type: type,
-            paid: false,
-            description: reason,
+            date: new Date(),
+            reason,
+            paid,
+            installmentPrice,
+            installmentQtd,
+            installmentCurrent
         }]
 
         return result;
@@ -157,7 +157,7 @@ const Debt = () => {
     return (
         <Container>
             <BackButton onPress={() => navigation.goBack()}>
-                <ArrowLeft size={24} color={'#000'}/>
+                <ArrowLeft/>
             </BackButton>
 
             <WrapperTitle

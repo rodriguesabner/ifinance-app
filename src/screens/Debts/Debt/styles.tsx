@@ -7,20 +7,18 @@ export const Container = styled.ScrollView.attrs({
         paddingBottom: 120
     },
 })`
-  flex: 1;
-  background-color: #fff;
-  padding: 60px 20px;
-  padding-top: ${Platform.OS === 'android' ? 30 : 60}px;
+    flex: 1;
+    background-color: #fff;
+    padding: 60px 20px;
+    padding-top: ${Platform.OS === 'android' ? 30 : 60}px;
 `;
 
 export const BackButton = styled.TouchableOpacity`
-  background-color: #a0e673;
-  margin-bottom: 20px;
-  width: 40px;
-  height: 40px;
-  border-radius: 500px;
-  justify-content: center;
-  align-items: center;
+    background-color: #eaeee8;
+    border-radius: 10px;
+    padding: 7px;
+    width: 40px;
+    align-items: center;
 `;
 
 export const Form = styled.View`

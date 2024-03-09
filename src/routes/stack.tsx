@@ -10,6 +10,7 @@ import {useSelector} from "react-redux";
 import {RootState} from "../store/reducers";
 import DateChooser from "../screens/DateChooser";
 import Debts from "../screens/Debts";
+import Debt from "../screens/Debts/Debt";
 
 const StackRoutes = createNativeStackNavigator();
 
@@ -78,7 +79,14 @@ function StackNativeRoutes() {
                 name="Debts"
                 component={Debts}
                 options={{
-                    animation: 'slide_from_left',
+                    animation: 'slide_from_right',
+                }}
+            />
+            <StackRoutes.Screen
+                name="Debt"
+                component={Debt}
+                options={{
+                    animation: 'slide_from_right',
                 }}
             />
         </StackRoutes.Navigator>
