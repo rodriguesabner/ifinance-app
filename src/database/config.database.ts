@@ -1,58 +1,69 @@
-import * as SQLite from 'expo-sqlite';
+import {type SQLiteDatabase} from 'expo-sqlite';
 
-const configDatabase = SQLite.openDatabase('transactions.db');
-
-const setupDatabase = () => {
-    configDatabase.transaction(tx => {
-        tx.executeSql(
-            `CREATE TABLE IF NOT EXISTS transactions
+async function migrateDbIfNeeded(db: SQLiteDatabase) {
+    const DATABASE_VERSION = 1;
+    let {user_version: currentDbVersion} = await db.getFirstAsync<{ user_version: number }>(
+        'PRAGMA user_version'
+    );
+    if (currentDbVersion >= DATABASE_VERSION) {
+        return;
+    }
+    if (currentDbVersion === 0) {
+        await db.execAsync(
+            `
+             CREATE TABLE IF NOT EXISTS transactions
              (
-                 id          INTEGER PRIMARY KEY AUTOINCREMENT,
-                 name        TEXT,
-                 price       TEXT,
-                 category    TEXT,
-                 date        TEXT,
-                 type        TEXT,
-                 description TEXT,
-                 paid        BOOLEAN
+                 id
+                 INTEGER
+                 PRIMARY
+                 KEY
+                 AUTOINCREMENT,
+                 name
+                 TEXT,
+                 price
+                 TEXT,
+                 category
+                 TEXT,
+                 date
+                 TEXT,
+                 type
+                 TEXT,
+                 description
+                 TEXT,
+                 paid
+                 BOOLEAN
              );`
         );
-    });
-    configDatabase.transaction(tx => {
-        tx.executeSql(
+        await db.execAsync(
             `CREATE TABLE IF NOT EXISTS debts
              (
-                 id                  INTEGER PRIMARY KEY AUTOINCREMENT,
-                 company             TEXT
-                 price               TEXT
-                 installmentValue    TEXT
-                 installmentNumbers  INT
-                 installmentCurrent  INT
-                 reason              TEXT
+                 id
+                 INTEGER
+                 PRIMARY
+                 KEY
+                 AUTOINCREMENT,
+                 company
+                 TEXT
+                 price
+                 TEXT
+                 installmentValue
+                 TEXT
+                 installmentNumbers
+                 INT
+                 installmentCurrent
+                 INT
+                 reason
+                 TEXT
              );`
         );
-    });
-};
-
-const dbTransactionPromise = (query: string, params: any[], resolveAction: Function, errorAction: Function): Promise<any> => {
-    return new Promise((resolve, reject) => {
-        configDatabase.transaction(transactionContext => {
-            transactionContext.executeSql(
-                query,
-                params,
-                (_, result) => resolveAction(resolve, result),
-                (_, error) => errorAction(reject, error)
-            );
-        });
-    });
+        currentDbVersion = 1;
+    }
+    // if (currentDbVersion === 1) {
+    //   Add more migrations
+    // }
+    await db.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);
 }
 
-const resolveAction = (resolve: any, result: any) => resolve(result);
-const errorAction = (reject: any, error: any) => reject(error);
-
 export {
-    setupDatabase,
-    dbTransactionPromise,
-    resolveAction,
-    errorAction
-};
+    migrateDbIfNeeded
+}

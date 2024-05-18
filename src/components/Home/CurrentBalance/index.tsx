@@ -1,13 +1,26 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Currency, DescriptionTotal, Layout, TopContainer, Total} from "./styles";
 import {useSelector} from "react-redux";
 import {RootState} from "../../../store/reducers";
 import {convertToPrice} from "../../../store/reducers/balance";
 import * as Clipboard from 'expo-clipboard';
 import Toast from 'react-native-root-toast';
+import {useSQLiteContext} from "expo-sqlite";
 
 const CurrentBalance = () => {
     const $balance = useSelector((state: RootState) => state.balance);
+    const db = useSQLiteContext();
+    const [version, setVersion] = useState('');
+
+    useEffect(() => {
+        async function setup() {
+            const result = await db.getFirstAsync<{ 'sqlite_version()': string }>(
+                'SELECT sqlite_version()'
+            );
+            setVersion(result['sqlite_version()']);
+        }
+        setup();
+    }, []);
 
     const hiddeValue = (value: any): string => {
         if ($balance.hiddeValue) return '*****';
@@ -28,15 +41,17 @@ const CurrentBalance = () => {
 
     return (
         <Layout>
+            <DescriptionTotal>
+                Saldo Atual
+            </DescriptionTotal>
             <TopContainer>
-                <Total onLongPress={() => !$balance.hiddeValue && copyBalanceClipboard()}>
+                <Total
+                    onLongPress={() => !$balance.hiddeValue && copyBalanceClipboard()}
+                >
                     {hiddeValue($balance.total)}
                 </Total>
                 <Currency>{$balance.currency}</Currency>
             </TopContainer>
-            <DescriptionTotal>
-                Você terá no final do mês
-            </DescriptionTotal>
         </Layout>
     );
 };

@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import ConfigDatabase from "../../database/config.database";
 
 interface CategoryProps {
     title: string
@@ -107,7 +108,7 @@ export const balanceSlice = createSlice({
         },
         setCurrentDate: (state, action: PayloadAction<any>) => {
             state.currentDate = action.payload
-        }
+        },
     }
 })
 

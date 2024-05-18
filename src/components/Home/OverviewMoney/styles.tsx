@@ -1,7 +1,6 @@
 import styled from "styled-components/native";
 
 export const Layout = styled.View`
-  margin: 40px 0;
   justify-content: space-between;
   flex-direction: row;
   align-items: center;

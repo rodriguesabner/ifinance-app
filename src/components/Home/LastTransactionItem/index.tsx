@@ -24,7 +24,7 @@ import Toast from "react-native-root-toast";
 import {Bank, Coin, Money, Receipt} from "phosphor-react-native"
 import api from "../../../services/api";
 import {TransactionProps} from "../../../interfaces/transaction.interface";
-import {deleteTransactionDb} from "../../../database/config.database";
+import {SQLiteDatabase, useSQLiteContext} from "expo-sqlite";
 
 export interface LastTransactionProps {
     backgroundColor?: string,
@@ -43,6 +43,7 @@ export interface LastTransactionProps {
 }
 
 const LastTransactionItem = (props: LastTransactionProps) => {
+    const db: SQLiteDatabase = useSQLiteContext();
     const navigation: NavigationProp<any> = useNavigation();
 
     const dispatch = useDispatch();
@@ -111,7 +112,12 @@ const LastTransactionItem = (props: LastTransactionProps) => {
         dispatch(enableLoading());
 
         if($balance.isOffline) {
-            await deleteTransactionDb(transaction)
+            await db.runAsync(
+                `DELETE
+                     FROM transactions
+                     WHERE id = ?;`,
+                [transaction.id],
+            );
         } else {
             await api.delete(`/v1/transactions/${transaction.id}`);
         }

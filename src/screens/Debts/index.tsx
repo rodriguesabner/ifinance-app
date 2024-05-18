@@ -9,14 +9,17 @@ import LastDebtItem from "../../components/Debts/LastDebtItem";
 import {DebtProps} from "../../interfaces/debts.interface";
 import {getDebtsDb} from "../../database/debts";
 import {useNavigation} from "@react-navigation/native";
+import {SQLiteDatabase, useSQLiteContext} from "expo-sqlite";
 
 const Debts = () => {
     const navigation = useNavigation();
+    const db: SQLiteDatabase = useSQLiteContext();
     const [debts, setDebts] = useState<DebtProps[]>([]);
 
     useEffect(() => {
         async function getDebts(){
-            const {rows} = await getDebtsDb();
+            const {rows} = await db.getAllAsync<DebtProps[]>("SELECT * FROM debts;");
+            console.log(rows);
             setDebts(rows._array)
         }
 

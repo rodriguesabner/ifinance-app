@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-import {FlatListProps, Platform} from "react-native";
+import {FlatListProps, Platform, TouchableOpacityProps} from "react-native";
 
 export const Container = styled.ScrollView.attrs({
     showsVerticalScrollIndicator: false,
@@ -13,7 +13,7 @@ export const Container = styled.ScrollView.attrs({
   padding-top: ${Platform.OS === 'android' ? 30 : 60}px;
 `;
 
-export const BackButton = styled.TouchableOpacity`
+export const BackButton = styled.TouchableOpacity<TouchableOpacityProps>`
     background-color: #eaeee8;
     border-radius: 10px;
     padding: 7px;

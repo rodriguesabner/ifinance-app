@@ -16,20 +16,24 @@ import {
 } from "../../store/reducers/balance";
 import moment from "moment";
 import 'moment/locale/pt-br';
-import OverviewMoney from "../../components/Home/OverviewMoney";
 import MostOutcome from "../../components/Home/MostOutcome";
-import Actions from "../../components/Home/Actions";
 import api from "../../services/api";
 import {Calendar, SignOut} from "phosphor-react-native";
-import {getTransactionsDb} from "../../database/transaction";
+import {SQLiteDatabase, useSQLiteContext} from "expo-sqlite";
+import {TransactionProps} from "../../interfaces/transaction.interface";
+import BottomNavigation from "../../components/BottomNavigation";
+import Assistant from "../../components/Home/Assistant";
+import TransactionsToPay from "../../components/Home/TransactionsToPay";
 
 const Home = () => {
     const dispatch = useDispatch();
+    const db: SQLiteDatabase = useSQLiteContext();
     const $balance = useSelector((state: RootState) => state.balance);
     const navigation: NavigationProp<any> = useNavigation();
 
     const [transactions, setTransactions] = useState<any[]>([]);
     const [mostOutcome, setMostOutcome] = useState<any[]>([]);
+    const [transactionToPay, setTransactionToPay] = useState<any[]>([])
     const [, setTotalBalance] = useState(0);
     const [countTransactions, setCountTransactions] = useState(0);
 
@@ -72,8 +76,21 @@ const Home = () => {
 
         let data: any;
         if ($balance.isOffline) {
-            const {rows} = await getTransactionsDb(month, year);
-            data = rows._array;
+            let choosedMonth = month.toString()
+
+            if (month < 10) {
+                choosedMonth = `0${month}`.slice(-2);
+            }
+
+            const rows = await db.getAllAsync<TransactionProps[]>("" +
+                `SELECT *
+                 FROM transactions
+                 WHERE strftime('%m', date) = ?
+                   AND strftime('%Y', date) = ?;`,
+                [choosedMonth, year.toString()]
+            );
+
+            data = rows;
         } else {
             const ret = await api.get(`/v1/transactions?month=${month}&year=${year}`);
             data = ret.data;
@@ -107,6 +124,8 @@ const Home = () => {
                 description: transaction.description,
             })
         }
+
+        setTransactionToPay(list.filter((item) => item.type === 'outcome' && item.category !== 'Saldo Conta' && item.paid === false && item.price > 0));
 
         const mostOutcome = list
             .filter((item) => item.type === 'outcome' && item.category !== 'Saldo Conta')
@@ -178,10 +197,14 @@ const Home = () => {
                             </View>
                         </View>
 
-                        <Actions date={new Date($balance.currentDate)}/>
-                        <OverviewMoney/>
+                        {/*<Actions date={new Date($balance.currentDate)}/>*/}
+                        {/*<OverviewMoney/>*/}
+
+                        <TransactionsToPay transactionsToPay={transactionToPay}/>
                     </HeaderWrapper>
                 </View>
+
+                <Assistant transactions={transactions}/>
 
                 <MostOutcome
                     countTransactions={countTransactions}
@@ -217,6 +240,8 @@ const Home = () => {
                     </View>
                 )}
             />
+
+            <BottomNavigation/>
         </Layout>
     );
 };

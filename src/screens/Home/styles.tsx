@@ -6,9 +6,9 @@ interface LayoutProps {
 }
 export const Layout = styled.View.attrs({
 })<LayoutProps>`
-  flex: 1;
-  background-color: #fff;
-  padding: 10px 0;
+    flex: 1;
+    background-color: #fafafa;
+    padding: 10px 0;
 `;
 
 export const HeaderWrapper = styled.View`

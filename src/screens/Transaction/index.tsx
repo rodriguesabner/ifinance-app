@@ -23,12 +23,13 @@ import moment from "moment";
 import {ArrowLeft} from "phosphor-react-native";
 import CategorySelect from "./SelectCategory";
 import {setTransactionsAction, setTransactionsChanged} from "../../store/reducers/balance";
-import {insertTransaction, updateTransaction} from "../../database/transaction";
 import {TransactionProps} from "../../interfaces/transaction.interface";
 import api from "../../services/api";
 import Toast from "react-native-root-toast";
+import {SQLiteDatabase, useSQLiteContext} from "expo-sqlite";
 
 const Transaction = () => {
+    const db: SQLiteDatabase = useSQLiteContext();
     const route: RouteProp<any> = useRoute();
     const navigation: NavigationProp<any> = useNavigation();
     const dispatch = useDispatch();
@@ -113,7 +114,27 @@ const Transaction = () => {
             .replace(',', '.')
 
         if ($balance.isOffline) {
-            await updateTransaction({...transactionToInsert, id});
+            await db.runAsync(
+                `UPDATE transactions
+                 SET name        = ?,
+                     price       = ?,
+                     category    = ?,
+                     date        = ?,
+                     type        = ?,
+                     description = ?,
+                     paid        = ?
+                 WHERE id = ?;`,
+                [
+                    transactionToInsert.name,
+                    transactionToInsert.price,
+                    transactionToInsert.category,
+                    transactionToInsert.date.toISOString(),
+                    transactionToInsert.type,
+                    transactionToInsert.description,
+                    transactionToInsert.paid,
+                    id,
+                ],
+            )
         } else {
             await api.patch(`/v1/transactions/${id}?type=${type}`, transactionToInsert)
         }
@@ -145,13 +166,28 @@ const Transaction = () => {
             .replace(',', '.')
 
         if ($balance.isOffline) {
-            ret = await insertTransaction(transactionToInsert)
+            console.log(transactionToInsert)
+            ret = await db.runAsync(
+                `INSERT INTO transactions (name, price, category, date, type, description, paid)
+                 VALUES (?, ?, ?, ?, ?, ?, ?);`,
+                [
+                    transactionToInsert.name,
+                    transactionToInsert.price,
+                    transactionToInsert.category,
+                    transactionToInsert.date.toISOString(),
+                    transactionToInsert.type,
+                    transactionToInsert.description,
+                    transactionToInsert.paid,
+                ]
+            );
+
+            console.log(ret);
         } else {
             ret = await api.post(`/v1/transactions?type=${type}`, transactionToInsert);
         }
 
         const result = [...$balance.transactions, {
-            id: ret.insertId ?? ret.InsertedID,
+            id: ret.lastInsertRowId,
             name,
             price: sanitizedPrice,
             category,

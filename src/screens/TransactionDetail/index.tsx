@@ -29,7 +29,7 @@ import {BackButton} from "../Transaction/SelectCategory/styles";
 import {ArrowLeft, Clipboard as ClipboardIcon, Pencil, Ticket} from "phosphor-react-native";
 import api from "../../services/api";
 import {TransactionProps} from "../../interfaces/transaction.interface";
-import {deleteTransactionDb, updateTransaction} from "../../database/transaction";
+import {SQLiteDatabase, useSQLiteContext} from "expo-sqlite";
 
 export interface TransactionDetailProps {
     transaction: {
@@ -43,6 +43,7 @@ export interface TransactionDetailProps {
 }
 
 const TransactionDetail = () => {
+    const db: SQLiteDatabase = useSQLiteContext();
     const route: RouteProp<any> = useRoute();
     const dispatch = useDispatch();
     const $balance = useSelector((state: RootState) => state.balance);
@@ -110,7 +111,27 @@ const TransactionDetail = () => {
             }
 
             navigation.goBack();
-            await updateTransaction(newTransaction)
+            await db.runAsync(
+                `UPDATE transactions
+                 SET name        = ?,
+                     price       = ?,
+                     category    = ?,
+                     date        = ?,
+                     type        = ?,
+                     description = ?,
+                     paid        = ?
+                 WHERE id = ?;`,
+                [
+                    newTransaction.name,
+                    newTransaction.price,
+                    newTransaction.category,
+                    newTransaction.date.toISOString(),
+                    newTransaction.type,
+                    newTransaction.description,
+                    newTransaction.paid,
+                    newTransaction.id,
+                ],
+            )
         } else {
             await api.put(`/v1/transactions/${route.params?.transaction.id}`);
         }
@@ -155,7 +176,12 @@ const TransactionDetail = () => {
         dispatch(enableLoading());
 
         if ($balance.isOffline) {
-            await deleteTransactionDb(route.params?.transaction)
+            await db.runAsync(
+                    `DELETE
+                     FROM transactions
+                     WHERE id = ?;`,
+                    [route.params?.transaction.id],
+                );
         } else {
             await api.delete(`/v1/transactions/${route.params?.transaction.id}`);
         }

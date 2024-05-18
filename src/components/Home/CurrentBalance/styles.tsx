@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-import {Platform} from "react-native";
+import {Platform, TextProps} from "react-native";
 
 export const Layout = styled.View`
     margin-bottom: 20px;
@@ -16,7 +16,7 @@ export const BottomContainer = styled.View`
   opacity: .5;
 `;
 
-type TotalProps = {
+interface TotalProps extends TextProps {
     color?: string;
 }
 

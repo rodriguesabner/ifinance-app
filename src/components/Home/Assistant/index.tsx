@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Layout, Text} from "./styles";
+import {Layout, Text, Title} from "./styles";
 import WrapperTitle from "../WrapperTitle";
 import api from "../../../services/api";
 
@@ -26,6 +26,8 @@ const Assistant = (props: AssistantProps) => {
                 ]
             };
 
+            return;
+
             try {
                 const {data} = await api.post('https://api.openai.com/v1/chat/completions',
                     body,
@@ -33,10 +35,11 @@ const Assistant = (props: AssistantProps) => {
                         maxBodyLength: Infinity,
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${process.env.EXPO_PUBLIC_OPEN_AI_KEY}`
+                            Authorization: `Bearer ${process.env.EXPO_PUBLIC_OPEN_AI_KEY}`
                         }
                     });
                 console.log(data);
+                setTipBot(data);
             } catch (e) {
                 console.log(JSON.stringify(e))
             }
@@ -49,14 +52,10 @@ const Assistant = (props: AssistantProps) => {
 
     return (
         <Layout>
-            <WrapperTitle
-                title={''}
-                subtitle={`Assistente`}
-            />
-
-            <Text>
-
-            </Text>
+            <Title>
+                Insights Inteligente (IA)
+            </Title>
+            <Text>{tipBot}</Text>
         </Layout>
     );
 };
