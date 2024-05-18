@@ -1,26 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Container, Item, Layout} from "./styles";
 import {Bank, DotsThree, Receipt, Wallet, X} from "phosphor-react-native";
 import {Text} from "react-native";
-import ModalFull from "../Home/ModalFull";
+import {useNavigation} from "@react-navigation/native";
 
 const BottomNavigation = () => {
-    const onPressedAdd = () => {
-        return (
-            <ModalFull>
-                <X />
-                <Text>
-                    O que vamos adicionar?
-                </Text>
-                <Text>
-                    Receita
-                </Text>
-                <Text>
-                    Despesa
-                </Text>
-            </ModalFull>
-        )
-    }
+    const navigation = useNavigation();
 
     return (
         <Layout>
@@ -33,7 +18,7 @@ const BottomNavigation = () => {
                     <Receipt size={18} color={"#fff"}/>
                     <Text style={{color: '#fff'}}>Extrato</Text>
                 </Item>
-                <Item onPress={() => onPressedAdd()}>
+                <Item onPress={() => navigation.navigate("ChooseActionAdd")}>
                     <Bank size={18} color={"#fff"}/>
                     <Text style={{color: '#fff'}}>Adicionar</Text>
                 </Item>

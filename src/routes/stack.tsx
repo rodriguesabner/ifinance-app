@@ -11,6 +11,7 @@ import {RootState} from "../store/reducers";
 import DateChooser from "../screens/DateChooser";
 import Debts from "../screens/Debts";
 import Debt from "../screens/Debts/Debt";
+import ChooseActionAdd from "../screens/ChooseActionAdd";
 
 const StackRoutes = createNativeStackNavigator();
 
@@ -31,6 +32,7 @@ function StackNativeRoutes() {
         >
             <StackRoutes.Screen name="Login" component={Login}/>
             <StackRoutes.Screen name="Register" component={Register}/>
+            <StackRoutes.Screen name="ChooseActionAdd" component={ChooseActionAdd}/>
             <StackRoutes.Screen
                 name="Home"
                 component={HomeScreen}
