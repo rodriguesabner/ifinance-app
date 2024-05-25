@@ -14,6 +14,7 @@ export interface BalanceProps {
     income: number;
     outcome: number;
     transactions: any[];
+    rawTransactions: any[];
     debts: any[];
     currentDate: string;
     categories: CategoryProps[];
@@ -31,6 +32,7 @@ const initialState: BalanceProps = {
     income: 0,
     outcome: 0,
     transactions: [],
+    rawTransactions: [],
     debts: [],
     currentDate: new Date().toISOString(),
     transactionChanged: false,
@@ -72,12 +74,35 @@ export const convertToPrice = (value: any) => {
         .format(value);
 }
 
+export function calculateBalance(transactions: any[]) {
+    const incomeValue = transactions
+        .filter((item) => item?.type === 'income')
+        .reduce((acc, item) => {
+            return acc + parseFloat(item.price);
+        }, 0);
+
+    const outcomeValue = transactions
+        .filter((item) => item.type === 'outcome')
+        .reduce((acc, item) => {
+            return acc + parseFloat(item.price);
+        }, 0);
+
+    return {
+        total: incomeValue - outcomeValue,
+        incomeValue,
+        outcomeValue
+    };
+}
+
 export const balanceSlice = createSlice({
     name: 'balance',
     initialState,
     reducers: {
         setBalance: (state, action: PayloadAction<any>) => {
             state.total = action.payload
+        },
+        setRawTransactionsAction: (state, action: PayloadAction<any>) => {
+            state.rawTransactions = action.payload
         },
         setTransactionsAction: (state, action: PayloadAction<any>) => {
             state.transactions = action.payload
@@ -115,6 +140,7 @@ export const balanceSlice = createSlice({
 export const {
     setBalance,
     setTransactionsAction,
+    setRawTransactionsAction,
     setDebtsAction,
     setOutcome,
     setIncome,

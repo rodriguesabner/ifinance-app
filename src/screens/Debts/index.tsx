@@ -19,7 +19,6 @@ const Debts = () => {
     useEffect(() => {
         async function getDebts(){
             const {rows} = await db.getAllAsync<DebtProps[]>("SELECT * FROM debts;");
-            console.log(rows);
             setDebts(rows._array)
         }
 

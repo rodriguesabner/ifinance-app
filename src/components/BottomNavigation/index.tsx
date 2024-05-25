@@ -11,20 +11,20 @@ const BottomNavigation = () => {
         <Layout>
             <Container>
                 <Item>
-                    <Wallet size={18} color={"#fff"}/>
-                    <Text style={{color: '#fff'}}>Início</Text>
+                    <Wallet size={18} color={"#000"}/>
+                    <Text style={{color: '#000'}}>Início</Text>
                 </Item>
                 <Item>
-                    <Receipt size={18} color={"#fff"}/>
-                    <Text style={{color: '#fff'}}>Extrato</Text>
+                    <Receipt size={18} color={"#000"}/>
+                    <Text style={{color: '#000'}}>Extrato</Text>
                 </Item>
                 <Item onPress={() => navigation.navigate("ChooseActionAdd")}>
-                    <Bank size={18} color={"#fff"}/>
-                    <Text style={{color: '#fff'}}>Adicionar</Text>
+                    <Bank size={18} color={"#000"}/>
+                    <Text style={{color: '#000'}}>Adicionar</Text>
                 </Item>
                 <Item>
-                    <DotsThree size={18} color={"#fff"}/>
-                    <Text style={{color: '#fff'}}>Mais</Text>
+                    <DotsThree size={18} color={"#000"}/>
+                    <Text style={{color: '#000'}}>Mais</Text>
                 </Item>
             </Container>
         </Layout>

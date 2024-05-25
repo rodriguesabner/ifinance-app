@@ -3,7 +3,7 @@ import {
     BackButton,
     Button,
     CancelButton,
-    Container,
+    Container, CurrentBalanceButton, CurrentBalanceButtonText,
     Footer,
     Form,
     Input,
@@ -15,14 +15,14 @@ import {
 import WrapperTitle from "../../components/Home/WrapperTitle";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../store/reducers";
-import {ActivityIndicator, Alert, Text, View} from "react-native";
+import {ActivityIndicator, Alert, Text, TouchableOpacity, View} from "react-native";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigation/native";
 import {DateText, DateWrapper} from "../Home/styles";
 import moment from "moment";
 import {ArrowLeft} from "phosphor-react-native";
 import CategorySelect from "./SelectCategory";
-import {setTransactionsAction, setTransactionsChanged} from "../../store/reducers/balance";
+import {calculateBalance, setTransactionsAction, setTransactionsChanged} from "../../store/reducers/balance";
 import {TransactionProps} from "../../interfaces/transaction.interface";
 import api from "../../services/api";
 import Toast from "react-native-root-toast";
@@ -69,6 +69,26 @@ const Transaction = () => {
             setIsEdit(true);
         }
     }, [route.params])
+
+    const getBalanceLastMonth = () => {
+        const lastMonth = moment(route.params?.date || date).subtract(1, 'month').startOf('month');
+        const filteredTransactions = $balance.rawTransactions
+            .map((transaction) => ({
+                ...transaction,
+                date: moment(transaction.date),
+                price: parseFloat(transaction.price)
+            }))
+            .filter((transaction) => {
+                const transactionMonth = moment(transaction.date);
+                return transactionMonth.isSame(lastMonth, 'month');
+            });
+
+        const balanceLastMonth = calculateBalance(filteredTransactions)
+            .total
+            .toString()
+            .replace(".", ",");
+        setPrice(balanceLastMonth);
+    }
 
     async function save() {
         if (!name || !price) {
@@ -166,7 +186,6 @@ const Transaction = () => {
             .replace(',', '.')
 
         if ($balance.isOffline) {
-            console.log(transactionToInsert)
             ret = await db.runAsync(
                 `INSERT INTO transactions (name, price, category, date, type, description, paid)
                  VALUES (?, ?, ?, ?, ?, ?, ?);`,
@@ -180,8 +199,6 @@ const Transaction = () => {
                     transactionToInsert.paid,
                 ]
             );
-
-            console.log(ret);
         } else {
             ret = await api.post(`/v1/transactions?type=${type}`, transactionToInsert);
         }
@@ -305,6 +322,12 @@ const Transaction = () => {
                             onChangeText={(value: string) => maskMoneyBr(value)}
                         />
                     </WrapperCurrency>
+
+                    {category === 'Saldo Conta' && (
+                        <CurrentBalanceButton onPress={() => getBalanceLastMonth()}>
+                            <CurrentBalanceButtonText>Saldo atual</CurrentBalanceButtonText>
+                        </CurrentBalanceButton>
+                    )}
                 </View>
                 <WrapperPrices
                     data={prices()}

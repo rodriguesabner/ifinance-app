@@ -7,23 +7,24 @@ import {NavigationProp, useNavigation} from "@react-navigation/native";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../store/reducers";
 import {
+    calculateBalance,
     disableLoading,
     enableLoading,
     setBalance,
     setIncome,
-    setOutcome,
+    setOutcome, setRawTransactionsAction,
     setTransactionsAction
 } from "../../store/reducers/balance";
 import moment from "moment";
 import 'moment/locale/pt-br';
 import MostOutcome from "../../components/Home/MostOutcome";
-import api from "../../services/api";
 import {Calendar, SignOut} from "phosphor-react-native";
 import {SQLiteDatabase, useSQLiteContext} from "expo-sqlite";
 import {TransactionProps} from "../../interfaces/transaction.interface";
 import BottomNavigation from "../../components/BottomNavigation";
 import Assistant from "../../components/Home/Assistant";
 import TransactionsToPay from "../../components/Home/TransactionsToPay";
+import CreditCard from "../../components/Home/CreditCard";
 
 const Home = () => {
     const dispatch = useDispatch();
@@ -31,6 +32,7 @@ const Home = () => {
     const $balance = useSelector((state: RootState) => state.balance);
     const navigation: NavigationProp<any> = useNavigation();
 
+    const [rawTransactions, setRawTransactions] = useState([])
     const [transactions, setTransactions] = useState<any[]>([]);
     const [mostOutcome, setMostOutcome] = useState<any[]>([]);
     const [transactionToPay, setTransactionToPay] = useState<any[]>([])
@@ -38,63 +40,46 @@ const Home = () => {
     const [countTransactions, setCountTransactions] = useState(0);
 
     useEffect(() => {
-        getTransactions([]);
+        void getRawTransactions();
+        void getTransactions([]);
     }, [$balance.currentDate])
 
     useEffect(() => {
         if ($balance.transactionChanged) {
-            getTransactions($balance.transactions);
+            void getRawTransactions();
+            void getTransactions($balance.transactions);
         }
     }, [$balance.transactionChanged, $balance.transactions])
 
-    function calculateBalance(transactions: any[]) {
-        let total: number = 0;
+    async function getRawTransactions(){
+        if($balance.rawTransactions.length <= 0) {
+            const rawData = await db.getAllAsync<TransactionProps[]>(
+                `SELECT * FROM transactions`,
+            );
 
-        const incomeValue = transactions
-            .filter((item) => item?.type === 'income')
-            .reduce((acc, item) => {
-                return acc + parseFloat(item.price);
-            }, 0);
-
-        const outcomeValue = transactions
-            .filter((item) => item.type === 'outcome')
-            .reduce((acc, item) => {
-                return acc + parseFloat(item.price);
-            }, 0);
-
-        total = incomeValue - outcomeValue;
-
-        setTotalBalance(total);
-        dispatch(setOutcome(outcomeValue));
-        dispatch(setIncome(incomeValue));
-        dispatch(setBalance(total));
+            dispatch(setRawTransactionsAction(rawData));
+        }
     }
 
     async function fetchTransactions() {
         const month = new Date($balance.currentDate).getMonth() + 1;
         const year = new Date($balance.currentDate).getFullYear();
 
-        let data: any;
-        if ($balance.isOffline) {
-            let choosedMonth = month.toString()
+        let choosedMonth = month.toString()
 
-            if (month < 10) {
-                choosedMonth = `0${month}`.slice(-2);
-            }
-
-            const rows = await db.getAllAsync<TransactionProps[]>("" +
-                `SELECT *
-                 FROM transactions
-                 WHERE strftime('%m', date) = ?
-                   AND strftime('%Y', date) = ?;`,
-                [choosedMonth, year.toString()]
-            );
-
-            data = rows;
-        } else {
-            const ret = await api.get(`/v1/transactions?month=${month}&year=${year}`);
-            data = ret.data;
+        if (month < 10) {
+            choosedMonth = `0${month}`.slice(-2);
         }
+
+        const data = await db.getAllAsync<TransactionProps[]>("" +
+            `SELECT *
+             FROM transactions
+             WHERE strftime('%m', date) = ?
+               AND strftime('%Y', date) = ?;`,
+            [choosedMonth, year.toString()]
+        );
+
+        setRawTransactions(data);
 
         if (data == null) {
             return [];
@@ -174,7 +159,12 @@ const Home = () => {
         setTransactions(valuesGrouped);
         dispatch(setTransactionsAction(orderedValues));
 
-        calculateBalance(list)
+        const {total, incomeValue, outcomeValue} = calculateBalance(list);
+        setTotalBalance(total);
+        dispatch(setOutcome(outcomeValue));
+        dispatch(setIncome(incomeValue));
+        dispatch(setBalance(total));
+
         dispatch(disableLoading());
     }
 
@@ -203,6 +193,8 @@ const Home = () => {
                         <TransactionsToPay transactionsToPay={transactionToPay}/>
                     </HeaderWrapper>
                 </View>
+
+                <CreditCard transactions={rawTransactions}/>
 
                 <Assistant transactions={transactions}/>
 

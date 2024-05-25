@@ -4,15 +4,18 @@ import {ArrowDown, ArrowUp, X} from "phosphor-react-native";
 import {Text, TouchableOpacity, View} from "react-native";
 import {useNavigation} from "@react-navigation/native";
 import moment from "moment";
+import {useSelector} from "react-redux";
+import {RootState} from "../../store/reducers";
 
 const ChooseActionAdd = () => {
     const navigation = useNavigation();
+    const $balance = useSelector((state: RootState) => state.balance);
 
     const goToScreen = (path: string, type: string) => {
         const propsNavigation = {};
 
         Object.assign(propsNavigation, {
-            date: moment().toISOString(),
+            date: $balance.currentDate,
             type: type.toLowerCase()
         })
 
@@ -49,9 +52,7 @@ const ChooseActionAdd = () => {
                             onPress={() => goToScreen("Transaction", 'outcome')}
                         >
                             <ArrowDown size={26} color={'#b64848'}/>
-                            <Text>
-                                Despesa
-                            </Text>
+                            <Text>Despesa</Text>
                         </TouchableOpacity>
                     </Container>
                 </View>

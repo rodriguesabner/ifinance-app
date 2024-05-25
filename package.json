@@ -39,6 +39,7 @@
     "phosphor-react-native": "^1.1.2",
     "react": "18.2.0",
     "react-native": "^0.74.1",
+    "react-native-credit-card": "^0.1.9",
     "react-native-currency-input": "^1.1.0",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-root-toast": "^3.4.1",
@@ -47,6 +48,7 @@
     "react-native-svg": "15.2.0",
     "react-redux": "^8.0.5",
     "redux": "^4.2.1",
+    "rn-credit-card": "^1.0.4",
     "styled-components": "^6.1.11",
     "uuid": "^9.0.1",
     "xlsx": "^0.18.5"

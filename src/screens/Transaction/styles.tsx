@@ -108,3 +108,11 @@ export const CurrentCategory = styled.TouchableOpacity`
     width: 100%;
     padding-top: 15px;
 `;
+
+export const CurrentBalanceButton = styled.TouchableOpacity`
+    margin-top: 5px;
+`;
+
+export const CurrentBalanceButtonText = styled.Text`
+    color: cornflowerblue;
+`;
