@@ -17,7 +17,7 @@ import {
 import WrapperTitle from "../../components/Home/WrapperTitle";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../store/reducers";
-import {ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Text, View} from "react-native";
+import {ActivityIndicator, Alert, Text, View} from "react-native";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigation/native";
 import {DateText, DateWrapper} from "../Home/styles";
@@ -273,106 +273,101 @@ const Transaction = () => {
                 title={''}
                 subtitle={isEdit ? 'Editar Transação' : type === 'income' ? 'Nova Receita' : 'Nova Despesa'}
             />
-
-            <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-            >
-                <Form>
-                    <View
-                        style={{
-                            alignItems: 'flex-start'
-                        }}
+            <Form>
+                <View
+                    style={{
+                        alignItems: 'flex-start'
+                    }}
+                >
+                    <Label>Data</Label>
+                    <DateWrapper
+                        onPress={() => handleToggleDatePicker()}
                     >
-                        <Label>Data</Label>
-                        <DateWrapper
-                            onPress={() => handleToggleDatePicker()}
-                        >
-                            <DateText>{renderMonthYear()}</DateText>
-                        </DateWrapper>
+                        <DateText>{renderMonthYear()}</DateText>
+                    </DateWrapper>
 
-                        {showDatePicker && (
-                            <RNDateTimePicker
-                                style={{marginTop: 10}}
-                                mode={'date'}
-                                display={'spinner'}
-                                value={date}
-                                onChange={(event, selectedDate) => {
-                                    const currentDate = selectedDate || date;
-                                    setDate(currentDate);
-                                    setShowDatePicker(false)
-                                }}
-                            />
-                        )}
-                    </View>
-
-                    <View>
-                        <Label>Título</Label>
-                        <Input
-                            placeholder={type === 'income' ? "Salário" : "Netflix"}
-                            value={name}
-                            onChangeText={setName}
+                    {showDatePicker && (
+                        <RNDateTimePicker
+                            style={{marginTop: 10}}
+                            mode={'date'}
+                            display={'spinner'}
+                            value={date}
+                            onChange={(event, selectedDate) => {
+                                const currentDate = selectedDate || date;
+                                setDate(currentDate);
+                                setShowDatePicker(false)
+                            }}
                         />
-                    </View>
+                    )}
+                </View>
 
-                    <View>
-                        <Label>Descrição (opcional)</Label>
-                        <Input placeholder="Código do boleto/pix ou alguma observação" value={description}
-                               onChangeText={setDescription}/>
-                    </View>
-
-                    <View>
-                        <Label>Valor</Label>
-
-                        <WrapperCurrency>
-                            <Input
-                                keyboardType="numeric"
-                                placeholder={type === 'income' ? "R$5900" : 'R$30'}
-                                value={price}
-                                onChangeText={(value: string) => maskMoneyBr(value)}
-                            />
-                        </WrapperCurrency>
-
-                        {category === 'Saldo Conta' && (
-                            <CurrentBalanceButton onPress={() => getBalanceLastMonth()}>
-                                <CurrentBalanceButtonText>Saldo atual</CurrentBalanceButtonText>
-                            </CurrentBalanceButton>
-                        )}
-                    </View>
-                    <WrapperPrices
-                        data={prices()}
-                        keyExtractor={(item: any) => item.value}
-                        contentContainerStyle={{gap: 10}}
-                        renderItem={({item}: { item: any }) => (
-                            <PriceItem onPress={() => handleClickPrice(item.label)}>
-                                <Text style={{color: '#000'}}>{item.label}</Text>
-                            </PriceItem>
-                        )}
+                <View>
+                    <Label>Título</Label>
+                    <Input
+                        placeholder={type === 'income' ? "Salário" : "Netflix"}
+                        value={name}
+                        onChangeText={setName}
                     />
+                </View>
 
-                    <View>
-                        <Label>Categoria</Label>
-                        <CategorySelect
-                            category={category}
-                            setShowCategoryPicker={setShowCategoryPicker}
-                            setCategory={setCategory}
-                            showCategoryPicker={showCategoryPicker}
-                            type={type}
+                <View>
+                    <Label>Descrição (opcional)</Label>
+                    <Input placeholder="Código do boleto/pix ou alguma observação" value={description}
+                           onChangeText={setDescription}/>
+                </View>
+
+                <View>
+                    <Label>Valor</Label>
+
+                    <WrapperCurrency>
+                        <Input
+                            keyboardType="numeric"
+                            placeholder={type === 'income' ? "R$5900" : 'R$30'}
+                            value={price}
+                            onChangeText={(value: string) => maskMoneyBr(value)}
                         />
-                    </View>
+                    </WrapperCurrency>
 
-                    <Footer>
-                        <CancelButton onPress={() => navigation.goBack()}>
-                            <Text style={{color: "#000", fontSize: 16}}>Cancelar</Text>
-                        </CancelButton>
-                        <Button disabled={loading} onPress={() => save()}>
-                            <Text style={{color: "#000", fontSize: 16}}>Salvar</Text>
-                            {loading && (
-                                <ActivityIndicator size="small" color="#000" style={{marginLeft: 15}}/>
-                            )}
-                        </Button>
-                    </Footer>
-                </Form>
-            </KeyboardAvoidingView>
+                    {category === 'Saldo Conta' && (
+                        <CurrentBalanceButton onPress={() => getBalanceLastMonth()}>
+                            <CurrentBalanceButtonText>Saldo atual</CurrentBalanceButtonText>
+                        </CurrentBalanceButton>
+                    )}
+                </View>
+                <WrapperPrices
+                    data={prices()}
+                    keyExtractor={(item: any) => item.value}
+                    contentContainerStyle={{gap: 10}}
+                    renderItem={({item}: { item: any }) => (
+                        <PriceItem onPress={() => handleClickPrice(item.label)}>
+                            <Text style={{color: '#000'}}>{item.label}</Text>
+                        </PriceItem>
+                    )}
+                />
+
+                <View>
+                    <Label>Categoria</Label>
+                    <CategorySelect
+                        category={category}
+                        setShowCategoryPicker={setShowCategoryPicker}
+                        setCategory={setCategory}
+                        showCategoryPicker={showCategoryPicker}
+                        type={type}
+                    />
+                </View>
+
+                <Footer>
+                    <CancelButton onPress={() => navigation.goBack()}>
+                        <Text style={{color: "#000", fontSize: 16}}>Cancelar</Text>
+                    </CancelButton>
+                    <Button disabled={loading} onPress={() => save()}>
+                        <Text style={{color: "#000", fontSize: 16}}>Salvar</Text>
+                        {loading && (
+                            <ActivityIndicator size="small" color="#000" style={{marginLeft: 15}}/>
+                        )}
+                    </Button>
+                </Footer>
+            </Form>
         </Container>
     );
 };

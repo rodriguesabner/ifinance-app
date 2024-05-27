@@ -4,7 +4,7 @@ import {FlatListProps, Platform, TouchableOpacityProps, TextInputProps} from "re
 export const Container = styled.ScrollView.attrs({
     showsVerticalScrollIndicator: false,
     contentContainerStyle: {
-        paddingBottom: 120
+        paddingBottom: 240
     },
 })`
   flex: 1;
@@ -76,7 +76,7 @@ interface TextCurrentCategoryProps {
     color?: string;
 }
 export const TextCurrentCategory = styled.Text<TextCurrentCategoryProps>`
-  color: ${(props) => props.color || '#999'};
+  color: ${(props: TextCurrentCategoryProps) => props.color || '#999'};
 `;
 
 export const WrapperCurrency = styled.View`
