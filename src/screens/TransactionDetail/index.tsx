@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Alert, Image, Text, TouchableOpacity, View} from "react-native";
+import {Alert, Image, Text, TouchableOpacity, View, ViewStyle} from "react-native";
 import moment from "moment/moment";
 import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigation/native";
 import {useDispatch, useSelector} from "react-redux";
@@ -177,11 +177,11 @@ const TransactionDetail = () => {
 
         if ($balance.isOffline) {
             await db.runAsync(
-                    `DELETE
-                     FROM transactions
-                     WHERE id = ?;`,
-                    [route.params?.transaction.id],
-                );
+                `DELETE
+                 FROM transactions
+                 WHERE id = ?;`,
+                [route.params?.transaction.id],
+            );
         } else {
             await api.delete(`/v1/transactions/${route.params?.transaction.id}`);
         }
@@ -245,7 +245,13 @@ const TransactionDetail = () => {
                         value={paid}
                         onValueChange={(value) => void markPaid(value)}
                     />
-                    <Label style={{marginBottom: 0, fontSize: 14, color: '#000', opacity: .5, fontWeight: '500'}}>
+                    <Label style={{
+                        marginBottom: 0,
+                        fontSize: 14,
+                        color: '#000',
+                        opacity: .5,
+                        fontWeight: '500'
+                    }}>
                         Essa transação foi paga?
                     </Label>
                 </WrapperPaidTransaction>

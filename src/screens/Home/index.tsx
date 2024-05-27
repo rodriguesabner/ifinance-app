@@ -32,7 +32,7 @@ const Home = () => {
     const $balance = useSelector((state: RootState) => state.balance);
     const navigation: NavigationProp<any> = useNavigation();
 
-    const [rawTransactions, setRawTransactions] = useState([])
+    const [rawTransactions, setRawTransactions] = useState<any[]>([])
     const [transactions, setTransactions] = useState<any[]>([]);
     const [mostOutcome, setMostOutcome] = useState<any[]>([]);
     const [transactionToPay, setTransactionToPay] = useState<any[]>([])

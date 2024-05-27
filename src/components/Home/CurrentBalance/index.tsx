@@ -17,8 +17,12 @@ const CurrentBalance = () => {
             const result = await db.getFirstAsync<{ 'sqlite_version()': string }>(
                 'SELECT sqlite_version()'
             );
-            setVersion(result['sqlite_version()']);
+
+            if (result) {
+                setVersion(result['sqlite_version()']);
+            }
         }
+
         setup();
     }, []);
 

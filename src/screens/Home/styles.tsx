@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-import {Dimensions, FlatListProps, Platform} from "react-native";
+import {Dimensions, FlatListProps, Platform, TouchableOpacityProps} from "react-native";
 
 interface LayoutProps {
     backgroundColor?: string;
@@ -49,7 +49,7 @@ export const FlatListMonths = styled.FlatList.attrs({
     padding: 10px 0;
 `;
 
-interface DateWrapperProps {
+interface DateWrapperProps extends TouchableOpacityProps {
     isActive?: boolean;
 }
 

@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-import {FlatListProps, Platform} from "react-native";
+import {FlatListProps, Platform, TextInputProps, TouchableOpacityProps} from "react-native";
 
 export const Container = styled.ScrollView.attrs({
     showsVerticalScrollIndicator: false,
@@ -13,7 +13,7 @@ export const Container = styled.ScrollView.attrs({
     padding-top: ${Platform.OS === 'android' ? 30 : 60}px;
 `;
 
-export const BackButton = styled.TouchableOpacity`
+export const BackButton = styled.TouchableOpacity<TouchableOpacityProps>`
     background-color: #a0e673;
     margin-bottom: 20px;
     width: 40px;
@@ -36,7 +36,7 @@ export const Label = styled.Text`
 export const Input = styled.TextInput.attrs({
     placeholderTextColor: '#999',
     returnKeyType: 'done',
-})`
+})<TextInputProps>`
     background-color: #eaeee8;
     height: 42px;
     padding-left: 10px;
@@ -54,7 +54,7 @@ export const Footer = styled.View`
   margin-top: 20px;
 `;
 
-export const CancelButton = styled.TouchableOpacity`
+export const CancelButton = styled.TouchableOpacity<TouchableOpacityProps>`
     background-color: #eaeee8;
     height: 48px;
     align-items: center;
@@ -64,7 +64,7 @@ export const CancelButton = styled.TouchableOpacity`
     width: 47%;
 `;
 
-export const Button = styled.TouchableOpacity`
+export const Button = styled.TouchableOpacity<TouchableOpacityProps>`
     background-color: #a0e76d;
     height: 48px;
     align-items: center;
@@ -74,7 +74,7 @@ export const Button = styled.TouchableOpacity`
     width: 47%;
 `;
 
-interface TextCurrentCategoryProps {
+interface TextCurrentCategoryProps extends Text {
     color?: string;
 }
 export const TextCurrentCategory = styled.Text<TextCurrentCategoryProps>`
@@ -96,13 +96,13 @@ export const WrapperPrices = styled.FlatList.attrs({
 })<FlatListProps<any>>`
 `;
 
-export const PriceItem = styled.TouchableOpacity`
+export const PriceItem = styled.TouchableOpacity<TouchableOpacityProps>`
     background-color: #eaeee8;
     padding: 10px 14px;
     border-radius: 20px;
 `;
 
-export const CurrentCategory = styled.TouchableOpacity`
+export const CurrentCategory = styled.TouchableOpacity<TouchableOpacityProps>`
     background-color: #eaeee8;
     height: 42px;
     padding-left: 10px;

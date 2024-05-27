@@ -2,8 +2,9 @@ import React from 'react';
 import {Check, Warning} from "phosphor-react-native";
 import {Text, View} from "react-native";
 import {convertToPrice} from "../../../store/reducers/balance";
+import {TransactionProps} from "../../../interfaces/transaction.interface";
 
-const TransactionsToPay = ({transactionsToPay}) => {
+const TransactionsToPay = ({transactionsToPay}: {transactionsToPay: TransactionProps[]}) => {
     return (
         <View
             style={{
@@ -44,7 +45,7 @@ const TransactionsToPay = ({transactionsToPay}) => {
                     para pagar.
                 </Text>
                 <Text style={{color: '#666'}}>
-                    Total: R${convertToPrice(transactionsToPay.reduce((acc, item) => {
+                    Total: R${convertToPrice(transactionsToPay.reduce((acc: number, item: { price: string; }) => {
                     return acc + parseFloat(item.price);
                 }, 0))}
                 </Text>
